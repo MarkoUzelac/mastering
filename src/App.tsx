@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { audioEngine } from './utils/audio-engine';
 import { DEFAULT_PARAMS, MASTERING_PRESETS } from './utils/presets';
 import {
@@ -12,6 +13,7 @@ import {
 import { Header, ActiveTab } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { TrackHeader } from './components/TrackHeader';
+import { MobileBottomNav } from './components/MobileBottomNav';
 
 // Workstation DSP Components
 import { WaveformHero } from './components/WaveformHero';
@@ -28,6 +30,9 @@ import { LandingView } from './components/LandingView';
 
 // Educational Guides View
 import { LearnGuidesView, GuideSlug } from './learn/LearnGuidesView';
+
+// Admin Panel View
+import { AdminPanelView } from './components/AdminPanelView';
 
 // Legal & Compliance Views
 import { PrivacyPolicyView } from './legal/PrivacyPolicyView';
@@ -96,6 +101,13 @@ export const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(225.782);
+  const [isLooping, setIsLooping] = useState<boolean>(false);
+  const [isMono, setIsMono] = useState<boolean>(false);
+  const [loopRegion, setLoopRegion] = useState<{ start: number; end: number; enabled: boolean }>({
+    start: 30,
+    end: 75,
+    enabled: false,
+  });
   const [currentTrack, setCurrentTrack] = useState<AudioTrackInfo | null>(null);
   const [activePresetId, setActivePresetId] = useState<string>('modern-streaming');
   const [selectedTarget, setSelectedTarget] = useState<ReferenceTarget>(REFERENCE_TARGETS[0]);
@@ -379,6 +391,19 @@ export const App: React.FC = () => {
     setCurrentTime(time);
   };
 
+  const handleToggleMono = () => {
+    setIsMono((prev) => {
+      const next = !prev;
+      handleAdvancedParamChange('width', next ? 0 : 100);
+      return next;
+    });
+  };
+
+  const handleToggleLoop = () => {
+    setIsLooping((prev) => !prev);
+    setLoopRegion((prev) => ({ ...prev, enabled: !prev.enabled }));
+  };
+
   const handleTriggerMaster = () => {
     soundHaptics.playSwitchSound(true);
     setIsMasteringInProgress(true);
@@ -417,8 +442,58 @@ export const App: React.FC = () => {
     'data-request',
   ].includes(activeTab);
 
+  const getSeoInfo = () => {
+    if (isPricingModalOpen) {
+      return { title: 'Pricing & Pro Plans | MasteringLocal.Pro', description: 'Upgrade to MasteringLocal.Pro for high-resolution exports and advanced dynamics processing.' };
+    }
+
+    if (isLegalView) {
+      const legalTitles: Record<string, string> = {
+        'privacy': 'Privacy Policy',
+        'terms': 'Terms of Service',
+        'subscriptions': 'Subscription Terms',
+        'cookies': 'Cookie Policy',
+        'refunds': 'Refund Policy',
+        'legal': 'Legal Imprint',
+        'contact': 'Contact Support',
+        'data-request': 'Data Request'
+      };
+      const pageTitle = legalTitles[activeTab] || 'Legal';
+      return { title: `${pageTitle} | MasteringLocal.Pro`, description: `View the ${pageTitle} for MasteringLocal.Pro.` };
+    }
+
+    switch(activeTab) {
+      case 'landing':
+        return { title: 'MasteringLocal.Pro — Professional Audio Mastering', description: 'Studio-grade audio mastering console. 100% in your browser. No audio uploads, zero server processing.' };
+      case 'mastering':
+        return { title: 'Mastering Workspace | MasteringLocal.Pro', description: 'Professional audio mastering workstation with zero latency DSP.' };
+      case 'analysis':
+        return { title: 'Loudness & Analysis | MasteringLocal.Pro', description: 'Real-time true peak and LUFS analysis for audio mastering.' };
+      case 'presets':
+        return { title: 'Mastering Presets | MasteringLocal.Pro', description: 'Professional mastering presets for Spotify, Apple Music, and Club.' };
+      case 'learn':
+        return { title: 'Learn Audio Mastering | MasteringLocal.Pro', description: 'Educational guides on LUFS, True Peak, and audio dynamics.' };
+      case 'admin':
+        return { title: 'Admin Control Panel | MasteringLocal.Pro', description: 'Platform administration.' };
+      default:
+        return { title: 'MasteringLocal.Pro — Professional Audio Mastering', description: 'Studio-grade audio mastering console.' };
+    }
+  };
+
+  const seo = getSeoInfo();
+
   return (
-    <div className="min-h-screen bg-[#050608] text-[#F4F3EF] flex flex-col font-sans selection:bg-[#8B5CF6]/30 selection:text-[#C4B5FD]">
+    <HelmetProvider>
+      <Helmet>
+        <title>{seo.title}</title>
+        <meta name="description" content={seo.description} />
+        <meta property="og:title" content={seo.title} />
+        <meta property="og:description" content={seo.description} />
+        <meta property="og:url" content="https://masteringlocal.pro" />
+        <meta name="twitter:title" content={seo.title} />
+        <meta name="twitter:description" content={seo.description} />
+      </Helmet>
+      <div className="min-h-screen bg-[#090A08] text-[#F2F2EE] flex flex-col font-sans selection:bg-[#B7F000]/30 selection:text-[#B7F000]">
       {/* Top Header */}
       <Header
         activeTab={activeTab as ActiveTab}
@@ -461,14 +536,14 @@ export const App: React.FC = () => {
         />
 
         {/* Center Workspace & Right Column */}
-        <main className="flex-1 min-w-0 p-4 lg:p-5 overflow-y-auto">
+        <main className="flex-1 min-w-0 p-3 sm:p-4 lg:p-5 pb-24 md:pb-5 overflow-y-auto">
           {/* Back button for legal pages */}
           {isLegalView && (
             <div className="max-w-4xl mx-auto mb-4">
               <button
                 type="button"
                 onClick={() => setActiveTab('mastering')}
-                className="px-3.5 py-1.5 rounded-lg bg-[#14171D] hover:bg-[#1C2028] text-xs font-mono text-[#8B5CF6] border border-[#242830] transition-colors flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-[#14171D] hover:bg-[#1C2028] text-xs font-mono text-[#B7F000] border border-[#242830] transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Return to Mastering Workstation
@@ -499,6 +574,8 @@ export const App: React.FC = () => {
                   isPlaying={isPlaying}
                   isBypassed={isBypassed}
                   onSeek={handleSeek}
+                  loopRegion={loopRegion}
+                  onToggleLoop={handleToggleLoop}
                 />
 
                 {/* 3. 5-Module Processing Chain (EQ, Dynamics, Saturation, Stereo, Limiter) */}
@@ -538,8 +615,10 @@ export const App: React.FC = () => {
                   onStop={handleStop}
                   onSeek={handleSeek}
                   onToggleBypass={handleToggleBypass}
-                  onOpenParityModal={() => setIsParityModalOpen(true)}
-                  onOpenAuditModal={() => setIsAuditModalOpen(true)}
+                  isLooping={isLooping}
+                  onToggleLoop={handleToggleLoop}
+                  isMono={isMono}
+                  onToggleMono={handleToggleMono}
                 />
               </div>
 
@@ -579,6 +658,8 @@ export const App: React.FC = () => {
               meterData={meterData}
               isPlaying={isPlaying}
               isBypassed={isBypassed}
+              params={params}
+              onParamChange={handleParamChange}
               onOpenParity={() => setIsParityModalOpen(true)}
             />
           )}
@@ -607,6 +688,13 @@ export const App: React.FC = () => {
             <LearnGuidesView
               initialSlug={initialGuideSlug}
               onTryMastering={() => setActiveTab('mastering')}
+            />
+          )}
+
+          {/* VIEW ADMIN: Admin Control Panel */}
+          {activeTab === 'admin' && (
+            <AdminPanelView
+              onBack={() => setActiveTab('mastering')}
             />
           )}
 
@@ -667,10 +755,10 @@ export const App: React.FC = () => {
       </div>
 
       {/* Footer Legal & Navigation Bar */}
-      <footer className="border-t border-[#1E2530] bg-[#0A0C0F] px-6 py-4 text-xs text-[#8E95A2] select-none">
+      <footer className="border-t border-[#222420] bg-[#0A0C0F] px-6 py-4 text-xs text-[#8E95A2] select-none">
         <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 font-mono text-[11px]">
-            <span className="text-[#8B5CF6] font-semibold">MASTERINGLOCAL.PRO</span>
+            <span className="text-[#B7F000] font-semibold">MASTERINGLOCAL.PRO</span>
             <span>·</span>
             <span>Client-Side 64-bit Audio DSP</span>
             <span>·</span>
@@ -681,63 +769,63 @@ export const App: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('learn')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Guides &amp; LUFS
             </button>
             <button
               type="button"
               onClick={() => setIsPricingModalOpen(true)}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Pricing &amp; Plans
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('privacy')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Privacy Policy
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('terms')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Terms of Service
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('subscriptions')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Subscription Terms
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('cookies')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Cookie Policy
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('refunds')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Refund Policy
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('legal')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Imprint / Legal
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('contact')}
-              className="hover:text-[#8B5CF6] transition-colors cursor-pointer"
+              className="hover:text-[#B7F000] transition-colors cursor-pointer"
             >
               Contact &amp; Support
             </button>
@@ -747,6 +835,14 @@ export const App: React.FC = () => {
 
       {/* Cookie Consent Banner */}
       <CookieConsentBanner onOpenPolicy={() => setActiveTab('cookies')} />
+
+      {/* Mobile Fixed Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        isPro={FeatureGates.isProUser()}
+        onOpenAccount={() => handleOpenAccount('subscription')}
+      />
 
       {/* MODALS */}
       <AdvancedModuleModal
@@ -758,30 +854,38 @@ export const App: React.FC = () => {
         onAdvancedParamChange={handleAdvancedParamChange}
       />
 
-      <ReferenceTargetModal
-        selectedTargetId={selectedTarget.id}
-        onSelectTarget={(target) => {
-          setSelectedTarget(target);
-          handleAdvancedParamChange('ceiling', target.truePeakCeiling);
-        }}
-        onClose={() => setIsReferenceModalOpen(false)}
-      />
+      {isReferenceModalOpen && (
+        <ReferenceTargetModal
+          selectedTargetId={selectedTarget.id}
+          onSelectTarget={(target) => {
+            setSelectedTarget(target);
+            handleAdvancedParamChange('ceiling', target.truePeakCeiling);
+          }}
+          onClose={() => setIsReferenceModalOpen(false)}
+        />
+      )}
 
-      <LoudnessDetailsModal
-        meterData={meterData}
-        targetLufs={selectedTarget.targetLufs}
-        onClose={() => setIsLoudnessModalOpen(false)}
-      />
+      {isLoudnessModalOpen && (
+        <LoudnessDetailsModal
+          meterData={meterData}
+          targetLufs={selectedTarget.targetLufs}
+          onClose={() => setIsLoudnessModalOpen(false)}
+        />
+      )}
 
-      <StemsModal
-        onClose={() => setIsStemsModalOpen(false)}
-      />
+      {isStemsModalOpen && (
+        <StemsModal
+          onClose={() => setIsStemsModalOpen(false)}
+        />
+      )}
 
-      <HistoryModal
-        historyList={snapshots}
-        onRestore={handleRestoreSnapshot}
-        onClose={() => setIsHistoryModalOpen(false)}
-      />
+      {isHistoryModalOpen && (
+        <HistoryModal
+          historyList={snapshots}
+          onRestore={handleRestoreSnapshot}
+          onClose={() => setIsHistoryModalOpen(false)}
+        />
+      )}
 
       <ParityModal
         isOpen={isParityModalOpen}
@@ -842,5 +946,6 @@ export const App: React.FC = () => {
         }}
       />
     </div>
+    </HelmetProvider>
   );
 };

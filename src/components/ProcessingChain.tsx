@@ -95,8 +95,8 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 relative">
       {/* 1. EQUALIZER MODULE (CYAN) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0E1116] border rounded-xl p-3.5 transition-all shadow-sm ${
-          bypasses.eq || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#1E2530] hover:border-[#06B6D4]/40'
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+          bypasses.eq || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#06B6D4]/40'
         }`}
       >
         {/* Header */}
@@ -108,7 +108,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
           <button
             onClick={() => handleToggle('eq')}
             className={`p-1 rounded-md transition cursor-pointer ${
-              bypasses.eq ? 'text-[#646A73] hover:text-[#9A9EA6] bg-[#14171B]' : 'text-[#06B6D4] bg-[#06B6D4]/10 hover:bg-[#06B6D4]/20'
+              bypasses.eq ? 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]' : 'text-[#06B6D4] bg-[#06B6D4]/10 hover:bg-[#06B6D4]/20'
             }`}
             title={bypasses.eq ? 'Enable EQ Module' : 'Bypass EQ Module'}
           >
@@ -137,7 +137,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
                   <path
                     d={pathD}
                     fill="none"
-                    stroke={bypasses.eq || isBypassed ? '#646A73' : '#06B6D4'}
+                    stroke={bypasses.eq || isBypassed ? '#686A63' : '#06B6D4'}
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
@@ -196,7 +196,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('eq')}
-          className="w-full py-1 text-[11px] font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1C2026] border border-[#24282D] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -204,8 +204,8 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 2. DYNAMICS MODULE (GREEN) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0E1116] border rounded-xl p-3.5 transition-all shadow-sm ${
-          bypasses.dynamics || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#1E2530] hover:border-[#10B981]/40'
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+          bypasses.dynamics || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#10B981]/40'
         }`}
       >
         {/* Header */}
@@ -217,7 +217,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
           <button
             onClick={() => handleToggle('dynamics')}
             className={`p-1 rounded-md transition cursor-pointer ${
-              bypasses.dynamics ? 'text-[#646A73] hover:text-[#9A9EA6] bg-[#14171B]' : 'text-[#10B981] bg-[#10B981]/10 hover:bg-[#10B981]/20'
+              bypasses.dynamics ? 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]' : 'text-[#10B981] bg-[#10B981]/10 hover:bg-[#10B981]/20'
             }`}
             title={bypasses.dynamics ? 'Enable Dynamics Module' : 'Bypass Dynamics Module'}
           >
@@ -247,7 +247,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
                   <path
                     d={pathD}
                     fill="none"
-                    stroke={bypasses.dynamics || isBypassed ? '#646A73' : '#10B981'}
+                    stroke={bypasses.dynamics || isBypassed ? '#686A63' : '#10B981'}
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
@@ -258,7 +258,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
           </svg>
 
           {/* Gain Reduction Meter Overlay on Right */}
-          <div className="absolute right-1.5 top-1.5 bottom-1.5 w-1.5 bg-[#14171B] rounded-full overflow-hidden flex flex-col justify-end">
+          <div className="absolute right-1.5 top-1.5 bottom-1.5 w-1.5 bg-[#151714] rounded-full overflow-hidden flex flex-col justify-end">
             <div
               className="w-full bg-[#34D399] transition-all duration-75"
               style={{
@@ -314,7 +314,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('dynamics')}
-          className="w-full py-1 text-[11px] font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1C2026] border border-[#24282D] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -322,8 +322,8 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 3. SATURATION MODULE (AMBER) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0E1116] border rounded-xl p-3.5 transition-all shadow-sm ${
-          bypasses.saturation || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#1E2530] hover:border-[#F59E0B]/40'
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+          bypasses.saturation || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#F59E0B]/40'
         }`}
       >
         {/* Header */}
@@ -335,7 +335,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
           <button
             onClick={() => handleToggle('saturation')}
             className={`p-1 rounded-md transition cursor-pointer ${
-              bypasses.saturation ? 'text-[#646A73] hover:text-[#9A9EA6] bg-[#14171B]' : 'text-[#F59E0B] bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20'
+              bypasses.saturation ? 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]' : 'text-[#F59E0B] bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20'
             }`}
             title={bypasses.saturation ? 'Enable Saturation Module' : 'Bypass Saturation Module'}
           >
@@ -362,7 +362,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
                 <path
                   d={points}
                   fill="none"
-                  stroke={bypasses.saturation || isBypassed ? '#646A73' : '#F59E0B'}
+                  stroke={bypasses.saturation || isBypassed ? '#686A63' : '#F59E0B'}
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
@@ -417,7 +417,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('saturation')}
-          className="w-full py-1 text-[11px] font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1C2026] border border-[#24282D] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -425,20 +425,20 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 4. STEREO MODULE (VIOLET) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0E1116] border rounded-xl p-3.5 transition-all shadow-sm ${
-          bypasses.stereo || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#1E2530] hover:border-[#8B5CF6]/40'
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+          bypasses.stereo || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#B7F000]/40'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold tracking-wide text-[#A78BFA] flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]" />
+          <span className="text-xs font-semibold tracking-wide text-[#C7FF18] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#B7F000]" />
             Stereo
           </span>
           <button
             onClick={() => handleToggle('stereo')}
             className={`p-1 rounded-md transition cursor-pointer ${
-              bypasses.stereo ? 'text-[#646A73] hover:text-[#9A9EA6] bg-[#14171B]' : 'text-[#8B5CF6] bg-[#8B5CF6]/10 hover:bg-[#8B5CF6]/20'
+              bypasses.stereo ? 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]' : 'text-[#B7F000] bg-[#B7F000]/10 hover:bg-[#B7F000]/20'
             }`}
             title={bypasses.stereo ? 'Enable Stereo Module' : 'Bypass Stereo Module'}
           >
@@ -465,7 +465,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
                     rx={spreadX}
                     ry={spreadY}
                     fill="rgba(139, 92, 246, 0.15)"
-                    stroke={bypasses.stereo || isBypassed ? '#646A73' : '#8B5CF6'}
+                    stroke={bypasses.stereo || isBypassed ? '#686A63' : '#B7F000'}
                     strokeWidth="1.5"
                   />
                   <ellipse
@@ -474,7 +474,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
                     rx={spreadX * 0.5}
                     ry={spreadY * 0.6}
                     fill="none"
-                    stroke="#C4B5FD"
+                    stroke="#D4FF5C"
                     strokeWidth="1"
                     strokeDasharray="2 2"
                   />
@@ -517,15 +517,15 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
             onChange={(val) => onAdvancedParamChange('balance', val)}
           />
           <div className="flex flex-col items-center select-none">
-            <span className="text-[11px] font-medium text-[#9A9EA6] tracking-tight mb-1 text-center">
+            <span className="text-[11px] font-medium text-[#A5A69F] tracking-tight mb-1 text-center">
               Phase
             </span>
             <button
               onClick={() => onAdvancedParamChange('phaseInvert', !advancedParams.phaseInvert)}
               className={`w-9 h-9 rounded-full flex items-center justify-center border font-mono font-bold text-xs transition cursor-pointer ${
                 advancedParams.phaseInvert
-                  ? 'bg-[#8B5CF6] text-white border-[#A78BFA] shadow-[0_0_8px_rgba(139,92,246,0.5)]'
-                  : 'bg-[#0F1216] text-[#9A9EA6] hover:text-[#F4F3EF] border-[#282E38]'
+                  ? 'bg-[#B7F000] text-\[#F2F2EE\] border-[#C7FF18] shadow-[0_0_8px_rgba(139,92,246,0.5)]'
+                  : 'bg-[#0F1216] text-[#A5A69F] hover:text-[#F2F2EE] border-[#282E38]'
               }`}
               title="Phase Polarity Invert (ø)"
             >
@@ -540,7 +540,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('stereo')}
-          className="w-full py-1 text-[11px] font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1C2026] border border-[#24282D] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -548,8 +548,8 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 5. LIMITER MODULE (RED) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0E1116] border rounded-xl p-3.5 transition-all shadow-sm ${
-          bypasses.limiter || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#1E2530] hover:border-[#EF4444]/40'
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+          bypasses.limiter || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#EF4444]/40'
         }`}
       >
         {/* Header */}
@@ -561,7 +561,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
           <button
             onClick={() => handleToggle('limiter')}
             className={`p-1 rounded-md transition cursor-pointer ${
-              bypasses.limiter ? 'text-[#646A73] hover:text-[#9A9EA6] bg-[#14171B]' : 'text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20'
+              bypasses.limiter ? 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]' : 'text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20'
             }`}
             title={bypasses.limiter ? 'Enable Limiter Module' : 'Bypass Limiter Module'}
           >
@@ -585,7 +585,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
                 <path
                   d={pathD}
                   fill="none"
-                  stroke={bypasses.limiter || isBypassed ? '#646A73' : '#EF4444'}
+                  stroke={bypasses.limiter || isBypassed ? '#686A63' : '#EF4444'}
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
@@ -644,7 +644,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('limiter')}
-          className="w-full py-1 text-[11px] font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1C2026] border border-[#24282D] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
         >
           Advanced
         </button>

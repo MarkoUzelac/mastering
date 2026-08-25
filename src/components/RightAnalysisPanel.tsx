@@ -115,18 +115,18 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
   return (
     <div className="w-full flex flex-col gap-3 shrink-0">
       {/* 1. OUTPUT METER */}
-      <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 shadow-sm">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-semibold tracking-wide text-[#F4F3EF]">Output Meter</span>
-          <div className="flex items-center gap-1 bg-[#14171B] border border-[#24282D] rounded-md px-1.5 py-0.5">
+          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Output Meter</span>
+          <div className="flex items-center gap-1 bg-[#151714] border border-[#222420] rounded-md px-1.5 py-0.5">
             <select
               value={meterMode}
               onChange={(e) => setMeterMode(e.target.value as any)}
-              className="bg-transparent text-[11px] font-mono text-[#8B5CF6] focus:outline-none cursor-pointer"
+              className="bg-transparent text-[11px] font-mono text-[#B7F000] focus:outline-none cursor-pointer"
             >
-              <option value="TP" className="bg-[#0E1116] text-[#F4F3EF]">TP</option>
-              <option value="Peak" className="bg-[#0E1116] text-[#F4F3EF]">Peak</option>
-              <option value="RMS" className="bg-[#0E1116] text-[#F4F3EF]">RMS</option>
+              <option value="TP" className="bg-[#0D0E0C] text-[#F2F2EE]">TP</option>
+              <option value="Peak" className="bg-[#0D0E0C] text-[#F2F2EE]">Peak</option>
+              <option value="RMS" className="bg-[#0D0E0C] text-[#F2F2EE]">RMS</option>
             </select>
           </div>
         </div>
@@ -135,7 +135,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
         <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center bg-[#07090C] border border-[#181C22] rounded-lg p-2.5">
           {/* L Channel */}
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-mono text-center text-[#646A73]">L</span>
+            <span className="text-[10px] font-mono text-center text-[#686A63]">L</span>
             <div className="flex flex-col gap-0.5 h-36 justify-between">
               {DB_TICKS.map((db, idx) => (
                 <div
@@ -150,7 +150,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
           </div>
 
           {/* Central dB Scale Labels */}
-          <div className="flex flex-col justify-between h-36 py-0.5 text-[9px] font-mono text-[#646A73] text-center select-none">
+          <div className="flex flex-col justify-between h-36 py-0.5 text-[9px] font-mono text-[#686A63] text-center select-none">
             <span>0</span>
             <span>-3</span>
             <span>-6</span>
@@ -165,7 +165,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
 
           {/* R Channel */}
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-mono text-center text-[#646A73]">R</span>
+            <span className="text-[10px] font-mono text-center text-[#686A63]">R</span>
             <div className="flex flex-col gap-0.5 h-36 justify-between">
               {DB_TICKS.map((db, idx) => (
                 <div
@@ -182,41 +182,41 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 2. LOUDNESS TELEMETRY */}
-      <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 shadow-sm space-y-2.5">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F4F3EF]">Loudness</span>
-          <span className="text-[10px] font-mono text-[#8B5CF6] px-1.5 py-0.5 bg-[#8B5CF6]/10 rounded border border-[#8B5CF6]/20">
+          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Loudness</span>
+          <span className="text-[10px] font-mono text-[#B7F000] px-1.5 py-0.5 bg-[#B7F000]/10 rounded border border-[#B7F000]/20">
             EBU R128
           </span>
         </div>
 
         {/* Big Bold Integrated Readout */}
         <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-2.5 flex flex-col items-center justify-center">
-          <span className="text-[10px] font-mono text-[#646A73] uppercase tracking-wider mb-0.5">
+          <span className="text-[10px] font-mono text-[#686A63] uppercase tracking-wider mb-0.5">
             Integrated
           </span>
-          <div className="text-2xl font-mono font-bold text-[#F4F3EF] tracking-tight">
+          <div className="text-2xl font-mono font-bold text-[#F2F2EE] tracking-tight">
             {integratedLufs.toFixed(1)}{' '}
-            <span className="text-xs font-medium text-[#8B5CF6]">LUFS</span>
+            <span className="text-xs font-medium text-[#B7F000]">LUFS</span>
           </div>
         </div>
 
         {/* Secondary Metrics Grid */}
         <div className="grid grid-cols-3 gap-1.5 text-center">
           <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-1.5">
-            <div className="text-[9px] font-mono text-[#646A73]">Short Term</div>
+            <div className="text-[9px] font-mono text-[#686A63]">Short Term</div>
             <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
               {shortTermLufs.toFixed(1)}
             </div>
           </div>
           <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-1.5">
-            <div className="text-[9px] font-mono text-[#646A73]">Range</div>
+            <div className="text-[9px] font-mono text-[#686A63]">Range</div>
             <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
               {loudnessRange.toFixed(1)} LU
             </div>
           </div>
           <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-1.5">
-            <div className="text-[9px] font-mono text-[#646A73]">True Peak</div>
+            <div className="text-[9px] font-mono text-[#686A63]">True Peak</div>
             <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
               {truePeakDb.toFixed(1)} dB
             </div>
@@ -225,42 +225,42 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
 
         <button
           onClick={onOpenLoudnessDetails}
-          className="w-full py-1 text-xs font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1C2026] border border-[#24282D] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
         >
           Loudness Details
         </button>
       </div>
 
       {/* 3. REFERENCE TARGET */}
-      <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 shadow-sm space-y-2">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F4F3EF]">Reference</span>
-          <span className="text-[10px] font-mono text-[#646A73]">TARGET MATCH</span>
+          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Reference</span>
+          <span className="text-[10px] font-mono text-[#686A63]">TARGET MATCH</span>
         </div>
 
         <div className="flex items-center justify-between bg-[#07090C] border border-[#181C22] rounded-lg p-2">
           <div>
-            <div className="text-xs font-semibold text-[#F4F3EF]">{referencePlatform}</div>
-            <div className="text-[10px] font-mono text-[#8B5CF6]">
+            <div className="text-xs font-semibold text-[#F2F2EE]">{referencePlatform}</div>
+            <div className="text-[10px] font-mono text-[#B7F000]">
               {targetLufs.toFixed(1)} LUFS
             </div>
           </div>
 
           <button
             onClick={onOpenReferenceModal}
-            className="p-1.5 rounded-md bg-[#1C162E] hover:bg-[#271E42] text-[#A78BFA] border border-[#8B5CF6]/40 transition cursor-pointer"
+            className="p-1.5 rounded-md bg-[#1C162E] hover:bg-[#271E42] text-[#C7FF18] border border-[#B7F000]/40 transition cursor-pointer"
             title="Change Target Reference"
           >
-            <Check className="w-3.5 h-3.5 text-[#8B5CF6]" />
+            <Check className="w-3.5 h-3.5 text-[#B7F000]" />
           </button>
         </div>
       </div>
 
       {/* 4. CORRELATION (GONIOMETER) */}
-      <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 shadow-sm space-y-2">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F4F3EF]">Correlation</span>
-          <span className="text-[10px] font-mono text-[#646A73]">PHASE CLOUD</span>
+          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Correlation</span>
+          <span className="text-[10px] font-mono text-[#686A63]">PHASE CLOUD</span>
         </div>
 
         <div className="w-full h-20 bg-[#07090C] border border-[#181C22] rounded-lg overflow-hidden relative">
@@ -273,7 +273,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
         </div>
 
         {/* Phase Scale Labels */}
-        <div className="flex items-center justify-between px-1 text-[10px] font-mono text-[#646A73]">
+        <div className="flex items-center justify-between px-1 text-[10px] font-mono text-[#686A63]">
           <span>-1</span>
           <span>0</span>
           <span>+1</span>
@@ -281,9 +281,9 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 5. BALANCE */}
-      <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 shadow-sm space-y-2">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F4F3EF]">Balance</span>
+          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Balance</span>
           <span className="text-[10px] font-mono text-[#E5E7EB] tabular-nums">0.02</span>
         </div>
 
@@ -292,12 +292,12 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
           <div className="w-0.5 h-full bg-[#343A46]" />
           {/* Indicator Dot */}
           <div
-            className="absolute w-2.5 h-2.5 rounded-full bg-[#8B5CF6] shadow-[0_0_6px_rgba(139,92,246,0.8)]"
+            className="absolute w-2.5 h-2.5 rounded-full bg-[#B7F000] shadow-[0_0_6px_rgba(139,92,246,0.8)]"
             style={{ left: 'calc(50% + 2px)' }}
           />
         </div>
 
-        <div className="flex items-center justify-between text-[10px] font-mono text-[#646A73]">
+        <div className="flex items-center justify-between text-[10px] font-mono text-[#686A63]">
           <span>L</span>
           <span>C</span>
           <span>R</span>

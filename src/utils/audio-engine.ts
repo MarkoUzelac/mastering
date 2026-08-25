@@ -32,7 +32,7 @@ export class AudioMasteringEngine {
   public getAudioContext(): AudioContext {
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      this.ctx = new AudioCtx({ sampleRate: 48000 });
+      this.ctx = new AudioCtx({ sampleRate: 48000, latencyHint: 'interactive' });
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
@@ -133,7 +133,7 @@ export class AudioMasteringEngine {
     this.analyserOut.smoothingTimeConstant = 0.8;
 
     // Script Processor for real-time mastering DSP execution
-    const bufferSize = 2048;
+    const bufferSize = 512;
     this.processorNode = ctx.createScriptProcessor(bufferSize, channels, 2);
 
     this.processorNode.onaudioprocess = (e) => {

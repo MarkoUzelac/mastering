@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { soundHaptics } from '../utils/sound-haptics';
 
 export type KnobAccentColor = 'cyan' | 'green' | 'amber' | 'violet' | 'red' | 'purple' | 'gray';
 
@@ -37,10 +38,10 @@ const COLOR_MAP: Record<KnobAccentColor, { arc: string; glow: string; text: stri
     dot: '#FDE68A',
   },
   violet: {
-    arc: '#8B5CF6',
+    arc: '#B7F000',
     glow: 'rgba(139, 92, 246, 0.4)',
-    text: '#A78BFA',
-    dot: '#C4B5FD',
+    text: '#C7FF18',
+    dot: '#D4FF5C',
   },
   purple: {
     arc: '#9333EA',
@@ -79,14 +80,15 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const startYRef = useRef<number>(0);
   const startValRef = useRef<number>(value);
+  const lastEmittedValRef = useRef<number>(value);
 
   const colors = COLOR_MAP[color] || COLOR_MAP.cyan;
 
-  // Knob sizes
+  // Knob sizes (optimized for minimum 44px touch targets)
   const dimensions = {
-    sm: { diameter: 38, radius: 15, stroke: 2.5, cx: 19, cy: 19 },
-    md: { diameter: 44, radius: 17, stroke: 3, cx: 22, cy: 22 },
-    lg: { diameter: 52, radius: 21, stroke: 3.5, cx: 26, cy: 26 },
+    sm: { diameter: 44, radius: 17, stroke: 2.8, cx: 22, cy: 22 },
+    md: { diameter: 48, radius: 19, stroke: 3.2, cx: 24, cy: 24 },
+    lg: { diameter: 56, radius: 23, stroke: 3.8, cx: 28, cy: 28 },
   }[size];
 
   // Map value to normalized fraction 0..1
@@ -128,6 +130,8 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
     setIsDragging(true);
     startYRef.current = e.clientY;
     startValRef.current = value;
+    lastEmittedValRef.current = value;
+    soundHaptics.playSliderTick(1600);
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
@@ -140,9 +144,19 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
       const rawNewVal = startValRef.current + deltaY * sensitivity;
       const clampedVal = Math.max(min, Math.min(max, rawNewVal));
       const steppedVal = Math.round(clampedVal / step) * step;
-      onChange(Number(steppedVal.toFixed(2)));
+      const rounded = Number(steppedVal.toFixed(2));
+
+      // Trigger micro tick sound/haptic only when crossing a meaningful step threshold
+      const stepDelta = Math.abs(rounded - lastEmittedValRef.current);
+      const threshold = step >= 1 ? 1 : step * 5;
+      if (stepDelta >= threshold) {
+        lastEmittedValRef.current = rounded;
+        soundHaptics.playSliderTick(1400 + fraction * 600);
+      }
+
+      onChange(rounded);
     },
-    [isDragging, disabled, max, min, step, onChange]
+    [isDragging, disabled, max, min, step, onChange, fraction]
   );
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -158,6 +172,7 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
 
   const handleDoubleClick = () => {
     if (disabled) return;
+    soundHaptics.playResetSound();
     onChange(defaultValue);
   };
 
@@ -165,18 +180,23 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
     if (disabled) return;
     if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
       e.preventDefault();
+      soundHaptics.playSliderTick(1600);
       onChange(Math.min(max, Number((value + step).toFixed(2))));
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
       e.preventDefault();
+      soundHaptics.playSliderTick(1400);
       onChange(Math.max(min, Number((value - step).toFixed(2))));
     } else if (e.key === 'Home') {
       e.preventDefault();
+      soundHaptics.playSliderTick(1000);
       onChange(min);
     } else if (e.key === 'End') {
       e.preventDefault();
+      soundHaptics.playSliderTick(2000);
       onChange(max);
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
+      soundHaptics.playResetSound();
       onChange(defaultValue);
     }
   };
@@ -188,12 +208,14 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
 
   return (
     <div
-      className={`flex flex-col items-center select-none ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-ns-resize'}`}
+      className={`flex flex-col items-center select-none touch-none ${
+        disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-ns-resize'
+      }`}
       onDoubleClick={handleDoubleClick}
       title={`${label}: ${formattedDisplay} (Drag up/down, Double-click to reset)`}
     >
       {/* Upper Label */}
-      <span className="text-[11px] font-medium text-[#9A9EA6] tracking-tight mb-1 text-center truncate max-w-[68px]">
+      <span className="text-[11px] font-medium text-[#A5A69F] tracking-tight mb-1 text-center truncate max-w-[72px]">
         {label}
       </span>
 
@@ -205,8 +227,8 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className={`relative flex items-center justify-center rounded-full outline-none focus-visible:ring-1 focus-visible:ring-[#8B5CF6] transition-transform ${
-          isDragging ? 'scale-105' : 'hover:scale-[1.02]'
+        className={`relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#B7F000] transition-transform touch-none active:scale-105 ${
+          isDragging ? 'scale-105' : 'hover:scale-[1.03]'
         }`}
         style={{ width: dimensions.diameter, height: dimensions.diameter }}
       >
@@ -260,10 +282,10 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
           <circle
             cx={indicatorPos.x}
             cy={indicatorPos.y}
-            r={1.8}
+            r={2}
             fill={colors.dot}
             style={{
-              filter: `drop-shadow(0 0 2px ${colors.glow})`,
+              filter: `drop-shadow(0 0 3px ${colors.glow})`,
             }}
           />
         </svg>
@@ -276,3 +298,4 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
     </div>
   );
 };
+

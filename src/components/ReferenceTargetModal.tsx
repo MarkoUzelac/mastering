@@ -70,19 +70,19 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0E1116] border border-[#1E2530] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#1E2530] bg-[#0A0C0F]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
           <div className="flex items-center gap-2.5">
-            <Target className="w-4 h-4 text-[#8B5CF6]" />
+            <Target className="w-4 h-4 text-[#B7F000]" />
             <div>
-              <h3 className="text-sm font-semibold text-[#F4F3EF]">Loudness Target Reference</h3>
-              <p className="text-[11px] text-[#646A73]">Platform delivery standards &amp; streaming targets</p>
+              <h3 className="text-sm font-semibold text-[#F2F2EE]">Loudness Target Reference</h3>
+              <p className="text-[11px] text-[#686A63]">Platform delivery standards &amp; streaming targets</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B] transition cursor-pointer"
+            className="p-1.5 rounded-lg text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -102,32 +102,32 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
                 }}
                 className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${
                   isSelected
-                    ? 'bg-[#1C162E] border-[#8B5CF6] text-[#F4F3EF]'
-                    : 'bg-[#07090C] border-[#181C22] hover:border-[#24282D] text-[#9A9EA6]'
+                    ? 'bg-[#1C162E] border-[#B7F000] text-[#F2F2EE]'
+                    : 'bg-[#07090C] border-[#181C22] hover:border-[#222420] text-[#A5A69F]'
                 }`}
               >
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-[#F4F3EF]">{target.platform}</span>
+                    <span className="text-xs font-semibold text-[#F2F2EE]">{target.platform}</span>
                     {target.badge && (
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#8B5CF6] text-white">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#B7F000] text-\[#F2F2EE\]">
                         {target.badge}
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-[#646A73] line-clamp-1">{target.description}</p>
+                  <p className="text-[11px] text-[#686A63] line-clamp-1">{target.description}</p>
                 </div>
 
                 <div className="flex items-center gap-3 text-right">
                   <div>
-                    <div className="text-xs font-mono font-bold text-[#8B5CF6]">
+                    <div className="text-xs font-mono font-bold text-[#B7F000]">
                       {target.targetLufs.toFixed(1)} LUFS
                     </div>
-                    <div className="text-[10px] font-mono text-[#646A73]">
+                    <div className="text-[10px] font-mono text-[#686A63]">
                       Ceil: {target.truePeakCeiling.toFixed(1)} dBTP
                     </div>
                   </div>
-                  {isSelected && <Check className="w-4 h-4 text-[#8B5CF6]" />}
+                  {isSelected && <Check className="w-4 h-4 text-[#B7F000]" />}
                 </div>
               </div>
             );
@@ -135,10 +135,10 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#1E2530] bg-[#0A0C0F] flex justify-end">
+        <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
           >
             Done
           </button>

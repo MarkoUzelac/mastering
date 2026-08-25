@@ -16,11 +16,11 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 md:px-8 text-left space-y-8 animate-fade-in">
       <div className="border-b border-[#242830] pb-6">
-        <div className="flex items-center gap-2.5 text-[#D6AF62] mb-2">
+        <div className="flex items-center gap-2.5 text-[#B7F000] mb-2">
           <CreditCard className="w-5 h-5" />
           <span className="text-xs uppercase tracking-wider font-semibold">Billing Policy</span>
         </div>
-        <h1 className="text-2xl md:text-3xl font-bold text-[#F4F3EF]">Subscription & Recurring Billing Terms</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-[#F2F2EE]">Subscription & Recurring Billing Terms</h1>
         <p className="text-sm text-[#8E95A2] mt-1.5">
           Clear, transparent terms on pricing, renewals, cancellation, and invoices.
         </p>
@@ -28,25 +28,25 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
 
       {/* Pricing Table */}
       <section className="space-y-4 text-sm text-[#A0A6B2]">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">1. Subscription Plans and Rates</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">1. Subscription Plans and Rates</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-5 rounded-xl bg-[#121418] border border-[#2A2E35] space-y-3">
             <div className="flex justify-between items-baseline">
-              <span className="font-semibold text-[#F4F3EF]">MasteringPro Pro Monthly</span>
-              <span className="text-xl font-bold text-[#D6AF62]">€19<span className="text-xs text-[#8E95A2] font-normal"> / month</span></span>
+              <span className="font-semibold text-[#F2F2EE]">MasteringPro Pro Monthly</span>
+              <span className="text-xl font-bold text-[#B7F000]">€19<span className="text-xs text-[#8E95A2] font-normal"> / month</span></span>
             </div>
             <p className="text-xs text-[#8E95A2]">
               Billed monthly on the same calendar day of initial subscription. Unlimited 24-bit/32-bit float master exports and commercial license.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl bg-[#121418] border border-[#D6AF62]/30 space-y-3">
+          <div className="p-5 rounded-xl bg-[#121418] border border-[#B7F000]/30 space-y-3">
             <div className="flex justify-between items-baseline">
               <div>
-                <span className="font-semibold text-[#F4F3EF]">MasteringPro Pro Annual</span>
-                <span className="ml-2 text-[10px] uppercase font-bold bg-[#D6AF62] text-[#0E1013] px-1.5 py-0.5 rounded">Best Value</span>
+                <span className="font-semibold text-[#F2F2EE]">MasteringPro Pro Annual</span>
+                <span className="ml-2 text-[10px] uppercase font-bold bg-[#B7F000] text-[#0E1013] px-1.5 py-0.5 rounded">Best Value</span>
               </div>
-              <span className="text-xl font-bold text-[#D6AF62]">€169<span className="text-xs text-[#8E95A2] font-normal"> / year</span></span>
+              <span className="text-xl font-bold text-[#B7F000]">€169<span className="text-xs text-[#8E95A2] font-normal"> / year</span></span>
             </div>
             <p className="text-xs text-[#8E95A2]">
               Billed annually at €169.00/year (equivalent to €14.08/month, saving €59/year). Full commercial mastering license.
@@ -57,7 +57,7 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
 
       {/* Automatic Renewal */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">2. Automatic Renewal and Invoicing</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">2. Automatic Renewal and Invoicing</h2>
         <p>
           All Pro subscriptions renew automatically at the end of each billing cycle (monthly or yearly). Your payment method on file will be charged the agreed recurring fee unless you cancel before your next renewal date.
         </p>
@@ -68,7 +68,7 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
 
       {/* Cancellation Flow */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">3. Cancellation and Access Expiration</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">3. Cancellation and Access Expiration</h2>
         <p>
           You may cancel your subscription at any time with one click directly inside your account settings. Upon cancellation:
         </p>
@@ -81,7 +81,7 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
 
       {/* Payment Failures */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">4. Failed Payments & Grace Period</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">4. Failed Payments & Grace Period</h2>
         <p className="text-xs text-[#8E95A2]">
           If a recurring payment fails (e.g. expired card, insufficient funds), Stripe will attempt automated retries over a 7-day grace period. During this period, your account status is marked as <code>PAST_DUE</code>. If payment is not reconciled within the grace period, Pro privileges revert to Free tier limits.
         </p>
@@ -89,9 +89,9 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
 
       {/* Contact */}
       <section className="p-4 rounded-lg bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
-        <div className="font-semibold text-[#F4F3EF]">Billing Support</div>
+        <div className="font-semibold text-[#F2F2EE]">Billing Support</div>
         <div>Entity: {LEGAL_CONFIG.businessName}</div>
-        <div>Direct Billing Inquiries: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#D6AF62] underline">{LEGAL_CONFIG.supportEmail}</a></div>
+        <div>Direct Billing Inquiries: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#B7F000] underline">{LEGAL_CONFIG.supportEmail}</a></div>
       </section>
     </div>
   );

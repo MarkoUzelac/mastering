@@ -165,39 +165,39 @@ export const AccountModal: React.FC<AccountModalProps> = ({
     : 'N/A';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#08090B]/85 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#0E1013] border border-[#24282D] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#090A08]/85 backdrop-blur-md animate-fade-in">
+      <div className="bg-[#0E1013] border border-[#222420] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#24282D] bg-[#14171B]/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#14171B] border border-[#24282D] flex items-center justify-center text-[#D6AF62]">
+            <div className="w-8 h-8 rounded-lg bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
               <User className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#F4F3EF] tracking-wider uppercase font-mono">
+              <h3 className="text-sm font-semibold text-[#F2F2EE] tracking-wider uppercase font-mono">
                 Studio Account &amp; Entitlements
               </h3>
-              <p className="text-[11px] text-[#9A9EA6] font-mono">
+              <p className="text-[11px] text-[#A5A69F] font-mono">
                 {user.email} · {isPro ? 'Pro Active' : 'Free Tier'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-[#9A9EA6] hover:text-[#F4F3EF] p-1.5 rounded-lg hover:bg-[#14171B] transition cursor-pointer"
+            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1.5 rounded-lg hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center px-6 border-b border-[#24282D] bg-[#0E1013] text-xs font-mono overflow-x-auto">
+        <div className="flex items-center px-6 border-b border-[#222420] bg-[#0E1013] text-xs font-mono overflow-x-auto">
           <button
             onClick={() => setActiveTab('subscription')}
             className={`py-3 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'subscription'
-                ? 'border-[#D6AF62] text-[#D6AF62]'
-                : 'border-transparent text-[#9A9EA6] hover:text-[#F4F3EF]'
+                ? 'border-[#B7F000] text-[#B7F000]'
+                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -207,8 +207,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             onClick={() => setActiveTab('billing')}
             className={`py-3 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'billing'
-                ? 'border-[#D6AF62] text-[#D6AF62]'
-                : 'border-transparent text-[#9A9EA6] hover:text-[#F4F3EF]'
+                ? 'border-[#B7F000] text-[#B7F000]'
+                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
             }`}
           >
             <CreditCard className="w-3.5 h-3.5" />
@@ -218,8 +218,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             onClick={() => setActiveTab('usage')}
             className={`py-3 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'usage'
-                ? 'border-[#D6AF62] text-[#D6AF62]'
-                : 'border-transparent text-[#9A9EA6] hover:text-[#F4F3EF]'
+                ? 'border-[#B7F000] text-[#B7F000]'
+                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
@@ -229,8 +229,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             onClick={() => setActiveTab('exports')}
             className={`py-3 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'exports'
-                ? 'border-[#D6AF62] text-[#D6AF62]'
-                : 'border-transparent text-[#9A9EA6] hover:text-[#F4F3EF]'
+                ? 'border-[#B7F000] text-[#B7F000]'
+                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
             }`}
           >
             <FileAudio className="w-3.5 h-3.5" />
@@ -240,8 +240,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             onClick={() => setActiveTab('privacy')}
             className={`py-3 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'privacy'
-                ? 'border-[#D6AF62] text-[#D6AF62]'
-                : 'border-transparent text-[#9A9EA6] hover:text-[#F4F3EF]'
+                ? 'border-[#B7F000] text-[#B7F000]'
+                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5" />
@@ -255,7 +255,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             <div
               className={`p-3 rounded-xl border flex items-center gap-2 text-xs ${
                 actionMessage.type === 'success'
-                  ? 'bg-[#1C170E] border-[#D6AF62] text-[#D6AF62]'
+                  ? 'bg-[#1C170E] border-[#B7F000] text-[#B7F000]'
                   : 'bg-[#1C1012] border-[#E56B6B]/40 text-[#E56B6B]'
               }`}
             >
@@ -271,11 +271,11 @@ export const AccountModal: React.FC<AccountModalProps> = ({
           {/* TAB 1: Subscription */}
           {activeTab === 'subscription' && (
             <div className="space-y-4">
-              <div className="bg-[#08090B] p-4 rounded-xl border border-[#1E2228] space-y-3">
+              <div className="bg-[#090A08] p-4 rounded-xl border border-[#222420] space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-[#646A73] uppercase font-mono block">CURRENT TIER</span>
-                    <h4 className="text-base font-semibold text-[#F4F3EF] flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] text-[#686A63] uppercase font-mono block">CURRENT TIER</span>
+                    <h4 className="text-base font-semibold text-[#F2F2EE] flex items-center gap-2 mt-0.5">
                       {currentPlanConfig.name}
                       <ProBadge size="xs" locked={!isPro} />
                     </h4>
@@ -284,9 +284,9 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                     className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold border ${
                       isPro
                         ? entitlement.cancelAtPeriodEnd
-                          ? 'bg-[#1C170E] text-[#E7C77F] border-[#E7C77F]/40'
-                          : 'bg-[#1C170E] text-[#D6AF62] border-[#D6AF62]/40'
-                        : 'bg-[#14171B] text-[#9A9EA6] border-[#24282D]'
+                          ? 'bg-[#1C170E] text-[#C7FF18] border-[#C7FF18]/40'
+                          : 'bg-[#1C170E] text-[#B7F000] border-[#B7F000]/40'
+                        : 'bg-[#151714] text-[#A5A69F] border-[#222420]'
                     }`}
                   >
                     STATUS: {entitlement.status}
@@ -294,22 +294,22 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                   </span>
                 </div>
 
-                <hr className="border-[#1E2228]" />
+                <hr className="border-[#222420]" />
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-[11px] font-mono">
                   <div>
-                    <span className="text-[#646A73] block text-[10px]">INTERVAL</span>
-                    <span className="text-[#F4F3EF]">{currentPlanConfig.periodLabel || 'Forever'}</span>
+                    <span className="text-[#686A63] block text-[10px]">INTERVAL</span>
+                    <span className="text-[#F2F2EE]">{currentPlanConfig.periodLabel || 'Forever'}</span>
                   </div>
                   <div>
-                    <span className="text-[#646A73] block text-[10px]">PRICE</span>
-                    <span className="text-[#F4F3EF]">€{currentPlanConfig.price} / cycle</span>
+                    <span className="text-[#686A63] block text-[10px]">PRICE</span>
+                    <span className="text-[#F2F2EE]">€{currentPlanConfig.price} / cycle</span>
                   </div>
                   <div>
-                    <span className="text-[#646A73] block text-[10px]">
+                    <span className="text-[#686A63] block text-[10px]">
                       {entitlement.cancelAtPeriodEnd ? 'ACCESS EXPIRES' : 'NEXT RENEWAL'}
                     </span>
-                    <span className="text-[#F4F3EF]">{formattedPeriodEnd}</span>
+                    <span className="text-[#F2F2EE]">{formattedPeriodEnd}</span>
                   </div>
                 </div>
               </div>
@@ -321,9 +321,9 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                     <button
                       onClick={handleOpenStripePortal}
                       disabled={isProcessing}
-                      className="px-4 py-2 bg-[#171A20] hover:bg-[#20252E] text-[#F4F3EF] border border-[#2D333F] font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2 bg-[#171A20] hover:bg-[#20252E] text-[#F2F2EE] border border-[#2D333F] font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
                     >
-                      <ExternalLink className="w-3.5 h-3.5 text-[#D6AF62]" />
+                      <ExternalLink className="w-3.5 h-3.5 text-[#B7F000]" />
                       <span>Manage in Stripe Portal</span>
                     </button>
 
@@ -331,7 +331,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                       <button
                         onClick={handleResume}
                         disabled={isProcessing}
-                        className="px-4 py-2 bg-[#D6AF62] hover:bg-[#E7C77F] text-[#08090B] font-semibold font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                        className="px-4 py-2 bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] font-semibold font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Resume Pro Subscription</span>
@@ -340,7 +340,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                       <button
                         onClick={handleCancel}
                         disabled={isProcessing}
-                        className="px-4 py-2 bg-[#14171B] hover:bg-[#1B1F24] text-[#E56B6B] border border-[#E56B6B]/30 font-medium font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                        className="px-4 py-2 bg-[#151714] hover:bg-[#1B1F24] text-[#E56B6B] border border-[#E56B6B]/30 font-medium font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
                       >
                         {isProcessing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                         <span>Cancel Subscription</span>
@@ -350,7 +350,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                 ) : (
                   <button
                     onClick={onUpgradeClick}
-                    className="px-5 py-2.5 bg-[#D6AF62] hover:bg-[#E7C77F] text-[#08090B] font-semibold font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-2 shadow-md shadow-[#D6AF62]/20"
+                    className="px-5 py-2.5 bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] font-semibold font-mono rounded-lg text-xs transition cursor-pointer flex items-center gap-2 shadow-md shadow-[#B7F000]/20"
                   >
                     <Sparkles className="w-4 h-4" />
                     <span>UPGRADE TO PRO STUDIO (€19/MO OR €169/YR)</span>
@@ -364,18 +364,18 @@ export const AccountModal: React.FC<AccountModalProps> = ({
           {activeTab === 'billing' && (
             <div className="space-y-4">
               {/* Payment Method */}
-              <div className="bg-[#08090B] p-4 rounded-xl border border-[#1E2228] space-y-2">
-                <span className="text-[10px] text-[#646A73] uppercase font-mono block">SAVED PAYMENT METHOD</span>
+              <div className="bg-[#090A08] p-4 rounded-xl border border-[#222420] space-y-2">
+                <span className="text-[10px] text-[#686A63] uppercase font-mono block">SAVED PAYMENT METHOD</span>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="px-2.5 py-1.5 rounded bg-[#14171B] border border-[#24282D] text-[#D6AF62] font-mono font-bold text-xs">
+                    <div className="px-2.5 py-1.5 rounded bg-[#151714] border border-[#222420] text-[#B7F000] font-mono font-bold text-xs">
                       {user.paymentMethod?.brand || 'CARD'}
                     </div>
                     <div>
-                      <span className="text-xs text-[#F4F3EF] font-mono font-semibold">
+                      <span className="text-xs text-[#F2F2EE] font-mono font-semibold">
                         •••• •••• •••• {user.paymentMethod?.last4 || '4242'}
                       </span>
-                      <span className="text-[10px] text-[#9A9EA6] font-mono block">
+                      <span className="text-[10px] text-[#A5A69F] font-mono block">
                         Expires {user.paymentMethod?.expMonth}/{user.paymentMethod?.expYear}
                       </span>
                     </div>
@@ -383,7 +383,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                   <button
                     type="button"
                     onClick={handleOpenStripePortal}
-                    className="text-[10px] text-[#D6AF62] hover:underline flex items-center gap-1 font-mono"
+                    className="text-[10px] text-[#B7F000] hover:underline flex items-center gap-1 font-mono"
                   >
                     Update in Stripe <ExternalLink className="w-3 h-3" />
                   </button>
@@ -392,23 +392,23 @@ export const AccountModal: React.FC<AccountModalProps> = ({
 
               {/* Invoices Table */}
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-[#F4F3EF] font-mono">Billing History &amp; Invoices</span>
+                <span className="text-xs font-semibold text-[#F2F2EE] font-mono">Billing History &amp; Invoices</span>
                 {invoices.length === 0 ? (
-                  <div className="p-6 text-center text-[#9A9EA6] bg-[#08090B] rounded-xl border border-[#1E2228] font-mono text-xs">
+                  <div className="p-6 text-center text-[#A5A69F] bg-[#090A08] rounded-xl border border-[#222420] font-mono text-xs">
                     No invoices generated yet for this account.
                   </div>
                 ) : (
-                  <div className="divide-y divide-[#1E2228] bg-[#08090B] rounded-xl border border-[#1E2228] overflow-hidden font-mono">
+                  <div className="divide-y divide-[#222420] bg-[#090A08] rounded-xl border border-[#222420] overflow-hidden font-mono">
                     {invoices.map((inv) => (
                       <div key={inv.id} className="p-3 flex items-center justify-between text-xs">
                         <div className="space-y-0.5">
-                          <span className="font-semibold text-[#F4F3EF]">{inv.number}</span>
-                          <span className="text-[10px] text-[#9A9EA6] block">
+                          <span className="font-semibold text-[#F2F2EE]">{inv.number}</span>
+                          <span className="text-[10px] text-[#A5A69F] block">
                             {new Date(inv.created).toLocaleDateString()} · {inv.interval}ly
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="font-semibold text-[#F4F3EF]">€{inv.amount.toFixed(2)}</span>
+                          <span className="font-semibold text-[#F2F2EE]">€{inv.amount.toFixed(2)}</span>
                           <span className="px-2 py-0.5 rounded bg-[#1C170E] text-[#6FCF97] text-[10px] font-bold border border-[#6FCF97]/30">
                             PAID
                           </span>
@@ -426,9 +426,9 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             <div className="space-y-4">
               <UsageMeter usage={usage} isPro={isPro} onUpgradeClick={onUpgradeClick} />
 
-              <div className="bg-[#08090B] p-4 rounded-xl border border-[#1E2228] space-y-2 text-[11px] text-[#9A9EA6]">
-                <strong className="text-[#F4F3EF] font-mono">Tier Entitlement Limits:</strong>
-                <ul className="list-disc list-inside space-y-1 text-[#9A9EA6]">
+              <div className="bg-[#090A08] p-4 rounded-xl border border-[#222420] space-y-2 text-[11px] text-[#A5A69F]">
+                <strong className="text-[#F2F2EE] font-mono">Tier Entitlement Limits:</strong>
+                <ul className="list-disc list-inside space-y-1 text-[#A5A69F]">
                   <li>Free: 5 Standard 16-bit PCM exports per 30-day period</li>
                   <li>Pro: Unlimited 16-bit, 24-bit Studio, and 32-bit Float master renders</li>
                   <li>Processing: Non-blocking client-side Web Worker pipeline</li>
@@ -441,29 +441,29 @@ export const AccountModal: React.FC<AccountModalProps> = ({
           {activeTab === 'exports' && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#F4F3EF] font-mono">Recent Master Audio Exports</span>
-                <span className="text-[10px] text-[#9A9EA6] font-mono">{exportHistory.length} tracks rendered</span>
+                <span className="text-xs font-semibold text-[#F2F2EE] font-mono">Recent Master Audio Exports</span>
+                <span className="text-[10px] text-[#A5A69F] font-mono">{exportHistory.length} tracks rendered</span>
               </div>
 
               {exportHistory.length === 0 ? (
-                <div className="p-6 text-center text-[#9A9EA6] bg-[#08090B] rounded-xl border border-[#1E2228] font-mono text-xs">
+                <div className="p-6 text-center text-[#A5A69F] bg-[#090A08] rounded-xl border border-[#222420] font-mono text-xs">
                   No audio tracks exported yet. Load a track and export to see logs here.
                 </div>
               ) : (
-                <div className="divide-y divide-[#1E2228] bg-[#08090B] rounded-xl border border-[#1E2228] overflow-hidden font-mono">
+                <div className="divide-y divide-[#222420] bg-[#090A08] rounded-xl border border-[#222420] overflow-hidden font-mono">
                   {exportHistory.map((exp) => (
                     <div key={exp.id} className="p-3 flex items-center justify-between text-xs">
                       <div className="space-y-0.5">
-                        <span className="font-semibold text-[#F4F3EF]">{exp.filename}</span>
-                        <div className="flex items-center gap-2 text-[10px] text-[#9A9EA6]">
+                        <span className="font-semibold text-[#F2F2EE]">{exp.filename}</span>
+                        <div className="flex items-center gap-2 text-[10px] text-[#A5A69F]">
                           <span>{exp.format}</span>
                           <span>•</span>
                           <span>{new Date(exp.createdAt).toLocaleDateString()}</span>
                           <span>•</span>
-                          <span className="text-[#D6AF62]">{exp.profileName}</span>
+                          <span className="text-[#B7F000]">{exp.profileName}</span>
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded bg-[#14171B] text-[#D6AF62] text-[10px] font-bold border border-[#24282D]">
+                      <span className="px-2 py-0.5 rounded bg-[#151714] text-[#B7F000] text-[10px] font-bold border border-[#222420]">
                         {exp.tier}
                       </span>
                     </div>
@@ -476,8 +476,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({
           {/* TAB 5: Privacy & GDPR Rights */}
           {activeTab === 'privacy' && (
             <div className="space-y-4 text-xs">
-              <div className="p-4 rounded-xl bg-[#08090B] border border-[#1E2228] space-y-2 text-[#9A9EA6]">
-                <div className="font-semibold text-[#F4F3EF] flex items-center gap-2">
+              <div className="p-4 rounded-xl bg-[#090A08] border border-[#222420] space-y-2 text-[#A5A69F]">
+                <div className="font-semibold text-[#F2F2EE] flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#6FCF97]" />
                   <span>GDPR Compliance &amp; Data Rights</span>
                 </div>
@@ -488,7 +488,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                   <button
                     type="button"
                     onClick={() => { onClose(); onNavigateToDataRequest(); }}
-                    className="text-[#D6AF62] underline font-medium block pt-1"
+                    className="text-[#B7F000] underline font-medium block pt-1"
                   >
                     Submit formal GDPR Data Subject Access / Portability Request &rarr;
                   </button>
@@ -501,7 +501,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                   <Trash2 className="w-4 h-4" />
                   <span>Permanent Account Deletion (GDPR Art. 17)</span>
                 </div>
-                <p className="text-[11px] text-[#9A9EA6]">
+                <p className="text-[11px] text-[#A5A69F]">
                   Deleting your account will immediately terminate your subscription access, purge your profile records from local storage, and schedule removal of all personal identifiers. Statutory tax invoices are retained in anonymized form as required by EU law.
                 </p>
 
@@ -516,7 +516,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                   </button>
                 ) : (
                   <div className="p-3 bg-[#0E0C0D] rounded-lg border border-[#E56B6B]/40 space-y-2">
-                    <div className="text-xs text-[#F4F3EF]">
+                    <div className="text-xs text-[#F2F2EE]">
                       Type <strong className="text-[#E56B6B]">DELETE</strong> to confirm permanent erasure:
                     </div>
                     <input
@@ -524,7 +524,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                       value={deleteConfirmationInput}
                       onChange={(e) => setDeleteConfirmationInput(e.target.value)}
                       placeholder="Type DELETE"
-                      className="w-full px-3 py-1.5 bg-[#171012] border border-[#3D1E22] rounded text-xs text-[#F4F3EF] outline-none"
+                      className="w-full px-3 py-1.5 bg-[#171012] border border-[#3D1E22] rounded text-xs text-[#F2F2EE] outline-none"
                     />
                     <div className="flex items-center gap-2 pt-1">
                       <button
@@ -538,7 +538,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                       <button
                         type="button"
                         onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmationInput(''); }}
-                        className="px-3 py-1.5 bg-[#171A20] text-[#9A9EA6] rounded text-xs"
+                        className="px-3 py-1.5 bg-[#171A20] text-[#A5A69F] rounded text-xs"
                       >
                         Cancel
                       </button>
@@ -551,14 +551,14 @@ export const AccountModal: React.FC<AccountModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-[#24282D] bg-[#08090B] flex items-center justify-between text-[11px] text-[#646A73] font-mono">
+        <div className="px-6 py-3 border-t border-[#222420] bg-[#090A08] flex items-center justify-between text-[11px] text-[#686A63] font-mono">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-[#6FCF97]" />
             <span>MasteringLocal.Pro Security &amp; Entitlement Invariant</span>
           </div>
           <button
             onClick={onClose}
-            className="text-[#9A9EA6] hover:text-[#F4F3EF] transition cursor-pointer"
+            className="text-[#A5A69F] hover:text-[#F2F2EE] transition cursor-pointer"
           >
             Close
           </button>

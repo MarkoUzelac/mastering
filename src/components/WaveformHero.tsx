@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
+import { ZoomIn, ZoomOut, Split } from 'lucide-react';
 import { AudioTrackInfo } from '../types';
+import { soundHaptics } from '../utils/sound-haptics';
 
 interface WaveformHeroProps {
   currentTrack: AudioTrackInfo | null;
@@ -8,6 +10,8 @@ interface WaveformHeroProps {
   isPlaying: boolean;
   isBypassed: boolean;
   onSeek: (time: number) => void;
+  loopRegion?: { start: number; end: number; enabled: boolean };
+  onToggleLoop?: () => void;
 }
 
 export const WaveformHero: React.FC<WaveformHeroProps> = ({
@@ -17,12 +21,23 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
   isPlaying,
   isBypassed,
   onSeek,
+  loopRegion = { start: 30, end: 75, enabled: false },
+  onToggleLoop,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const lastScrubTickRef = useRef<number>(0);
+
+  const formatPrecisionTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    const ms = Math.floor((secs % 1) * 1000);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+  };
 
   // High-resolution peak extractor
   const waveformPeaks = useMemo(() => {
@@ -96,9 +111,21 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     const playheadRatio = duration > 0 ? currentTime / duration : 0;
     const playheadX = playheadRatio * width;
 
+    // Optional Loop / Section Region Highlight (A/B)
+    if (loopRegion.enabled && duration > 0) {
+      const startX = (loopRegion.start / duration) * width;
+      const endX = (loopRegion.end / duration) * width;
+      ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
+      ctx.fillRect(startX, 0, endX - startX, height);
+
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(startX, 0, endX - startX, height);
+    }
+
     if (!waveformPeaks) {
       // Synthetic stereo preview waveform when no file is loaded yet
-      const numBars = 180;
+      const numBars = 160;
       const barWidth = width / numBars;
       for (let i = 0; i < numBars; i++) {
         const x = i * barWidth;
@@ -108,7 +135,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
         const barH = env * rand * maxAmp;
 
         const isPlayed = x <= playheadX;
-        ctx.fillStyle = isPlayed ? '#A78BFA' : '#4C1D95';
+        ctx.fillStyle = isPlayed ? '#C7FF18' : '#4C1D95';
         ctx.fillRect(x + 1, midY - barH, barWidth - 1.5, barH * 2);
       }
     } else {
@@ -127,7 +154,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
         if (isBypassed) {
           ctx.fillStyle = isPlayed ? '#9CA3AF' : '#374151';
         } else {
-          ctx.fillStyle = isPlayed ? '#C4B5FD' : '#6D28D9';
+          ctx.fillStyle = isPlayed ? '#D4FF5C' : '#8CA800';
         }
         ctx.fillRect(x, yTop, barWidth, barH);
       }
@@ -135,21 +162,23 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
 
     // Playhead Line & Glow
     if (duration > 0 || isPlaying) {
-      ctx.strokeStyle = '#A78BFA';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#C7FF18';
+      ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
       ctx.lineTo(playheadX, height);
       ctx.stroke();
 
-      // Top & Bottom Handles
-      ctx.fillStyle = '#C4B5FD';
+      // Top Playhead Diamond
+      ctx.fillStyle = '#D4FF5C';
       ctx.beginPath();
-      ctx.arc(playheadX, 3, 3, 0, Math.PI * 2);
-      ctx.arc(playheadX, height - 3, 3, 0, Math.PI * 2);
+      ctx.moveTo(playheadX, 0);
+      ctx.lineTo(playheadX - 4, 7);
+      ctx.lineTo(playheadX + 4, 7);
+      ctx.closePath();
       ctx.fill();
     }
-  }, [waveformPeaks, currentTime, duration, isBypassed, isPlaying]);
+  }, [waveformPeaks, currentTime, duration, isBypassed, isPlaying, loopRegion, zoomLevel]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -157,6 +186,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const ratio = Math.max(0, Math.min(1, x / rect.width));
+    soundHaptics.playSliderTick(1800);
     onSeek(ratio * duration);
     setIsDragging(true);
     canvas.setPointerCapture(e.pointerId);
@@ -173,6 +203,11 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     setHoverTime(ratio * duration);
 
     if (isDragging) {
+      const nowMs = Date.now();
+      if (nowMs - lastScrubTickRef.current > 70) {
+        lastScrubTickRef.current = nowMs;
+        soundHaptics.playSliderTick(1600);
+      }
       onSeek(ratio * duration);
     }
   };
@@ -188,18 +223,81 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     }
   };
 
-  const formatTime = (secs: number) => {
+  const formatRulerTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60);
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const totalDuration = duration > 0 ? duration : 225.782;
+
   return (
-    <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 space-y-2 shadow-sm">
+    <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3 sm:p-3.5 space-y-2 shadow-sm">
+      {/* Top Header of Card: Timeline, Loop & Zoom */}
+      <div className="flex items-center justify-between text-xs font-mono text-[#A5A69F]">
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-semibold text-[#E5E7EB] uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#B7F000]" />
+            Timeline
+          </span>
+          <span className="text-[10px] text-[#686A63]">|</span>
+          <span className="text-[#D4FF5C] font-medium tabular-nums">
+            {formatPrecisionTime(currentTime)}
+          </span>
+          <span className="text-[#686A63]">/</span>
+          <span className="text-[#686A63] tabular-nums">{formatPrecisionTime(totalDuration)}</span>
+        </div>
+
+        {/* Zoom Controls & Loop Toggle */}
+        <div className="flex items-center gap-1">
+          {onToggleLoop && (
+            <button
+              onClick={() => {
+                soundHaptics.playButtonTap();
+                onToggleLoop();
+              }}
+              className={`px-2 py-1 text-[10px] font-mono rounded flex items-center gap-1 transition cursor-pointer active:scale-95 ${
+                loopRegion.enabled
+                  ? 'bg-[#B7F000]/20 text-[#D4FF5C] border border-[#B7F000]/40'
+                  : 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]'
+              }`}
+              title="Toggle A/B Loop Region"
+            >
+              <Split className="w-3 h-3" />
+              <span>A/B</span>
+            </button>
+          )}
+
+          <div className="flex items-center gap-0.5 bg-[#151714] border border-[#222420] rounded p-0.5">
+            <button
+              onClick={() => {
+                soundHaptics.playButtonTap();
+                setZoomLevel((z) => Math.max(1, z - 0.5));
+              }}
+              className="p-1 text-[#686A63] hover:text-[#E5E7EB] rounded transition cursor-pointer active:scale-95"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-3 h-3" />
+            </button>
+            <span className="text-[10px] px-1 text-[#A5A69F] font-mono">{zoomLevel}x</span>
+            <button
+              onClick={() => {
+                soundHaptics.playButtonTap();
+                setZoomLevel((z) => Math.min(4, z + 0.5));
+              }}
+              className="p-1 text-[#686A63] hover:text-[#E5E7EB] rounded transition cursor-pointer active:scale-95"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Waveform Canvas Container */}
       <div
         ref={containerRef}
-        className="relative w-full h-36 sm:h-44 rounded-lg overflow-hidden bg-[#07090C] border border-[#181C22] cursor-crosshair select-none"
+        className="relative w-full h-32 sm:h-40 rounded-lg overflow-hidden bg-[#07090C] border border-[#181C22] cursor-crosshair select-none touch-none"
         onPointerLeave={() => {
           setHoverTime(null);
           setHoverX(null);
@@ -210,31 +308,28 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          className="w-full h-full block"
+          onPointerCancel={handlePointerUp}
+          className="w-full h-full block touch-none"
         />
 
         {/* Hover Time Tooltip */}
         {hoverTime !== null && hoverX !== null && (
           <div
-            className="absolute top-2 -translate-x-1/2 px-1.5 py-0.5 bg-[#14171B] border border-[#2F353C] rounded text-[10px] font-mono text-[#F4F3EF] pointer-events-none shadow-md z-10"
+            className="absolute top-2 -translate-x-1/2 px-1.5 py-0.5 bg-[#151714] border border-[#2F353C] rounded text-[10px] font-mono text-[#F2F2EE] pointer-events-none shadow-md z-10 tabular-nums"
             style={{ left: `${hoverX}px` }}
           >
-            {formatTime(hoverTime)}
+            {formatPrecisionTime(hoverTime)}
           </div>
         )}
       </div>
 
       {/* Time Markers Ruler */}
-      <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#646A73] select-none">
+      <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#686A63] select-none">
         <span>0:00</span>
-        <span>0:30</span>
-        <span>1:00</span>
-        <span>1:30</span>
-        <span>2:00</span>
-        <span>2:30</span>
-        <span>3:00</span>
-        <span>3:30</span>
-        <span>{formatTime(duration || 225.782)}</span>
+        <span>{formatRulerTime(totalDuration * 0.25)}</span>
+        <span>{formatRulerTime(totalDuration * 0.5)}</span>
+        <span>{formatRulerTime(totalDuration * 0.75)}</span>
+        <span>{formatRulerTime(totalDuration)}</span>
       </div>
     </div>
   );

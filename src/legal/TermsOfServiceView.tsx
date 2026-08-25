@@ -16,11 +16,11 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 md:px-8 text-left space-y-8 animate-fade-in">
       <div className="border-b border-[#242830] pb-6">
-        <div className="flex items-center gap-2.5 text-[#D6AF62] mb-2">
+        <div className="flex items-center gap-2.5 text-[#B7F000] mb-2">
           <FileText className="w-5 h-5" />
           <span className="text-xs uppercase tracking-wider font-semibold">User Agreement</span>
         </div>
-        <h1 className="text-2xl md:text-3xl font-bold text-[#F4F3EF]">Terms of Service</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-[#F2F2EE]">Terms of Service</h1>
         <p className="text-sm text-[#8E95A2] mt-1.5">
           Last updated: August 2026 · Governed by {LEGAL_CONFIG.governingLaw}
         </p>
@@ -28,7 +28,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 1. Introduction and Scope */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">1. Overview & Service Description</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">1. Overview & Service Description</h2>
         <p>
           These Terms of Service (&quot;Terms&quot;) constitute a legally binding agreement between you and <strong>{LEGAL_CONFIG.businessName}</strong> (&quot;Company&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), governing your access to and use of the MasteringLocal.Pro application and related web audio mastering software.
         </p>
@@ -39,10 +39,10 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 2. Subscriptions, Fees, and Renewals */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">2. Subscriptions, Pricing & Automatic Renewal</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">2. Subscriptions, Pricing & Automatic Renewal</h2>
         <div className="p-4 rounded-xl bg-[#121418] border border-[#2A2E35] space-y-2 text-xs">
-          <div className="flex items-center gap-2 font-semibold text-[#F4F3EF]">
-            <DollarSign className="w-4 h-4 text-[#D6AF62]" />
+          <div className="flex items-center gap-2 font-semibold text-[#F2F2EE]">
+            <DollarSign className="w-4 h-4 text-[#B7F000]" />
             <span>Subscription Plans & Pricing Structure</span>
           </div>
           <ul className="list-disc list-inside space-y-1 text-[#8E95A2] pl-2">
@@ -58,7 +58,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 3. Audio Ownership & Commercial Release Rights */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">3. User Content & 100% Commercial Release Rights</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">3. User Content & 100% Commercial Release Rights</h2>
         <div className="p-4 rounded-xl bg-[#121418] border border-[#2E3540] space-y-2 text-xs">
           <div className="flex items-center gap-2 font-semibold text-[#6FCF97]">
             <Award className="w-4 h-4 text-[#6FCF97]" />
@@ -75,7 +75,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 4. Acceptable Use and Warranties */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">4. Acceptable Use Policy</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">4. Acceptable Use Policy</h2>
         <p>You agree not to use the service to:</p>
         <ul className="list-disc list-inside space-y-1 text-xs text-[#8E95A2] pl-2">
           <li>Infringe upon the copyright, patent, trademark, or trade secret rights of third parties.</li>
@@ -87,7 +87,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 5. Limitation of Liability */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">5. Limitation of Liability & Disclaimers</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">5. Limitation of Liability & Disclaimers</h2>
         <p className="text-xs text-[#8E95A2]">
           The software is provided &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; without warranties of any kind, whether express or implied. To the maximum extent permitted by applicable law, the Company shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or loss of profits or revenue arising out of the use or inability to use the mastering software.
         </p>
@@ -95,7 +95,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 6. Governing Law & Dispute Resolution */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
-        <h2 className="text-lg font-semibold text-[#F4F3EF]">6. Governing Law & Jurisdiction</h2>
+        <h2 className="text-lg font-semibold text-[#F2F2EE]">6. Governing Law & Jurisdiction</h2>
         <p className="text-xs text-[#8E95A2]">
           These Terms and any dispute or claim arising out of or in connection with them shall be governed by and construed in accordance with the <strong>{LEGAL_CONFIG.governingLaw}</strong>. In the event of disputes, the parties submit to the exclusive jurisdiction of the competent courts of {LEGAL_CONFIG.country}.
         </p>
@@ -103,9 +103,9 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
 
       {/* 7. Contact */}
       <section className="p-4 rounded-lg bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
-        <div className="font-semibold text-[#F4F3EF]">Legal Notice & Inquiries</div>
+        <div className="font-semibold text-[#F2F2EE]">Legal Notice & Inquiries</div>
         <div>Entity: {LEGAL_CONFIG.businessName}</div>
-        <div>Support: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#D6AF62] underline">{LEGAL_CONFIG.supportEmail}</a></div>
+        <div>Support: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#B7F000] underline">{LEGAL_CONFIG.supportEmail}</a></div>
       </section>
     </div>
   );

@@ -1,0 +1,26 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "description": "User profiles and subscription status",
+      "fields": [
+        { "name": "email", "type": "string" },
+        { "name": "displayName", "type": "string" },
+        { "name": "photoURL", "type": "string" },
+        { "name": "role", "type": "string", "description": "'admin' or 'user'" },
+        { "name": "subscriptionTier", "type": "string", "description": "'free' or 'pro'" },
+        { "name": "createdAt", "type": "timestamp" }
+      ]
+    },
+    {
+      "name": "sessions",
+      "description": "Saved mastering sessions",
+      "fields": [
+        { "name": "userId", "type": "string" },
+        { "name": "name", "type": "string" },
+        { "name": "settings", "type": "map" },
+        { "name": "createdAt", "type": "timestamp" }
+      ]
+    }
+  ]
+}

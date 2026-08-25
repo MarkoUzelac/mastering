@@ -159,11 +159,11 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
       {/* Header */}
       <div className="border-b border-[#242830] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2.5 text-[#D6AF62] mb-2">
+          <div className="flex items-center gap-2.5 text-[#B7F000] mb-2">
             <BookOpen className="w-5 h-5" />
             <span className="text-xs uppercase tracking-wider font-semibold">Mastering Academy & Knowledge Base</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#F4F3EF]">Audio Mastering Guides</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#F2F2EE]">Audio Mastering Guides</h1>
           <p className="text-sm text-[#8E95A2] mt-1.5">
             Practical, studio-grade guides on loudness standards, digital audio formats, and streaming optimization.
           </p>
@@ -172,7 +172,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
         <button
           type="button"
           onClick={onTryMastering}
-          className="px-4 py-2 bg-[#D6AF62] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 shrink-0 self-start md:self-auto"
+          className="px-4 py-2 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 shrink-0 self-start md:self-auto"
         >
           Try MasteringLocal Free
           <ArrowRight className="w-3.5 h-3.5" />
@@ -192,8 +192,8 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
               onClick={() => setActiveSlug(slug)}
               className={`px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${
                 isActive
-                  ? 'bg-[#D6AF62] text-[#0E1013] font-semibold'
-                  : 'bg-[#14171D] hover:bg-[#1B2028] text-[#8E95A2] hover:text-[#F4F3EF] border border-[#242830]'
+                  ? 'bg-[#B7F000] text-[#0E1013] font-semibold'
+                  : 'bg-[#14171D] hover:bg-[#1B2028] text-[#8E95A2] hover:text-[#F2F2EE] border border-[#242830]'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -207,25 +207,25 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
       <article className="p-6 md:p-8 rounded-2xl bg-[#121418] border border-[#242830] space-y-6">
         <div className="space-y-2 border-b border-[#242830] pb-6">
           <div className="flex items-center gap-3 text-xs text-[#8E95A2]">
-            <span className="text-[#D6AF62] font-semibold">{guide.category}</span>
+            <span className="text-[#B7F000] font-semibold">{guide.category}</span>
             <span>·</span>
             <span>{guide.readTime}</span>
           </div>
-          <h2 className="text-xl md:text-2xl font-bold text-[#F4F3EF]">{guide.title}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-[#F2F2EE]">{guide.title}</h2>
           <p className="text-sm text-[#A0A6B2]">{guide.subtitle}</p>
         </div>
 
         <div className="space-y-8 text-sm text-[#A0A6B2] leading-relaxed">
           {guide.sections.map((section, idx) => (
             <div key={idx} className="space-y-3">
-              <h3 className="text-base font-semibold text-[#F4F3EF]">{section.heading}</h3>
+              <h3 className="text-base font-semibold text-[#F2F2EE]">{section.heading}</h3>
               {section.content.map((p, pIdx) => (
                 <p key={pIdx}>{p}</p>
               ))}
 
               {section.tips && section.tips.length > 0 && (
                 <div className="p-4 rounded-xl bg-[#171A20] border border-[#2A313D] space-y-1.5 mt-3">
-                  <div className="text-xs font-semibold text-[#D6AF62]">Engineering Pro-Tip:</div>
+                  <div className="text-xs font-semibold text-[#B7F000]">Engineering Pro-Tip:</div>
                   <ul className="list-disc list-inside space-y-1 text-xs text-[#E1E4EA] pl-1">
                     {section.tips.map((tip, tIdx) => (
                       <li key={tIdx}>{tip}</li>
@@ -240,13 +240,13 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
         {/* CTA banner inside guide */}
         <div className="p-5 rounded-xl bg-gradient-to-r from-[#171B22] to-[#121418] border border-[#2E3542] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-8">
           <div>
-            <div className="text-sm font-bold text-[#F4F3EF]">Ready to master your tracks?</div>
+            <div className="text-sm font-bold text-[#F2F2EE]">Ready to master your tracks?</div>
             <div className="text-xs text-[#8E95A2]">100% browser-based. Zero audio uploads. Instant WAV download.</div>
           </div>
           <button
             type="button"
             onClick={onTryMastering}
-            className="px-4 py-2 bg-[#D6AF62] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-lg transition-colors flex items-center gap-2"
           >
             Start Free Master
             <ArrowRight className="w-3.5 h-3.5" />

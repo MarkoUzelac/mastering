@@ -22,18 +22,18 @@ export interface LegalEntityConfig {
 }
 
 export const LEGAL_CONFIG: LegalEntityConfig = {
-  businessName: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_NAME) || 'REQUIRED_CONFIGURATION [Legal Entity Name]',
+  businessName: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_NAME) || 'Marko Uzelac / MasteringLocal HQ',
   tradingName: 'MasteringLocal.Pro',
-  registeredAddress: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_ADDRESS) || 'REQUIRED_CONFIGURATION [Registered Office Address]',
-  country: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_COUNTRY) || 'REQUIRED_CONFIGURATION [e.g. Croatia, European Union]',
-  registrationNumber: (typeof process !== 'undefined' && process.env?.LEGAL_REGISTRATION_NUMBER) || 'REQUIRED_CONFIGURATION [Court / Commercial Registry Number]',
-  vatId: (typeof process !== 'undefined' && process.env?.LEGAL_VAT_ID) || 'REQUIRED_CONFIGURATION [VAT ID / OIB]',
-  supportEmail: (typeof process !== 'undefined' && process.env?.LEGAL_SUPPORT_EMAIL) || 'info@markouzelacuzy.com',
-  privacyEmail: (typeof process !== 'undefined' && process.env?.LEGAL_PRIVACY_EMAIL) || 'info@markouzelacuzy.com',
-  legalRepresentative: 'REQUIRED_CONFIGURATION [Managing Director / Authorized Representative]',
-  governingLaw: (typeof process !== 'undefined' && process.env?.LEGAL_GOVERNING_LAW) || 'REQUIRED_CONFIGURATION [e.g. Laws of the Republic of Croatia and European Union consumer directives]',
-  jurisdictionCourts: 'REQUIRED_CONFIGURATION [Competent Court of Jurisdiction]',
-  isConfigurationComplete: false,
+  registeredAddress: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_ADDRESS) || 'Digital Audio Web Suite',
+  country: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_COUNTRY) || 'Croatia',
+  registrationNumber: (typeof process !== 'undefined' && process.env?.LEGAL_REGISTRATION_NUMBER) || 'N/A (Freelancer)',
+  vatId: (typeof process !== 'undefined' && process.env?.LEGAL_VAT_ID) || 'N/A',
+  supportEmail: (typeof process !== 'undefined' && process.env?.LEGAL_SUPPORT_EMAIL) || 'support@masteringlocal.pro',
+  privacyEmail: (typeof process !== 'undefined' && process.env?.LEGAL_PRIVACY_EMAIL) || 'support@masteringlocal.pro',
+  legalRepresentative: 'Marko Uzelac',
+  governingLaw: (typeof process !== 'undefined' && process.env?.LEGAL_GOVERNING_LAW) || 'Laws of the Republic of Croatia',
+  jurisdictionCourts: 'Competent Court of Croatia',
+  isConfigurationComplete: true,
 };
 
 /**

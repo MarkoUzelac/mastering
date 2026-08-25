@@ -33,18 +33,18 @@ export const LimiterModule: React.FC<LimiterModuleProps> = ({
   const isLimiting = !isBypassed && (limiterActive || (meterData && meterData.limiterActive));
 
   return (
-    <div className="bg-[#0E1013] border border-[#24282D] rounded-xl p-4 flex flex-col justify-between h-full relative group shadow-lg">
+    <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 flex flex-col justify-between h-full relative group shadow-lg">
       {/* Rack corner bolt aesthetic */}
-      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#24282D] border border-[#14171B]" />
-      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#24282D] border border-[#14171B]" />
+      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
+      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
 
       {/* Module Header */}
-      <div className="flex items-center justify-between border-b border-[#1E2228] pb-2.5 mb-3">
+      <div className="flex items-center justify-between border-b border-[#222420] pb-2.5 mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold tracking-wider text-[#F4F3EF] uppercase font-mono">
+          <span className="text-xs font-semibold tracking-wider text-[#F2F2EE] uppercase font-mono">
             LIMITER
           </span>
-          <span className="text-[9px] font-mono text-[#D6AF62] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[#D6AF62]/20">
+          <span className="text-[9px] font-mono text-[#B7F000] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[#B7F000]/20">
             BRICKWALL
           </span>
           {isLimiting && (
@@ -53,7 +53,7 @@ export const LimiterModule: React.FC<LimiterModuleProps> = ({
             </span>
           )}
         </div>
-        <div className="text-[11px] font-mono text-[#9A9EA6]">
+        <div className="text-[11px] font-mono text-[#A5A69F]">
           Lookahead: 1.0 ms
         </div>
       </div>
@@ -62,51 +62,51 @@ export const LimiterModule: React.FC<LimiterModuleProps> = ({
         {/* Left: Ceiling & Release Settings */}
         <div className="space-y-3">
           <div>
-            <div className="text-[10px] font-mono text-[#9A9EA6] uppercase">SAFETY CEILING</div>
-            <div className="text-lg font-bold font-mono text-[#F4F3EF] num-tabular mt-0.5">
-              -1.0 <span className="text-xs text-[#D6AF62]">dBFS</span>
+            <div className="text-[10px] font-mono text-[#A5A69F] uppercase">SAFETY CEILING</div>
+            <div className="text-lg font-bold font-mono text-[#F2F2EE] num-tabular mt-0.5">
+              -1.0 <span className="text-xs text-[#B7F000]">dBFS</span>
             </div>
-            <div className="text-[10px] text-[#646A73] mt-1">EBU R128 Broadcast Guard</div>
+            <div className="text-[10px] text-[#686A63] mt-1">EBU R128 Broadcast Guard</div>
           </div>
 
-          <div className="pt-1 border-t border-[#1E2228]">
-            <div className="flex items-center justify-between text-[11px] font-mono text-[#9A9EA6]">
+          <div className="pt-1 border-t border-[#222420]">
+            <div className="flex items-center justify-between text-[11px] font-mono text-[#A5A69F]">
               <span>Release</span>
-              <span className="text-[#F4F3EF]">80 ms</span>
+              <span className="text-[#F2F2EE]">80 ms</span>
             </div>
           </div>
 
           {/* True Peak Box */}
           <div
             onClick={() => soundHaptics.playSliderTick(2000)}
-            className="bg-[#08090B] border border-[#1E2228] hover:border-[#D6AF62]/40 rounded-lg p-2 text-center transition-colors cursor-pointer"
+            className="bg-[#090A08] border border-[#222420] hover:border-[#B7F000]/40 rounded-lg p-2 text-center transition-colors cursor-pointer"
             title="Max Output Peak Clamp (-1.0 dBFS)"
           >
-            <div className="text-[9px] font-mono text-[#9A9EA6] uppercase tracking-wider">OUTPUT PEAK</div>
-            <div className="text-base font-bold font-mono text-[#D6AF62] num-tabular mt-0.5">
-              {truePeakDisplay} <span className="text-[10px] font-normal text-[#9A9EA6]">dB</span>
+            <div className="text-[9px] font-mono text-[#A5A69F] uppercase tracking-wider">OUTPUT PEAK</div>
+            <div className="text-base font-bold font-mono text-[#B7F000] num-tabular mt-0.5">
+              {truePeakDisplay} <span className="text-[10px] font-normal text-[#A5A69F]">dB</span>
             </div>
           </div>
         </div>
 
         {/* Right: Limiter Vertical Output / Gain Reduction Meter */}
         <div className="flex flex-col items-center justify-between h-full py-1">
-          <div className="text-[9px] font-mono text-[#9A9EA6] uppercase">OUTPUT</div>
+          <div className="text-[9px] font-mono text-[#A5A69F] uppercase">OUTPUT</div>
           
-          <div className="w-8 h-28 bg-[#08090B] border border-[#1E2228] rounded-lg p-1 flex flex-col justify-end relative shadow-inner">
+          <div className="w-8 h-28 bg-[#090A08] border border-[#222420] rounded-lg p-1 flex flex-col justify-end relative shadow-inner">
             {/* Ceiling marker line */}
             <div className="absolute inset-x-0 top-[15%] h-px bg-[#E56B6B] z-20" title="Ceiling -1.0 dBFS" />
 
             {/* Level Fill */}
             <div
-              className="w-full rounded-xs bg-gradient-to-t from-[#6A562F] via-[#D6AF62] to-[#E7C77F] transition-all duration-75"
+              className="w-full rounded-xs bg-gradient-to-t from-[#6A562F] via-[#B7F000] to-[#C7FF18] transition-all duration-75"
               style={{
                 height: `${Math.max(0, Math.min(100, ((maxPeak + 60) / 60) * 100))}%`,
               }}
             />
           </div>
 
-          <span className="text-[10px] font-mono text-[#9A9EA6] num-tabular">
+          <span className="text-[10px] font-mono text-[#A5A69F] num-tabular">
             {maxPeak > -60 ? `${maxPeak.toFixed(1)} dB` : '-inf'}
           </span>
         </div>

@@ -81,7 +81,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     style={{ backgroundColor: t.color }}
                   />
                   <div className="min-w-0">
-                    <span className="text-xs font-bold text-white block mb-0.5">
+                    <span className="text-xs font-bold text-\[#F2F2EE\] block mb-0.5">
                       {t.name}
                     </span>
                     <span className="text-[11px] text-[#00aa44] block font-mono">

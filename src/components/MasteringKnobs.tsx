@@ -32,18 +32,18 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
   };
 
   return (
-    <div className="bg-[#0E1013] rounded-xl p-5 border border-[#24282D] shadow-xl">
-      <div className="flex items-center justify-between border-b border-[#1E2228] pb-3 mb-5">
+    <div className="bg-[#0E1013] rounded-xl p-5 border border-[#222420] shadow-xl">
+      <div className="flex items-center justify-between border-b border-[#222420] pb-3 mb-5">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-[#D6AF62]" />
-          <h2 className="text-sm font-bold font-mono tracking-tight text-[#F4F3EF] uppercase">
+          <SlidersHorizontal className="w-4 h-4 text-[#B7F000]" />
+          <h2 className="text-sm font-bold font-mono tracking-tight text-[#F2F2EE] uppercase">
             Analog DSP Parameter Controls
           </h2>
         </div>
         <button
           id="reset-params-btn"
           onClick={handleResetAll}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-semibold text-[#D6AF62] hover:text-[#E7C77F] bg-[#14171B] hover:bg-[#1B1F24] border border-[#24282D] rounded-md transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-semibold text-[#B7F000] hover:text-[#C7FF18] bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] rounded-md transition-all cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           Reset Defaults
@@ -52,12 +52,12 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* EQ Section */}
-        <div className="space-y-4 bg-[#08090B] p-4 rounded-xl border border-[#1E2228]">
-          <div className="flex items-center justify-between border-b border-[#1E2228] pb-2">
-            <span className="text-xs font-bold font-mono text-[#D6AF62] uppercase tracking-wider">
+        <div className="space-y-4 bg-[#090A08] p-4 rounded-xl border border-[#222420]">
+          <div className="flex items-center justify-between border-b border-[#222420] pb-2">
+            <span className="text-xs font-bold font-mono text-[#B7F000] uppercase tracking-wider">
               3-Band Parametric EQ
             </span>
-            <span className="text-[10px] text-[#9A9EA6] font-mono">Biquad Filter Bank</span>
+            <span className="text-[10px] text-[#A5A69F] font-mono">Biquad Filter Bank</span>
           </div>
 
           {/* Low Shelf */}
@@ -67,11 +67,11 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
             title="Double-click to reset (0.0 dB)"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#F4F3EF] group-hover:text-[#D6AF62] transition-colors flex items-center gap-1.5 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#D6AF62]" />
+              <span className="font-semibold text-[#F2F2EE] group-hover:text-[#B7F000] transition-colors flex items-center gap-1.5 font-mono">
+                <span className="w-2 h-2 rounded-full bg-[#B7F000]" />
                 Low Shelf (120 Hz)
               </span>
-              <span className="font-mono font-bold text-[#F4F3EF] bg-[#14171B] px-2 py-0.5 rounded border border-[#24282D]">
+              <span className="font-mono font-bold text-[#F2F2EE] bg-[#151714] px-2 py-0.5 rounded border border-[#222420]">
                 {params.low > 0 ? `+${params.low.toFixed(1)}` : params.low.toFixed(1)} dB
               </span>
             </div>
@@ -86,9 +86,9 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
               onChange={(e) => handleSliderChange('low', parseFloat(e.target.value))}
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-[#646A73] font-mono">
+            <div className="flex justify-between text-[10px] text-[#686A63] font-mono">
               <span>-12 dB</span>
-              <span className="text-[9px] text-[#9A9EA6]">2x click: 0 dB</span>
+              <span className="text-[9px] text-[#A5A69F]">2x click: 0 dB</span>
               <span>+12 dB</span>
             </div>
           </div>
@@ -100,11 +100,11 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
             title="Double-click to reset (0.0 dB)"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#F4F3EF] group-hover:text-[#D6AF62] transition-colors flex items-center gap-1.5 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#D6AF62]" />
+              <span className="font-semibold text-[#F2F2EE] group-hover:text-[#B7F000] transition-colors flex items-center gap-1.5 font-mono">
+                <span className="w-2 h-2 rounded-full bg-[#B7F000]" />
                 Mid Peak (1.2 kHz, Q=0.8)
               </span>
-              <span className="font-mono font-bold text-[#F4F3EF] bg-[#14171B] px-2 py-0.5 rounded border border-[#24282D]">
+              <span className="font-mono font-bold text-[#F2F2EE] bg-[#151714] px-2 py-0.5 rounded border border-[#222420]">
                 {params.mid > 0 ? `+${params.mid.toFixed(1)}` : params.mid.toFixed(1)} dB
               </span>
             </div>
@@ -119,9 +119,9 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
               onChange={(e) => handleSliderChange('mid', parseFloat(e.target.value))}
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-[#646A73] font-mono">
+            <div className="flex justify-between text-[10px] text-[#686A63] font-mono">
               <span>-12 dB</span>
-              <span className="text-[9px] text-[#9A9EA6]">2x click: 0 dB</span>
+              <span className="text-[9px] text-[#A5A69F]">2x click: 0 dB</span>
               <span>+12 dB</span>
             </div>
           </div>
@@ -133,11 +133,11 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
             title="Double-click to reset (0.0 dB)"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#F4F3EF] group-hover:text-[#D6AF62] transition-colors flex items-center gap-1.5 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#D6AF62]" />
+              <span className="font-semibold text-[#F2F2EE] group-hover:text-[#B7F000] transition-colors flex items-center gap-1.5 font-mono">
+                <span className="w-2 h-2 rounded-full bg-[#B7F000]" />
                 High Shelf (8.5 kHz)
               </span>
-              <span className="font-mono font-bold text-[#F4F3EF] bg-[#14171B] px-2 py-0.5 rounded border border-[#24282D]">
+              <span className="font-mono font-bold text-[#F2F2EE] bg-[#151714] px-2 py-0.5 rounded border border-[#222420]">
                 {params.high > 0 ? `+${params.high.toFixed(1)}` : params.high.toFixed(1)} dB
               </span>
             </div>
@@ -152,21 +152,21 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
               onChange={(e) => handleSliderChange('high', parseFloat(e.target.value))}
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-[#646A73] font-mono">
+            <div className="flex justify-between text-[10px] text-[#686A63] font-mono">
               <span>-12 dB</span>
-              <span className="text-[9px] text-[#9A9EA6]">2x click: 0 dB</span>
+              <span className="text-[9px] text-[#A5A69F]">2x click: 0 dB</span>
               <span>+12 dB</span>
             </div>
           </div>
         </div>
 
         {/* Dynamics & Maximizer Section */}
-        <div className="space-y-4 bg-[#08090B] p-4 rounded-xl border border-[#1E2228]">
-          <div className="flex items-center justify-between border-b border-[#1E2228] pb-2">
-            <span className="text-xs font-bold font-mono text-[#D6AF62] uppercase tracking-wider">
+        <div className="space-y-4 bg-[#090A08] p-4 rounded-xl border border-[#222420]">
+          <div className="flex items-center justify-between border-b border-[#222420] pb-2">
+            <span className="text-xs font-bold font-mono text-[#B7F000] uppercase tracking-wider">
               Dynamics & Maximizer
             </span>
-            <span className="text-[10px] text-[#9A9EA6] font-mono">Feedback Comp + Limiter</span>
+            <span className="text-[10px] text-[#A5A69F] font-mono">Feedback Comp + Limiter</span>
           </div>
 
           {/* Threshold */}
@@ -176,10 +176,10 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
             title="Double-click to reset (-24.0 dB)"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#F4F3EF] group-hover:text-[#D6AF62] transition-colors font-mono">
+              <span className="font-semibold text-[#F2F2EE] group-hover:text-[#B7F000] transition-colors font-mono">
                 Compressor Threshold
               </span>
-              <span className="font-mono font-bold text-[#F4F3EF] bg-[#14171B] px-2 py-0.5 rounded border border-[#24282D]">
+              <span className="font-mono font-bold text-[#F2F2EE] bg-[#151714] px-2 py-0.5 rounded border border-[#222420]">
                 {params.threshold.toFixed(1)} dB
               </span>
             </div>
@@ -194,9 +194,9 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
               onChange={(e) => handleSliderChange('threshold', parseFloat(e.target.value))}
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-[#646A73] font-mono">
+            <div className="flex justify-between text-[10px] text-[#686A63] font-mono">
               <span>-60 dB</span>
-              <span className="text-[9px] text-[#9A9EA6]">2x click: -24 dB</span>
+              <span className="text-[9px] text-[#A5A69F]">2x click: -24 dB</span>
               <span>0 dB</span>
             </div>
           </div>
@@ -208,10 +208,10 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
             title="Double-click to reset (2.0:1)"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#F4F3EF] group-hover:text-[#D6AF62] transition-colors font-mono">
+              <span className="font-semibold text-[#F2F2EE] group-hover:text-[#B7F000] transition-colors font-mono">
                 Compression Ratio
               </span>
-              <span className="font-mono font-bold text-[#F4F3EF] bg-[#14171B] px-2 py-0.5 rounded border border-[#24282D]">
+              <span className="font-mono font-bold text-[#F2F2EE] bg-[#151714] px-2 py-0.5 rounded border border-[#222420]">
                 {params.ratio.toFixed(1)}:1
               </span>
             </div>
@@ -226,9 +226,9 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
               onChange={(e) => handleSliderChange('ratio', parseFloat(e.target.value))}
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-[#646A73] font-mono">
+            <div className="flex justify-between text-[10px] text-[#686A63] font-mono">
               <span>1.0:1</span>
-              <span className="text-[9px] text-[#9A9EA6]">2x click: 2.0:1</span>
+              <span className="text-[9px] text-[#A5A69F]">2x click: 2.0:1</span>
               <span>20:1</span>
             </div>
           </div>
@@ -240,10 +240,10 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
             title="Double-click to reset (0.0 dB)"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#F4F3EF] group-hover:text-[#D6AF62] transition-colors font-mono">
+              <span className="font-semibold text-[#F2F2EE] group-hover:text-[#B7F000] transition-colors font-mono">
                 Makeup Gain / Maximizer
               </span>
-              <span className="font-mono font-bold text-[#D6AF62] bg-[#14171B] px-2 py-0.5 rounded border border-[#24282D]">
+              <span className="font-mono font-bold text-[#B7F000] bg-[#151714] px-2 py-0.5 rounded border border-[#222420]">
                 +{params.gain.toFixed(1)} dB
               </span>
             </div>
@@ -258,9 +258,9 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
               onChange={(e) => handleSliderChange('gain', parseFloat(e.target.value))}
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-[#646A73] font-mono">
+            <div className="flex justify-between text-[10px] text-[#686A63] font-mono">
               <span>0 dB</span>
-              <span className="text-[9px] text-[#9A9EA6]">2x click: 0 dB</span>
+              <span className="text-[9px] text-[#A5A69F]">2x click: 0 dB</span>
               <span>+24 dB</span>
             </div>
           </div>
