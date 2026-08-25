@@ -243,7 +243,7 @@ app.post(['/api/stripe/checkout', '/api/checkout'], async (req, res) => {
   const rawPlan = plan || planId;
 
   if (!rawPlan || (rawPlan !== 'monthly' && rawPlan !== 'yearly' && rawPlan !== 'pro_monthly' && rawPlan !== 'pro_yearly')) {
-    return res.status(400).json({ error: 'Invalid plan selected. Permitted values are \"monthly\" or \"yearly\".' });
+    return res.status(400).json({ error: 'Invalid plan selected. Permitted values are "monthly" or "yearly".' });
   }
 
   const isYearly = rawPlan === 'yearly' || rawPlan === 'pro_yearly';
