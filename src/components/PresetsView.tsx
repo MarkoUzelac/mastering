@@ -1,8 +1,21 @@
 import React, { useState, useMemo } from 'react';
-import { Sparkles, Check, ArrowRight, Search, X, SlidersHorizontal } from 'lucide-react';
+import {
+  Sparkles,
+  Check,
+  ArrowRight,
+  Search,
+  X,
+  SlidersHorizontal,
+  Flame,
+  Layers,
+  Disc3,
+  Sliders,
+  Filter,
+} from 'lucide-react';
 import { MasteringPreset } from '../types';
 import { ProBadge } from './ProBadge';
 import { FeatureGates } from '../billing/feature-gates';
+import { PRESET_CATEGORIES, PresetCategory } from '../utils/presets';
 
 interface PresetsViewProps {
   presets: MasteringPreset[];
@@ -19,19 +32,40 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
   onOpenMastering,
   onOpenUpgradeModal,
 }) => {
+  const [selectedCategory, setSelectedCategory] = useState<PresetCategory>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const isPro = FeatureGates.isProUser();
 
-  const filteredPresets = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return presets;
+  // Category counts
+  const categoryCounts = useMemo(() => {
+    const counts: Record<PresetCategory, number> = {
+      All: presets.length,
+      Mastering: presets.filter((p) => p.category === 'Mastering').length,
+      Mixing: presets.filter((p) => p.category === 'Mixing').length,
+      Saturation: presets.filter((p) => p.category === 'Saturation').length,
+    };
+    return counts;
+  }, [presets]);
 
-    return presets.filter((preset) =>
-      preset.name.toLowerCase().includes(query) ||
-      (preset.category && preset.category.toLowerCase().includes(query)) ||
-      (preset.description && preset.description.toLowerCase().includes(query))
-    );
-  }, [presets, searchQuery]);
+  const filteredPresets = useMemo(() => {
+    return presets.filter((preset) => {
+      // Category filter
+      const matchesCategory =
+        selectedCategory === 'All' || preset.category === selectedCategory;
+
+      if (!matchesCategory) return false;
+
+      // Search filter
+      const query = searchQuery.trim().toLowerCase();
+      if (!query) return true;
+
+      return (
+        preset.name.toLowerCase().includes(query) ||
+        (preset.category && preset.category.toLowerCase().includes(query)) ||
+        (preset.description && preset.description.toLowerCase().includes(query))
+      );
+    });
+  }, [presets, selectedCategory, searchQuery]);
 
   const handleApply = (preset: MasteringPreset) => {
     const isProPreset = preset.proOnly || preset.isPro;
@@ -43,19 +77,46 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
     onOpenMastering();
   };
 
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'Mastering':
+        return <Disc3 className="w-3.5 h-3.5" />;
+      case 'Mixing':
+        return <Layers className="w-3.5 h-3.5" />;
+      case 'Saturation':
+        return <Flame className="w-3.5 h-3.5" />;
+      default:
+        return <Sliders className="w-3.5 h-3.5" />;
+    }
+  };
+
+  const getCategoryBadgeStyle = (category: string) => {
+    switch (category) {
+      case 'Mastering':
+        return 'text-[#D6AF62] bg-[#D6AF62]/10 border-[#D6AF62]/30';
+      case 'Mixing':
+        return 'text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/30';
+      case 'Saturation':
+        return 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/30';
+      default:
+        return 'text-[#9A9EA6] bg-[#14171B] border-[#24282D]';
+    }
+  };
+
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 py-4">
       {/* Header & Search Bar */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#24282D] pb-5">
         <div>
-          <div className="text-[10px] font-mono text-[#D6AF62] uppercase tracking-widest">
-            MASTERING PROFILES
+          <div className="text-[10px] font-mono text-[#D6AF62] uppercase tracking-widest flex items-center gap-1.5">
+            <SlidersHorizontal className="w-3 h-3" />
+            DSP CURVES &amp; CALIBRATIONS
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-[#F4F3EF] mt-0.5">
-            Calibrated Mastering Profiles & Targets
+            Mastering, Mixing &amp; Saturation Profiles
           </h1>
-          <p className="text-xs sm:text-sm text-[#9A9EA6] mt-1">
-            Engineered curves designed for major streaming platforms, club systems, and acoustic transparency.
+          <p className="text-xs sm:text-sm text-[#9A9EA6] mt-1 max-w-2xl">
+            Precision-tuned DSP curves categorized for streaming loudness compliance, cohesive bus mixing, and warm analog saturation.
           </p>
         </div>
 
@@ -71,7 +132,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search presets by name..."
+              placeholder="Search profiles or tone..."
               className="w-full pl-9 pr-8 py-2 bg-[#0E1013] border border-[#24282D] focus:border-[#D6AF62] rounded-lg text-xs text-[#F4F3EF] placeholder-[#646A73] focus:outline-none transition-colors"
             />
             {searchQuery && (
@@ -91,11 +152,52 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               Showing {filteredPresets.length} of {presets.length} profiles
             </span>
             {searchQuery && (
-              <span className="text-[#D6AF62]">
-                Filtered by &quot;{searchQuery}&quot;
+              <span className="text-[#D6AF62] truncate max-w-[140px]">
+                &quot;{searchQuery}&quot;
               </span>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Category Navigation Filter Tabs */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0E1013] border border-[#24282D] p-2 rounded-xl">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          {PRESET_CATEGORIES.map((cat) => {
+            const isSelected = selectedCategory === cat.id;
+            const count = categoryCounts[cat.id];
+
+            return (
+              <button
+                key={cat.id}
+                id={`filter-tab-${cat.id.toLowerCase()}`}
+                type="button"
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
+                  isSelected
+                    ? 'bg-[#1C170E] text-[#D6AF62] border border-[#D6AF62]/40 font-semibold shadow-sm'
+                    : 'bg-[#14171B] text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#1B1F24] border border-transparent'
+                }`}
+              >
+                {getCategoryIcon(cat.id)}
+                <span>{cat.label}</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded text-[10px] ${
+                    isSelected
+                      ? 'bg-[#D6AF62] text-[#08090B] font-bold'
+                      : 'bg-[#08090B] text-[#646A73]'
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Category Descriptor */}
+        <div className="text-[11px] text-[#646A73] font-mono px-2 hidden lg:block">
+          {PRESET_CATEGORIES.find((c) => c.id === selectedCategory)?.description}
         </div>
       </div>
 
@@ -103,19 +205,34 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
       {filteredPresets.length === 0 ? (
         <div className="py-16 text-center bg-[#0E1013] border border-[#24282D] rounded-xl p-8 space-y-3">
           <div className="w-10 h-10 rounded-full bg-[#14171B] border border-[#24282D] text-[#9A9EA6] mx-auto flex items-center justify-center">
-            <SlidersHorizontal className="w-5 h-5" />
+            <Filter className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-semibold text-[#F4F3EF]">No mastering presets found</h3>
+          <h3 className="text-sm font-semibold text-[#F4F3EF]">No presets found</h3>
           <p className="text-xs text-[#8E95A2] max-w-sm mx-auto">
-            No preset matches &quot;{searchQuery}&quot;. Try searching for &quot;Streaming&quot;, &quot;Club&quot;, &quot;Warm&quot;, or &quot;EDM&quot;.
+            No profile matches your current filters
+            {selectedCategory !== 'All' ? ` in the ${selectedCategory} category` : ''}
+            {searchQuery ? ` for query "${searchQuery}"` : ''}.
           </p>
-          <button
-            type="button"
-            onClick={() => setSearchQuery('')}
-            className="px-3.5 py-1.5 rounded-lg bg-[#14171B] hover:bg-[#1E2228] text-xs font-mono text-[#D6AF62] border border-[#24282D] transition-colors"
-          >
-            Clear Filter
-          </button>
+          <div className="flex items-center justify-center gap-2 pt-2">
+            {selectedCategory !== 'All' && (
+              <button
+                type="button"
+                onClick={() => setSelectedCategory('All')}
+                className="px-3.5 py-1.5 rounded-lg bg-[#14171B] hover:bg-[#1E2228] text-xs font-mono text-[#D6AF62] border border-[#24282D] transition-colors"
+              >
+                Show All Categories
+              </button>
+            )}
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="px-3.5 py-1.5 rounded-lg bg-[#14171B] hover:bg-[#1E2228] text-xs font-mono text-[#F4F3EF] border border-[#24282D] transition-colors"
+              >
+                Clear Search Query
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -130,7 +247,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                 id={`preset-card-${preset.id}`}
                 className={`bg-[#0E1013] border rounded-xl p-5 flex flex-col justify-between transition-all relative ${
                   isSelected
-                    ? 'border-[#D6AF62] shadow-[0_0_20px_rgba(214,175,98,0.15)]'
+                    ? 'border-[#D6AF62] shadow-[0_0_20px_rgba(214,175,98,0.15)] bg-gradient-to-b from-[#14171B] to-[#0E1013]'
                     : 'border-[#24282D] hover:border-[#3A4048]'
                 }`}
               >
@@ -140,14 +257,26 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                       <h3 className="text-base font-semibold text-[#F4F3EF] flex items-center gap-2">
                         {preset.name}
                       </h3>
-                      <span className="text-[10px] font-mono text-[#D6AF62] uppercase tracking-wider">
-                        {preset.category || 'Mastering Profile'}
-                      </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-full border uppercase tracking-wider flex items-center gap-1 ${getCategoryBadgeStyle(
+                            preset.category
+                          )}`}
+                        >
+                          {getCategoryIcon(preset.category)}
+                          {preset.category}
+                        </span>
+                        {preset.targetLufs && (
+                          <span className="text-[10px] font-mono text-[#9A9EA6]">
+                            {preset.targetLufs} LUFS
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {isProPreset && <ProBadge size="sm" locked={isLocked} />}
                   </div>
 
-                  <p className="text-xs text-[#9A9EA6] leading-relaxed mb-4">
+                  <p className="text-xs text-[#9A9EA6] leading-relaxed mb-4 min-h-[36px]">
                     {preset.description}
                   </p>
 

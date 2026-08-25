@@ -24,7 +24,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
 
-  // Extract high-resolution waveform peaks from loaded AudioBuffer
+  // High-resolution peak extractor
   const waveformPeaks = useMemo(() => {
     if (!currentTrack?.buffer) return null;
     const buffer = currentTrack.buffer;
@@ -36,10 +36,8 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     const totalSamples = buffer.length;
     const step = Math.floor(totalSamples / numBuckets);
 
-    const origMins: number[] = [];
-    const origMaxs: number[] = [];
-    const mastMins: number[] = [];
-    const mastMaxs: number[] = [];
+    const mins: number[] = [];
+    const maxs: number[] = [];
 
     for (let i = 0; i < numBuckets; i++) {
       const start = i * step;
@@ -53,24 +51,14 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
         if (val > maxVal) maxVal = val;
       }
 
-      const cleanMin = minVal === 1.0 ? 0 : minVal;
-      const cleanMax = maxVal === -1.0 ? 0 : maxVal;
-
-      origMins.push(cleanMin);
-      origMaxs.push(cleanMax);
-
-      // Mastered curve: enhanced dynamic crest & limiting density
-      const masteredFactor = 1.28;
-      const mMin = Math.max(-0.98, cleanMin * masteredFactor);
-      const mMax = Math.min(0.98, cleanMax * masteredFactor);
-      mastMins.push(mMin);
-      mastMaxs.push(mMax);
+      mins.push(minVal === 1.0 ? 0 : minVal);
+      maxs.push(maxVal === -1.0 ? 0 : maxVal);
     }
 
-    return { origMins, origMaxs, mastMins, mastMaxs, numBuckets };
+    return { mins, maxs, numBuckets };
   }, [currentTrack]);
 
-  // Render Waveform Canvas
+  // Render Waveform Canvas with Rich Violet Theme
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -86,90 +74,68 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    // Deep graphite background
-    ctx.fillStyle = '#0E1013';
+    // Dark sleek background
+    ctx.fillStyle = '#07090C';
     ctx.fillRect(0, 0, width, height);
 
-    // Subtle horizontal grid lines for 0dB, -6dB, -12dB
-    ctx.strokeStyle = '#181C22';
+    // Subtle horizontal grid lines
+    ctx.strokeStyle = '#14181F';
     ctx.lineWidth = 1;
-
-    const midY1 = height * 0.28; // Original track center
-    const midY2 = height * 0.72; // Mastered track center
-    const trackHeight = height * 0.40;
-
-    // Track divider line
-    ctx.strokeStyle = '#1E232B';
     ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
+    ctx.moveTo(0, height * 0.25);
+    ctx.lineTo(width, height * 0.25);
+    ctx.moveTo(0, height * 0.5);
+    ctx.lineTo(width, height * 0.5);
+    ctx.moveTo(0, height * 0.75);
+    ctx.lineTo(width, height * 0.75);
     ctx.stroke();
 
-    // Track labels
-    ctx.font = '10px "JetBrains Mono", monospace';
-    ctx.fillStyle = '#646A73';
-    ctx.fillText('ORIGINAL', 14, 18);
-    ctx.fillStyle = isBypassed ? '#646A73' : '#D6AF62';
-    ctx.fillText('MASTERED', 14, height / 2 + 18);
+    const midY = height / 2;
+    const maxAmp = height * 0.42;
 
-    if (!waveformPeaks) {
-      // Empty / Idle State
-      ctx.strokeStyle = '#24282D';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, midY1);
-      ctx.lineTo(width, midY1);
-      ctx.moveTo(0, midY2);
-      ctx.lineTo(width, midY2);
-      ctx.stroke();
-
-      ctx.fillStyle = '#646A73';
-      ctx.font = '12px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Drop audio file or select a reference master from above', width / 2, height / 2 - 4);
-      return;
-    }
-
-    const { origMins, origMaxs, mastMins, mastMaxs, numBuckets } = waveformPeaks;
     const playheadRatio = duration > 0 ? currentTime / duration : 0;
     const playheadX = playheadRatio * width;
-    const barWidth = Math.max(1, width / numBuckets);
 
-    // 1. Draw ORIGINAL Waveform (Top Half)
-    for (let i = 0; i < numBuckets; i++) {
-      const x = (i / numBuckets) * width;
-      const minVal = origMins[i];
-      const maxVal = origMaxs[i];
-      const yTop = midY1 - maxVal * (trackHeight * 0.42);
-      const yBot = midY1 - minVal * (trackHeight * 0.42);
-      const barH = Math.max(1, yBot - yTop);
+    if (!waveformPeaks) {
+      // Synthetic stereo preview waveform when no file is loaded yet
+      const numBars = 180;
+      const barWidth = width / numBars;
+      for (let i = 0; i < numBars; i++) {
+        const x = i * barWidth;
+        const norm = i / numBars;
+        const env = Math.sin(norm * Math.PI);
+        const rand = 0.3 + 0.7 * Math.abs(Math.sin(i * 12.3));
+        const barH = env * rand * maxAmp;
 
-      const isPlayed = x <= playheadX;
-      ctx.fillStyle = isPlayed ? '#9A9EA6' : '#333842';
-      ctx.fillRect(x, yTop, barWidth, barH);
-    }
-
-    // 2. Draw MASTERED Waveform (Bottom Half)
-    for (let i = 0; i < numBuckets; i++) {
-      const x = (i / numBuckets) * width;
-      const minVal = mastMins[i];
-      const maxVal = mastMaxs[i];
-      const yTop = midY2 - maxVal * (trackHeight * 0.42);
-      const yBot = midY2 - minVal * (trackHeight * 0.42);
-      const barH = Math.max(1, yBot - yTop);
-
-      const isPlayed = x <= playheadX;
-      if (isBypassed) {
-        ctx.fillStyle = isPlayed ? '#7E838D' : '#2A2E35';
-      } else {
-        ctx.fillStyle = isPlayed ? '#E7C77F' : '#6A562F';
+        const isPlayed = x <= playheadX;
+        ctx.fillStyle = isPlayed ? '#A78BFA' : '#4C1D95';
+        ctx.fillRect(x + 1, midY - barH, barWidth - 1.5, barH * 2);
       }
-      ctx.fillRect(x, yTop, barWidth, barH);
+    } else {
+      const { mins, maxs, numBuckets } = waveformPeaks;
+      const barWidth = Math.max(1, width / numBuckets);
+
+      for (let i = 0; i < numBuckets; i++) {
+        const x = (i / numBuckets) * width;
+        const minVal = mins[i];
+        const maxVal = maxs[i];
+        const yTop = midY - maxVal * maxAmp;
+        const yBot = midY - minVal * maxAmp;
+        const barH = Math.max(1.5, yBot - yTop);
+
+        const isPlayed = x <= playheadX;
+        if (isBypassed) {
+          ctx.fillStyle = isPlayed ? '#9CA3AF' : '#374151';
+        } else {
+          ctx.fillStyle = isPlayed ? '#C4B5FD' : '#6D28D9';
+        }
+        ctx.fillRect(x, yTop, barWidth, barH);
+      }
     }
 
-    // 3. Playhead Vertical Line & Glow
-    if (duration > 0) {
-      ctx.strokeStyle = '#D6AF62';
+    // Playhead Line & Glow
+    if (duration > 0 || isPlaying) {
+      ctx.strokeStyle = '#A78BFA';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
@@ -177,13 +143,13 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
       ctx.stroke();
 
       // Top & Bottom Handles
-      ctx.fillStyle = '#E7C77F';
+      ctx.fillStyle = '#C4B5FD';
       ctx.beginPath();
       ctx.arc(playheadX, 3, 3, 0, Math.PI * 2);
       ctx.arc(playheadX, height - 3, 3, 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [waveformPeaks, currentTime, duration, isBypassed]);
+  }, [waveformPeaks, currentTime, duration, isBypassed, isPlaying]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -229,11 +195,11 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
   };
 
   return (
-    <div className="bg-[#0E1013] border border-[#24282D] rounded-xl p-3.5 space-y-2">
+    <div className="bg-[#0E1116] border border-[#1E2530] rounded-xl p-3.5 space-y-2 shadow-sm">
       {/* Waveform Canvas Container */}
       <div
         ref={containerRef}
-        className="relative w-full h-44 sm:h-52 rounded-lg overflow-hidden bg-[#08090B] border border-[#1E2228] cursor-crosshair select-none"
+        className="relative w-full h-36 sm:h-44 rounded-lg overflow-hidden bg-[#07090C] border border-[#181C22] cursor-crosshair select-none"
         onPointerLeave={() => {
           setHoverTime(null);
           setHoverX(null);
@@ -259,12 +225,16 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
       </div>
 
       {/* Time Markers Ruler */}
-      <div className="flex items-center justify-between px-2 text-[11px] font-mono text-[#646A73] select-none">
+      <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#646A73] select-none">
         <span>0:00</span>
-        <span>{formatTime(duration * 0.25 || 30)}</span>
-        <span>{formatTime(duration * 0.5 || 60)}</span>
-        <span>{formatTime(duration * 0.75 || 90)}</span>
-        <span>{formatTime(duration || 120)}</span>
+        <span>0:30</span>
+        <span>1:00</span>
+        <span>1:30</span>
+        <span>2:00</span>
+        <span>2:30</span>
+        <span>3:00</span>
+        <span>3:30</span>
+        <span>{formatTime(duration || 225.782)}</span>
       </div>
     </div>
   );

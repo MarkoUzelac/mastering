@@ -32,23 +32,66 @@ class SubscriptionService {
   public async createCheckoutSession(planId: PlanId): Promise<{ url?: string; sessionId?: string; success?: boolean; error?: string; provider?: string }> {
     analytics.track('checkout_started', { planId });
 
+    const isYearly = planId === 'pro_yearly';
+    const plan = isYearly ? 'yearly' : 'monthly';
+
     try {
-      const res = await fetch('/api/checkout', {
+      // First attempt Cloudflare Worker Stripe Checkout endpoint, then standard endpoint
+      let res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ plan, planId }),
       });
 
+      if (res.status === 404) {
+        res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan, planId }),
+        });
+      }
+
       if (!res.ok) {
-        const err = await res.json();
-        analytics.track('payment_failed', { error: err.message });
-        return { error: err.message || 'Payment provider session could not be created' };
+        const err = await res.json().catch(() => ({}));
+        analytics.track('payment_failed', { error: err.message || err.error });
+        return { error: err.message || err.error || 'Payment provider session could not be created' };
       }
 
       const data = await res.json();
       return data;
     } catch {
       return { error: 'Network error communicating with billing service.' };
+    }
+  }
+
+  /**
+   * Opens the Stripe Customer Portal for self-service subscription and billing management
+   */
+  public async openCustomerPortal(customerId?: string): Promise<{ url?: string; error?: string }> {
+    try {
+      let res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId }),
+      });
+
+      if (res.status === 404) {
+        res = await fetch('/api/billing/portal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId }),
+        });
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        return { error: err.error || err.message || 'Failed to initialize Customer Portal' };
+      }
+
+      const data = await res.json();
+      return data;
+    } catch {
+      return { error: 'Network error connecting to Customer Portal.' };
     }
   }
 

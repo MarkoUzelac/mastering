@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Download,
-  ShieldCheck,
-  User,
-  Sparkles,
-  Sliders,
-  Menu,
-  X,
+  Upload,
   ArrowUpRight,
   BookOpen,
   Volume2,
   VolumeX,
-  Vibrate,
   Palette,
   Check,
   Cpu,
+  RotateCcw,
+  RotateCw,
+  Settings,
+  ChevronDown,
+  Edit3,
+  ArrowUp,
 } from 'lucide-react';
-import { ProBadge } from './ProBadge';
 import { UserEntitlement, UserUsage } from '../billing/entitlement-service';
 import { soundHaptics } from '../utils/sound-haptics';
 import { themeSkinService, STUDIO_SKINS, StudioSkinId } from '../utils/theme-skin';
@@ -31,6 +29,11 @@ interface HeaderProps {
   onOpenExportModal: () => void;
   onOpenPricingModal: () => void;
   onOpenAccountModal: (tab?: 'subscription' | 'billing' | 'usage' | 'exports' | 'privacy') => void;
+  onOpenSettingsModal?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
   hasAudio: boolean;
   entitlement: UserEntitlement;
   usage: UserUsage;
@@ -45,56 +48,27 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenExportModal,
   onOpenPricingModal,
   onOpenAccountModal,
+  onOpenSettingsModal,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
   hasAudio,
   entitlement,
   usage,
   onUploadClick,
 }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [skinDropdownOpen, setSkinDropdownOpen] = useState(false);
-  const [currentSkin, setCurrentSkin] = useState<StudioSkinId>(themeSkinService.getActiveSkin());
-  const [soundEnabled, setSoundEnabled] = useState(soundHaptics.isSoundEnabled());
-  const [hapticsEnabled, setHapticsEnabled] = useState(soundHaptics.isHapticsEnabled());
+  const [sessionDropdownOpen, setSessionDropdownOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
 
   const isPro = entitlement.status === 'PRO' || entitlement.status === 'TRIAL';
 
-  useEffect(() => {
-    const handleSkinChange = (e: Event) => {
-      const customEvent = e as CustomEvent<{ skinId: StudioSkinId }>;
-      if (customEvent.detail?.skinId) {
-        setCurrentSkin(customEvent.detail.skinId);
-      }
-    };
-    window.addEventListener('studio_skin_changed', handleSkinChange);
-    return () => window.removeEventListener('studio_skin_changed', handleSkinChange);
-  }, []);
-
-  const handleSelectSkin = (skinId: StudioSkinId) => {
-    themeSkinService.setSkin(skinId);
-    setCurrentSkin(skinId);
-    setSkinDropdownOpen(false);
-    soundHaptics.playPresetSnap();
-  };
-
-  const handleToggleSound = () => {
-    const next = !soundEnabled;
-    soundHaptics.setSoundEnabled(next);
-    setSoundEnabled(next);
-    if (next) soundHaptics.playResetSound();
-  };
-
-  const handleToggleHaptics = () => {
-    const next = !hapticsEnabled;
-    soundHaptics.setHapticsEnabled(next);
-    setHapticsEnabled(next);
-    if (next) soundHaptics.triggerHaptic('double');
-  };
-
   return (
-    <header className="border-b border-[#24282D] bg-[#08090B]/95 backdrop-blur sticky top-0 z-40 px-4 lg:px-7 py-2.5 transition-colors font-sans">
-      <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
-        {/* Left: Brand / Logo */}
-        <div className="flex items-center gap-6">
+    <header className="border-b border-[#1E2530] bg-[#0A0C0F] px-4 lg:px-6 py-2.5 transition-colors font-sans select-none sticky top-0 z-40">
+      <div className="max-w-[1920px] mx-auto flex items-center justify-between gap-4">
+        {/* Left: Brand / Logo + Session Selector + New Project */}
+        <div className="flex items-center gap-4 sm:gap-6">
+          {/* Logo Brand */}
           <div
             onClick={() => {
               soundHaptics.playSliderTick(1600);
@@ -102,307 +76,138 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className="flex items-center gap-2.5 cursor-pointer group select-none"
           >
-            <div className="h-7 w-7 rounded bg-[#14171B] border border-[#24282D] group-hover:border-[#D6AF62]/60 flex items-center justify-center text-[#D6AF62] font-mono font-bold text-xs transition-colors shadow-inner">
-              M
+            {/* Purple stylized icon */}
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] flex items-center justify-center text-white shadow-[0_0_12px_rgba(139,92,246,0.35)]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="4" y1="12" x2="4" y2="12" />
+                <line x1="8" y1="8" x2="8" y2="16" />
+                <line x1="12" y1="4" x2="12" y2="20" />
+                <line x1="16" y1="7" x2="16" y2="17" />
+                <line x1="20" y1="11" x2="20" y2="13" />
+              </svg>
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#F4F3EF] uppercase">
-                MASTERINGLOCAL
-              </span>
-              <span className="text-[11px] font-mono font-bold text-[#D6AF62] tracking-wider">
-                PRO
+
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-bold tracking-tight text-[#F4F3EF]">
+                  MasteringPro
+                </span>
+                <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-[#8B5CF6] text-white">
+                  PRO
+                </span>
+              </div>
+              <span className="text-[9px] font-mono tracking-widest text-[#646A73] uppercase -mt-0.5">
+                LOCAL
               </span>
             </div>
           </div>
 
-          {/* Desktop Navigation Tabs */}
-          <nav className="hidden md:flex items-center gap-1 text-xs">
+          {/* Session Selector Pill Dropdown */}
+          <div className="relative hidden md:block">
             <button
-              onClick={() => {
-                soundHaptics.playSliderTick(1400);
-                onSelectTab('mastering');
-              }}
-              className={`px-3 py-1.5 rounded transition font-medium cursor-pointer ${
-                activeTab === 'mastering'
-                  ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]'
-                  : 'text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B]/50'
-              }`}
+              onClick={() => setSessionDropdownOpen(!sessionDropdownOpen)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#F4F3EF] bg-[#14171B] hover:bg-[#1E232B] border border-[#24282D] rounded-lg transition cursor-pointer"
             >
-              Mastering Studio
-            </button>
-            <button
-              onClick={() => {
-                soundHaptics.playSliderTick(1400);
-                onSelectTab('analysis');
-              }}
-              className={`px-3 py-1.5 rounded transition font-medium cursor-pointer ${
-                activeTab === 'analysis'
-                  ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]'
-                  : 'text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B]/50'
-              }`}
-            >
-              Telemetry &amp; Phase
-            </button>
-            <button
-              onClick={() => {
-                soundHaptics.playSliderTick(1400);
-                onSelectTab('presets');
-              }}
-              className={`px-3 py-1.5 rounded transition font-medium cursor-pointer ${
-                activeTab === 'presets'
-                  ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]'
-                  : 'text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B]/50'
-              }`}
-            >
-              Profiles
-            </button>
-            <button
-              onClick={() => {
-                soundHaptics.playSliderTick(1400);
-                onSelectTab('dashboard');
-              }}
-              className={`px-3 py-1.5 rounded transition font-medium cursor-pointer ${
-                activeTab === 'dashboard'
-                  ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]'
-                  : 'text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B]/50'
-              }`}
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => {
-                soundHaptics.playSliderTick(1400);
-                onSelectTab('learn');
-              }}
-              className={`px-3 py-1.5 rounded transition font-medium cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'learn'
-                  ? 'bg-[#14171B] text-[#D6AF62] border border-[#24282D]'
-                  : 'text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B]/50'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              Guides
-            </button>
-            <button
-              onClick={() => {
-                soundHaptics.playSliderTick(1400);
-                onSelectTab('landing');
-              }}
-              className={`px-3 py-1.5 rounded transition font-medium cursor-pointer ${
-                activeTab === 'landing'
-                  ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]'
-                  : 'text-[#646A73] hover:text-[#9A9EA6]'
-              }`}
-            >
-              Overview
-            </button>
-          </nav>
-        </div>
-
-        {/* Right Section: Skins, Feedback, Audit & Account */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Studio Skin Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setSkinDropdownOpen(!skinDropdownOpen)}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#0E1013] hover:bg-[#14171B] border border-[#24282D] rounded-lg transition cursor-pointer"
-              title="Change Studio Console Skin"
-            >
-              <Palette className="w-3.5 h-3.5 text-[#D6AF62]" />
-              <span className="hidden xl:inline text-[11px] font-mono capitalize">
-                Skin: {themeSkinService.getSkinDefinition(currentSkin).name}
-              </span>
+              <span>Mastering Session</span>
+              <ChevronDown className="w-3.5 h-3.5 text-[#646A73]" />
             </button>
 
-            {skinDropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-64 bg-[#0E1013] border border-[#24282D] rounded-xl shadow-2xl p-1.5 z-50 space-y-1">
+            {sessionDropdownOpen && (
+              <div className="absolute left-0 mt-1.5 w-56 bg-[#0E1116] border border-[#1E2530] rounded-xl shadow-2xl p-1.5 z-50 space-y-1">
                 <div className="px-2.5 py-1 text-[10px] font-mono text-[#646A73] uppercase tracking-wider">
-                  Hardware Chassis Skins
+                  Active Sessions
                 </div>
-                {STUDIO_SKINS.map((skin) => (
-                  <button
-                    key={skin.id}
-                    onClick={() => handleSelectSkin(skin.id)}
-                    className={`w-full text-left p-2 rounded-lg flex items-center justify-between transition cursor-pointer ${
-                      currentSkin === skin.id
-                        ? 'bg-[#14171B] border border-[#24282D] text-[#F4F3EF]'
-                        : 'hover:bg-[#14171B]/60 text-[#9A9EA6]'
-                    }`}
-                  >
-                    <div>
-                      <div className="text-xs font-semibold flex items-center gap-1.5">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full border border-black/40"
-                          style={{ backgroundColor: skin.accentColor }}
-                        />
-                        <span>{skin.name}</span>
-                      </div>
-                      <div className="text-[10px] text-[#646A73]">{skin.category}</div>
-                    </div>
-                    {currentSkin === skin.id && <Check className="w-4 h-4 text-[#D6AF62]" />}
-                  </button>
-                ))}
+                <button
+                  onClick={() => setSessionDropdownOpen(false)}
+                  className="w-full text-left p-2 rounded-lg bg-[#1C162E] text-[#F4F3EF] text-xs flex items-center justify-between font-medium"
+                >
+                  <span>Main Mastering Project</span>
+                  <Check className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                </button>
+                <button
+                  onClick={() => setSessionDropdownOpen(false)}
+                  className="w-full text-left p-2 rounded-lg hover:bg-[#14171B] text-[#9A9EA6] text-xs"
+                >
+                  Stem Group A (Vocal + Beat)
+                </button>
               </div>
             )}
           </div>
 
-          {/* Sound Feedback Toggle */}
-          <button
-            onClick={handleToggleSound}
-            className={`p-1.5 text-xs rounded-lg transition cursor-pointer border ${
-              soundEnabled
-                ? 'bg-[#14171B] text-[#D6AF62] border-[#24282D]'
-                : 'bg-[#0E1013] text-[#646A73] border-[#1E2228] opacity-60'
-            }`}
-            title={soundEnabled ? 'UI Synthesizer Sounds: Enabled' : 'UI Synthesizer Sounds: Disabled'}
-          >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
-          </button>
-
-          {/* Haptic Feedback Toggle */}
-          <button
-            onClick={handleToggleHaptics}
-            className={`hidden sm:flex p-1.5 text-xs rounded-lg transition cursor-pointer border ${
-              hapticsEnabled
-                ? 'bg-[#14171B] text-[#D6AF62] border-[#24282D]'
-                : 'bg-[#0E1013] text-[#646A73] border-[#1E2228] opacity-60'
-            }`}
-            title={hapticsEnabled ? 'Haptic Vibrations: Enabled' : 'Haptic Vibrations: Disabled'}
-          >
-            <Vibrate className="w-3.5 h-3.5" />
-          </button>
-
-          {/* E2E Website & Runtime Audit Suite */}
+          {/* New Project Button */}
           <button
             onClick={() => {
-              soundHaptics.playSwitchSound(true);
-              onOpenAuditModal();
+              soundHaptics.playResetSound();
+              if (onUploadClick) onUploadClick();
             }}
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#0E1013] hover:bg-[#14171B] border border-[#24282D] hover:border-[#D6AF62]/40 rounded-lg transition cursor-pointer"
-            title="E2E Runtime & Website Audit Test Suite"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1E232B] border border-[#24282D] rounded-lg transition cursor-pointer"
           >
-            <Cpu className="w-3.5 h-3.5 text-[#6FCF97]" />
-            <span className="hidden sm:inline font-mono text-[11px]">Audit</span>
+            <Edit3 className="w-3.5 h-3.5 text-[#8B5CF6]" />
+            <span>New Project</span>
           </button>
+        </div>
 
-          {/* Pro Status or Upgrade CTA */}
-          {isPro ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1C170E] border border-[#D6AF62]/40 text-[#E7C77F] font-mono text-[11px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D6AF62] animate-pulse"></span>
-              <span className="font-semibold">PRO</span>
-            </div>
-          ) : (
+        {/* Right: Saved Status, Undo/Redo, Settings, Export Button */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Saved Status Indicator */}
+          <div className="flex items-center gap-1.5 px-2 py-1 text-xs text-[#10B981] font-mono font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+            <span className="hidden sm:inline text-[11px]">Saved</span>
+          </div>
+
+          {/* Undo / Redo Buttons */}
+          <div className="flex items-center gap-0.5 bg-[#14171B] border border-[#24282D] rounded-lg p-0.5">
             <button
-              onClick={() => {
-                soundHaptics.playPresetSnap();
-                onOpenPricingModal();
-              }}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-[#1C170E] hover:bg-[#282114] text-[#E7C77F] border border-[#D6AF62]/40 hover:border-[#D6AF62] transition shadow-sm cursor-pointer"
+              onClick={onUndo}
+              className="p-1.5 text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#1E232B] rounded transition cursor-pointer"
+              title="Undo Parameter Change (Ctrl+Z)"
             >
-              <Sparkles className="w-3 h-3 text-[#D6AF62]" />
-              <span className="font-mono text-[11px] font-semibold">UPGRADE</span>
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
-          )}
+            <button
+              onClick={onRedo}
+              className="p-1.5 text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#1E232B] rounded transition cursor-pointer"
+              title="Redo Parameter Change (Ctrl+Y)"
+            >
+              <RotateCw className="w-3.5 h-3.5" />
+            </button>
+          </div>
 
-          {/* User Account Trigger */}
+          {/* E2E Audit Quick Button */}
           <button
-            onClick={() => {
-              soundHaptics.playSliderTick(1600);
-              onOpenAccountModal('subscription');
-            }}
-            className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-[#14171B] border border-transparent hover:border-[#24282D] transition cursor-pointer"
-            title="Account & Subscription Portal"
+            onClick={onOpenAuditModal}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1E232B] border border-[#24282D] rounded-lg transition cursor-pointer"
+            title="E2E Runtime Audit Suite"
           >
-            <div className="w-6 h-6 rounded-md bg-[#1E2228] border border-[#2F353C] flex items-center justify-center text-xs font-semibold text-[#F4F3EF]">
-              U
-            </div>
+            <Cpu className="w-3.5 h-3.5 text-[#10B981]" />
+            <span className="hidden xl:inline text-[11px] font-mono">Audit</span>
           </button>
 
-          {/* Quick Export Master Header Button */}
+          {/* Settings Trigger */}
           <button
-            disabled={!hasAudio}
+            onClick={() => {
+              if (onOpenSettingsModal) onOpenSettingsModal();
+              else onOpenAccountModal('subscription');
+            }}
+            className="p-1.5 text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1E232B] border border-[#24282D] rounded-lg transition cursor-pointer"
+            title="Studio Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+
+          {/* Export Button (Violet Pill) */}
+          <button
             onClick={() => {
               soundHaptics.playResetSound();
               onOpenExportModal();
             }}
-            className={`hidden sm:flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-lg transition shadow-sm ${
-              hasAudio
-                ? 'bg-[#D6AF62] hover:bg-[#E7C77F] text-[#08090B] font-semibold cursor-pointer'
-                : 'bg-[#14171B] text-[#646A73] border border-[#24282D] cursor-not-allowed opacity-60'
-            }`}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#9333EA] hover:to-[#8B5CF6] transition shadow-[0_0_12px_rgba(139,92,246,0.35)] cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5" />
+            <ArrowUp className="w-3.5 h-3.5" />
             <span>Export</span>
-          </button>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 rounded text-[#9A9EA6] hover:text-[#F4F3EF] hover:bg-[#14171B] border border-[#24282D]"
-          >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
       </div>
-
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden pt-3 pb-2 border-t border-[#24282D] mt-2.5 flex flex-col gap-2">
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => { onSelectTab('mastering'); setMobileMenuOpen(false); }}
-              className={`py-1.5 text-xs rounded text-center ${activeTab === 'mastering' ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]' : 'text-[#9A9EA6]'}`}
-            >
-              Studio
-            </button>
-            <button
-              onClick={() => { onSelectTab('analysis'); setMobileMenuOpen(false); }}
-              className={`py-1.5 text-xs rounded text-center ${activeTab === 'analysis' ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]' : 'text-[#9A9EA6]'}`}
-            >
-              Analysis
-            </button>
-            <button
-              onClick={() => { onSelectTab('presets'); setMobileMenuOpen(false); }}
-              className={`py-1.5 text-xs rounded text-center ${activeTab === 'presets' ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]' : 'text-[#9A9EA6]'}`}
-            >
-              Profiles
-            </button>
-            <button
-              onClick={() => { onSelectTab('dashboard'); setMobileMenuOpen(false); }}
-              className={`py-1.5 text-xs rounded text-center ${activeTab === 'dashboard' ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]' : 'text-[#9A9EA6]'}`}
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => { onSelectTab('learn'); setMobileMenuOpen(false); }}
-              className={`py-1.5 text-xs rounded text-center ${activeTab === 'learn' ? 'bg-[#14171B] text-[#D6AF62] border border-[#24282D]' : 'text-[#9A9EA6]'}`}
-            >
-              Guides
-            </button>
-            <button
-              onClick={() => { onSelectTab('landing'); setMobileMenuOpen(false); }}
-              className={`py-1.5 text-xs rounded text-center ${activeTab === 'landing' ? 'bg-[#14171B] text-[#F4F3EF] border border-[#24282D]' : 'text-[#646A73]'}`}
-            >
-              Overview
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-[#24282D]/60 text-xs">
-            <button
-              onClick={() => { onOpenAccountModal('subscription'); setMobileMenuOpen(false); }}
-              className="text-[#9A9EA6] hover:text-[#F4F3EF] py-1"
-            >
-              Account &amp; Billing
-            </button>
-            <button
-              onClick={() => { onOpenAuditModal(); setMobileMenuOpen(false); }}
-              className="text-[#6FCF97] py-1 flex items-center gap-1 font-mono"
-            >
-              E2E Runtime Audit <ArrowUpRight className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

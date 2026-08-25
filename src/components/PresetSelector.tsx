@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MASTERING_PRESETS } from '../utils/presets';
+import { MASTERING_PRESETS, PRESET_CATEGORIES, PresetCategory } from '../utils/presets';
 import { MasteringParams, MasteringPreset } from '../types';
 import { Bookmark, Sparkles, Check, Music, Lock, Volume2 } from 'lucide-react';
 import { ProBadge } from './ProBadge';
@@ -19,10 +19,8 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
   isBypassed,
   onUpgradeClick,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<PresetCategory>('All');
   const isPro = FeatureGates.isProUser();
-
-  const categories = ['All', 'General', 'Character', 'Electronic', 'Organic', 'Urban', 'Loudness'];
 
   const filteredPresets = selectedCategory === 'All'
     ? MASTERING_PRESETS
@@ -54,23 +52,23 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
         <div className="flex items-center gap-2">
           <Bookmark className="w-4 h-4 text-[#00ff66]" />
           <h2 className="text-sm font-bold font-mono tracking-tight text-[#00ff66] uppercase glow-phosphor">
-            Mastering Target Presets &amp; Profiles
+            DSP Target Presets &amp; Profiles
           </h2>
         </div>
 
         {/* Category filters */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          {categories.map((cat) => (
+          {PRESET_CATEGORIES.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
               className={`px-2.5 py-1 text-xs font-mono rounded-lg transition cursor-pointer ${
-                selectedCategory === cat
+                selectedCategory === cat.id
                   ? 'bg-[#00ff66] text-[#030d06] font-bold shadow-sm shadow-[#00ff66]/30'
                   : 'bg-[#030d06] text-[#00aa44] hover:text-[#00ff66] border border-[#0f4020]'
               }`}
             >
-              {cat}
+              {cat.id === 'All' ? 'All' : cat.label}
             </button>
           ))}
         </div>
@@ -106,6 +104,11 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
                       <Check className="w-2.5 h-2.5" /> ACTIVE
                     </span>
                   )}
+                </div>
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 bg-[#0a2913] text-[#00ff66] border border-[#0f4020] rounded">
+                    {preset.category}
+                  </span>
                 </div>
                 <p className="text-[11px] text-[#00aa44] line-clamp-2 leading-relaxed mb-2 font-mono">
                   {preset.description}

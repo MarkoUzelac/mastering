@@ -24,7 +24,7 @@ function getStripe(): Stripe | null {
 app.use(cors());
 
 // Webhook raw body middleware for Stripe signature verification
-app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }));
+app.use(['/api/webhooks/stripe', '/api/stripe/webhook'], express.raw({ type: 'application/json' }));
 app.use(express.json());
 
 // In-memory persistent session storage (Single-tenant / demo workspace)
@@ -160,8 +160,8 @@ app.get('/api/me', (req, res) => {
   });
 });
 
-// GET /api/entitlements - Authoritative Entitlement Matrix
-app.get('/api/entitlements', (req, res) => {
+// GET /api/entitlements & GET /api/entitlement - Authoritative Entitlement Matrix
+app.get(['/api/entitlements', '/api/entitlement'], (req, res) => {
   const isPro = subscription.status === 'PRO' || subscription.status === 'TRIAL';
   res.json({
     tier: isPro ? 'PRO' : 'FREE',
@@ -233,19 +233,25 @@ app.get('/api/legal-config', (req, res) => {
   });
 });
 
-// POST /api/checkout - Create Stripe Checkout Session
-app.post('/api/checkout', async (req, res) => {
-  const { planId, returnUrl } = req.body;
-  if (!planId || (planId !== 'pro_monthly' && planId !== 'pro_yearly')) {
-    return res.status(400).json({ error: 'Invalid plan selected' });
+// POST /api/stripe/checkout & POST /api/checkout - Create Stripe Checkout Session
+app.post(['/api/stripe/checkout', '/api/checkout'], async (req, res) => {
+  const { plan, planId, returnUrl } = req.body;
+  const rawPlan = plan || planId;
+
+  if (!rawPlan || (rawPlan !== 'monthly' && rawPlan !== 'yearly' && rawPlan !== 'pro_monthly' && rawPlan !== 'pro_yearly')) {
+    return res.status(400).json({ error: 'Invalid plan selected. Permitted values are "monthly" or "yearly".' });
   }
 
-  const stripe = getStripe();
-  const monthlyPriceId = process.env.STRIPE_PRO_MONTHLY_PRICE_ID;
-  const annualPriceId = process.env.STRIPE_PRO_ANNUAL_PRICE_ID;
-  const priceId = planId === 'pro_yearly' ? annualPriceId : monthlyPriceId;
+  const isYearly = rawPlan === 'yearly' || rawPlan === 'pro_yearly';
+  const canonicalPlan = isYearly ? 'yearly' : 'monthly';
+  const legacyPlanId = isYearly ? 'pro_yearly' : 'pro_monthly';
 
-  // Real Stripe Integration if API key and Price IDs are present
+  const stripe = getStripe();
+  const monthlyPriceId = process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1U8NH5CseMvXi9qpU2i9i9XV';
+  const annualPriceId = process.env.STRIPE_PRO_YEARLY_PRICE_ID || process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1U8NHBCseMvXi9qpLOvF4OIu';
+  const priceId = isYearly ? annualPriceId : monthlyPriceId;
+
+  // Real Stripe Integration if API key is present
   if (stripe && priceId) {
     try {
       const origin = req.headers.origin || process.env.APP_URL || 'http://localhost:3000';
@@ -261,8 +267,15 @@ app.post('/api/checkout', async (req, res) => {
         customer_email: userAccount.email,
         client_reference_id: userAccount.id,
         metadata: {
-          planId,
+          plan: canonicalPlan,
+          planId: legacyPlanId,
           userId: userAccount.id,
+        },
+        subscription_data: {
+          metadata: {
+            plan: canonicalPlan,
+            userId: userAccount.id,
+          },
         },
         success_url: `${origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: returnUrl || `${origin}/?checkout=cancel`,
@@ -271,7 +284,8 @@ app.post('/api/checkout', async (req, res) => {
       return res.json({
         sessionId: session.id,
         url: session.url,
-        planId,
+        plan: canonicalPlan,
+        planId: legacyPlanId,
         provider: 'stripe_live',
       });
     } catch (err: unknown) {
@@ -285,12 +299,13 @@ app.post('/api/checkout', async (req, res) => {
 
   // Development / Test Fallback
   const sessionId = 'cs_test_' + Math.random().toString(36).substring(2, 15);
-  const checkoutUrl = `/?checkout=simulated&session_id=${sessionId}&plan=${planId}`;
+  const checkoutUrl = `/?checkout=simulated&session_id=${sessionId}&plan=${canonicalPlan}`;
 
   res.json({
     sessionId,
     url: checkoutUrl,
-    planId,
+    plan: canonicalPlan,
+    planId: legacyPlanId,
     provider: 'stripe_simulated',
     mode: process.env.PAYMENT_MODE || 'test',
   });
@@ -298,22 +313,24 @@ app.post('/api/checkout', async (req, res) => {
 
 // POST /api/checkout/confirm - Complete checkout & activate entitlement
 app.post('/api/checkout/confirm', (req, res) => {
-  const { planId } = req.body;
-  if (!planId) {
+  const { plan, planId } = req.body;
+  const rawPlan = plan || planId;
+  if (!rawPlan) {
     return res.status(400).json({ error: 'Missing plan ID' });
   }
 
-  const isYearly = planId === 'pro_yearly';
+  const isYearly = rawPlan === 'yearly' || rawPlan === 'pro_yearly';
+  const legacyPlanId: 'pro_monthly' | 'pro_yearly' = isYearly ? 'pro_yearly' : 'pro_monthly';
   const periodDuration = isYearly ? 1000 * 60 * 60 * 24 * 365 : 1000 * 60 * 60 * 24 * 30;
 
   subscription = {
     id: 'sub_' + Math.random().toString(36).substring(2, 12),
     customerId: userAccount.id,
-    plan: planId,
+    plan: legacyPlanId,
     status: 'PRO',
     currentPeriodEnd: Date.now() + periodDuration,
     cancelAtPeriodEnd: false,
-    features: getPlanFeatures(planId),
+    features: getPlanFeatures(legacyPlanId),
   };
 
   usage = {
@@ -350,8 +367,8 @@ app.post('/api/checkout/confirm', (req, res) => {
   });
 });
 
-// POST /api/billing/portal - Stripe Customer Portal Session
-app.post('/api/billing/portal', async (req, res) => {
+// POST /api/stripe/portal & POST /api/billing/portal - Stripe Customer Portal Session
+app.post(['/api/stripe/portal', '/api/billing/portal'], async (req, res) => {
   const stripe = getStripe();
   const origin = req.headers.origin || process.env.APP_URL || 'http://localhost:3000';
 
@@ -514,8 +531,8 @@ app.post('/api/account/delete', (req, res) => {
   });
 });
 
-// POST /api/webhooks/stripe & /api/webhooks/payment - Webhook Handler with Signature Verification
-app.post(['/api/webhooks/stripe', '/api/webhooks/payment'], (req, res) => {
+// POST /api/stripe/webhook & /api/webhooks/stripe & /api/webhooks/payment - Webhook Handler with Signature Verification
+app.post(['/api/stripe/webhook', '/api/webhooks/stripe', '/api/webhooks/payment'], (req, res) => {
   const stripe = getStripe();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   const sig = req.headers['stripe-signature'] as string;
@@ -551,7 +568,9 @@ app.post(['/api/webhooks/stripe', '/api/webhooks/payment'], (req, res) => {
   switch (eventType) {
     case 'checkout.session.completed': {
       const session = (event as { data?: { object?: Record<string, unknown> } })?.data?.object;
-      const plan = session?.metadata && typeof session.metadata === 'object' && (session.metadata as Record<string, unknown>).planId === 'pro_yearly' ? 'pro_yearly' : 'pro_monthly';
+      const meta = session?.metadata as Record<string, unknown> | undefined;
+      const isYearly = meta?.plan === 'yearly' || meta?.planId === 'pro_yearly';
+      const plan = isYearly ? 'pro_yearly' : 'pro_monthly';
       subscription.status = 'PRO';
       subscription.plan = plan;
       subscription.features = getPlanFeatures(plan);
@@ -559,14 +578,21 @@ app.post(['/api/webhooks/stripe', '/api/webhooks/payment'], (req, res) => {
       break;
     }
     case 'customer.subscription.created':
-    case 'customer.subscription.updated':
-    case 'invoice.payment_succeeded':
-    case 'invoice.paid': {
+    case 'customer.subscription.updated': {
       const obj = (event as { data?: { object?: Record<string, unknown> } })?.data?.object;
-      const planId = obj?.plan && typeof obj.plan === 'object' && typeof (obj.plan as Record<string, unknown>).id === 'string' && ((obj.plan as Record<string, unknown>).id as string).includes('year') ? 'pro_yearly' : 'pro_monthly';
+      const planObj = obj?.plan as Record<string, unknown> | undefined;
+      const planIdStr = typeof planObj?.id === 'string' ? planObj.id : '';
+      const isYearly = planIdStr.includes('year') || (obj?.metadata as Record<string, unknown>)?.plan === 'yearly';
+      const planId = isYearly ? 'pro_yearly' : 'pro_monthly';
       subscription.status = 'PRO';
       subscription.plan = planId;
       subscription.features = getPlanFeatures(planId);
+      usage.exportsLimit = -1;
+      break;
+    }
+    case 'invoice.payment_succeeded':
+    case 'invoice.paid': {
+      subscription.status = 'PRO';
       usage.exportsLimit = -1;
       break;
     }

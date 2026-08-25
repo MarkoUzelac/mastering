@@ -182,9 +182,13 @@ class SoundHapticsService {
   }
 
   /**
-   * Play Preset Load Snap
+   * Play Preset Load Snap / Click
    */
   public playPresetSnap(): void {
+    this.playPresetClick();
+  }
+
+  public playPresetClick(): void {
     this.triggerHaptic('snap');
     if (!this.soundEnabled) return;
 
@@ -213,6 +217,44 @@ class SoundHapticsService {
 
       osc.start(now);
       osc.stop(now + 0.045);
+    } catch {
+      // Ignore
+    }
+  }
+
+  /**
+   * Play Master Success Chime
+   */
+  public playSuccessSound(): void {
+    this.triggerHaptic('success');
+    if (!this.soundEnabled) return;
+
+    try {
+      const ctx = this.getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      [
+        { freq: 523.25, start: 0, dur: 0.1 },
+        { freq: 659.25, start: 0.08, dur: 0.12 },
+        { freq: 783.99, start: 0.16, dur: 0.15 },
+        { freq: 1046.5, start: 0.24, dur: 0.3 },
+      ].forEach(({ freq, start, dur }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + start);
+
+        gain.gain.setValueAtTime(0.06, now + start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + start);
+        osc.stop(now + start + dur);
+      });
     } catch {
       // Ignore
     }
