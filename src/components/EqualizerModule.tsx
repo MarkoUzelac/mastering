@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import { RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { MasteringParams } from '../types';
+import { soundHaptics } from '../utils/sound-haptics';
+
+interface EqualizerModuleProps {
+  params: MasteringParams;
+  onChange: (param: keyof MasteringParams, value: number) => void;
+  onReset?: () => void;
+  isBypassed: boolean;
+}
+
+export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
+  params,
+  onChange,
+  onReset,
+  isBypassed,
+}) => {
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [lowFreq] = useState(120);
+  const [midFreq] = useState(1200);
+  const [highFreq] = useState(8500);
+  const [midQ] = useState(0.8);
+
+  const handleResetAll = () => {
+    soundHaptics.playResetSound();
+    if (onReset) {
+      onReset();
+    } else {
+      onChange('low', 0);
+      onChange('mid', 0);
+      onChange('high', 0);
+    }
+  };
+
+  const handleSliderChange = (param: keyof MasteringParams, value: number) => {
+    onChange(param, value);
+    soundHaptics.playSliderTick(1400 + value * 40);
+  };
+
+  const handleDoubleClickReset = (param: keyof MasteringParams, defaultVal = 0) => {
+    onChange(param, defaultVal);
+    soundHaptics.playResetSound();
+  };
+
+  return (
+    <div className="bg-[#0E1013] border border-[#24282D] rounded-xl p-4 flex flex-col justify-between h-full relative group shadow-lg">
+      {/* Rack corner bolt aesthetic */}
+      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#24282D] border border-[#14171B]" />
+      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#24282D] border border-[#14171B]" />
+
+      {/* Module Header */}
+      <div className="flex items-center justify-between border-b border-[#1E2228] pb-2.5 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold tracking-wider text-[#F4F3EF] uppercase font-mono">
+            EQUALIZER
+          </span>
+          <span className="text-[9px] font-mono text-[#D6AF62] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[#D6AF62]/20">
+            DF2T 64-BIT
+          </span>
+          {isBypassed && (
+            <span className="text-[9px] font-mono text-[#646A73] bg-[#14171B] px-1.5 py-0.5 rounded">
+              OFF
+            </span>
+          )}
+        </div>
+        <button
+          onClick={handleResetAll}
+          className="flex items-center gap-1 text-[11px] text-[#9A9EA6] hover:text-[#D6AF62] transition cursor-pointer"
+          title="Reset EQ to neutral 0.0 dB"
+        >
+          <RotateCcw className="w-3 h-3" />
+          <span>Reset</span>
+        </button>
+      </div>
+
+      {/* 3-Band Fader Rack */}
+      <div className="grid grid-cols-3 gap-3 flex-1 items-end pt-1">
+        {/* LOW BAND */}
+        <div
+          className="flex flex-col items-center gap-2 select-none group/band"
+          onDoubleClick={() => handleDoubleClickReset('low', 0)}
+          title="Double-click to reset (0.0 dB)"
+        >
+          <div className="text-center cursor-pointer">
+            <div className="text-[10px] font-mono font-medium text-[#9A9EA6] group-hover/band:text-[#D6AF62] transition-colors uppercase">
+              LOW
+            </div>
+            <div className="text-[10px] font-mono text-[#646A73]">{lowFreq} Hz</div>
+            <div className="text-xs font-mono font-semibold text-[#F4F3EF] num-tabular mt-0.5 bg-[#14171B] px-1.5 py-0.5 rounded border border-[#24282D]">
+              {params.low >= 0 ? `+${params.low.toFixed(1)}` : params.low.toFixed(1)} dB
+            </div>
+          </div>
+
+          {/* Fader Track */}
+          <div className="relative h-28 flex items-center justify-center py-1">
+            <input
+              type="range"
+              min="-12"
+              max="12"
+              step="0.5"
+              value={params.low}
+              disabled={isBypassed}
+              onDoubleClick={() => handleDoubleClickReset('low', 0)}
+              onChange={(e) => handleSliderChange('low', parseFloat(e.target.value))}
+              className="fader-vertical cursor-pointer"
+            />
+          </div>
+          <span className="text-[9px] font-mono text-[#646A73] group-hover/band:text-[#9A9EA6] transition-colors">
+            2x click: 0dB
+          </span>
+        </div>
+
+        {/* MID BAND */}
+        <div
+          className="flex flex-col items-center gap-2 select-none group/band"
+          onDoubleClick={() => handleDoubleClickReset('mid', 0)}
+          title="Double-click to reset (0.0 dB)"
+        >
+          <div className="text-center cursor-pointer">
+            <div className="text-[10px] font-mono font-medium text-[#9A9EA6] group-hover/band:text-[#D6AF62] transition-colors uppercase">
+              MID
+            </div>
+            <div className="text-[10px] font-mono text-[#646A73]">{(midFreq / 1000).toFixed(2)} kHz</div>
+            <div className="text-xs font-mono font-semibold text-[#F4F3EF] num-tabular mt-0.5 bg-[#14171B] px-1.5 py-0.5 rounded border border-[#24282D]">
+              {params.mid >= 0 ? `+${params.mid.toFixed(1)}` : params.mid.toFixed(1)} dB
+            </div>
+          </div>
+
+          {/* Fader Track */}
+          <div className="relative h-28 flex items-center justify-center py-1">
+            <input
+              type="range"
+              min="-12"
+              max="12"
+              step="0.5"
+              value={params.mid}
+              disabled={isBypassed}
+              onDoubleClick={() => handleDoubleClickReset('mid', 0)}
+              onChange={(e) => handleSliderChange('mid', parseFloat(e.target.value))}
+              className="fader-vertical cursor-pointer"
+            />
+          </div>
+          <span className="text-[9px] font-mono text-[#646A73] group-hover/band:text-[#9A9EA6] transition-colors">
+            2x click: 0dB
+          </span>
+        </div>
+
+        {/* HIGH BAND */}
+        <div
+          className="flex flex-col items-center gap-2 select-none group/band"
+          onDoubleClick={() => handleDoubleClickReset('high', 0)}
+          title="Double-click to reset (0.0 dB)"
+        >
+          <div className="text-center cursor-pointer">
+            <div className="text-[10px] font-mono font-medium text-[#9A9EA6] group-hover/band:text-[#D6AF62] transition-colors uppercase">
+              HIGH
+            </div>
+            <div className="text-[10px] font-mono text-[#646A73]">{(highFreq / 1000).toFixed(2)} kHz</div>
+            <div className="text-xs font-mono font-semibold text-[#F4F3EF] num-tabular mt-0.5 bg-[#14171B] px-1.5 py-0.5 rounded border border-[#24282D]">
+              {params.high >= 0 ? `+${params.high.toFixed(1)}` : params.high.toFixed(1)} dB
+            </div>
+          </div>
+
+          {/* Fader Track */}
+          <div className="relative h-28 flex items-center justify-center py-1">
+            <input
+              type="range"
+              min="-12"
+              max="12"
+              step="0.5"
+              value={params.high}
+              disabled={isBypassed}
+              onDoubleClick={() => handleDoubleClickReset('high', 0)}
+              onChange={(e) => handleSliderChange('high', parseFloat(e.target.value))}
+              className="fader-vertical cursor-pointer"
+            />
+          </div>
+          <span className="text-[9px] font-mono text-[#646A73] group-hover/band:text-[#9A9EA6] transition-colors">
+            2x click: 0dB
+          </span>
+        </div>
+      </div>
+
+      {/* Advanced Toggle */}
+      <div className="mt-3 pt-2 border-t border-[#1E2228] flex justify-end">
+        <button
+          onClick={() => {
+            soundHaptics.playSwitchSound(!advancedOpen);
+            setAdvancedOpen(!advancedOpen);
+          }}
+          className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-[#9A9EA6] hover:text-[#F4F3EF] bg-[#14171B] hover:bg-[#1B1F24] border border-[#24282D] rounded transition cursor-pointer"
+        >
+          <span>Specs</span>
+          {advancedOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+        </button>
+      </div>
+
+      {/* Advanced Parametric Drawer */}
+      {advancedOpen && (
+        <div className="mt-2.5 pt-2 border-t border-[#24282D] space-y-1.5 text-[11px] font-mono animate-fadeIn">
+          <div className="flex items-center justify-between">
+            <span className="text-[#646A73]">Low Shelf Freq</span>
+            <span className="text-[#F4F3EF]">{lowFreq} Hz</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-[#646A73]">Mid Bell Q</span>
+            <span className="text-[#F4F3EF]">{midQ.toFixed(2)}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-[#646A73]">High Shelf Slope</span>
+            <span className="text-[#F4F3EF]">12 dB/oct</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

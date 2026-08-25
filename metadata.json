@@ -1,0 +1,8 @@
+{
+  "name": "MasteringLocal.Pro",
+  "description": "MASTERINGLOCAL.PRO — Studio-grade online audio mastering console combining professional hardware instrumentation, true peak/LUFS metering, real-time DSP, waveform visualization, and Pro subscription workflow.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

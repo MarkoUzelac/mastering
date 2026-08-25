@@ -1,0 +1,12 @@
+# robots.txt for MasteringLocal.Pro
+User-agent: *
+Allow: /
+Allow: /learn/
+Allow: /privacy
+Allow: /terms
+Allow: /cookies
+Allow: /refunds
+Allow: /legal
+Allow: /contact
+
+Sitemap: https://masteringlocal.pro/sitemap.xml

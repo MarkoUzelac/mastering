@@ -1,0 +1,61 @@
+name: Biquad EQ Numerical Parity
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  biquad-parity:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install NumPy
+        run: python -m pip install --disable-pip-version-check --no-input numpy
+
+      - name: Setup Emscripten 4.0.15
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 4.0.15
+
+      - name: Verify toolchain
+        run: |
+          em++ --version
+          node --version
+          python --version
+
+      - name: Generate JS reference
+        run: node tests/biquad_reference.js
+
+      - name: Compile WASM harness
+        run: |
+          em++ tests/biquad_engine.cpp \
+            -O3 \
+            -std=c++17 \
+            -sWASM=1 \
+            -sMODULARIZE=1 \
+            -sEXPORT_ES6=1 \
+            -sENVIRONMENT=node \
+            -sEXPORTED_FUNCTIONS='["_run_eq_test","_free_buffer","_malloc","_free"]' \
+            -o tests/biquad_engine.js
+
+      - name: Execute WASM harness
+        run: node tests/run_biquad_wasm.js
+
+      - name: Compare outputs
+        run: python tests/compare_biquad.py
