@@ -33,7 +33,7 @@ export const LimiterModule: React.FC<LimiterModuleProps> = ({
   const isLimiting = !isBypassed && (limiterActive || (meterData && meterData.limiterActive));
 
   return (
-    <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 flex flex-col justify-between h-full relative group shadow-lg">
+    <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
       {/* Rack corner bolt aesthetic */}
       <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
       <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
@@ -79,7 +79,7 @@ export const LimiterModule: React.FC<LimiterModuleProps> = ({
           {/* True Peak Box */}
           <div
             onClick={() => soundHaptics.playSliderTick(2000)}
-            className="bg-[#090A08] border border-[#222420] hover:border-[#B7F000]/40 rounded-lg p-2 text-center transition-colors cursor-pointer"
+            className="bg-[#090A08] border border-[#222420] hover:border-[#B7F000]/40 rounded-sm p-2 text-center transition-colors cursor-pointer"
             title="Max Output Peak Clamp (-1.0 dBFS)"
           >
             <div className="text-[9px] font-mono text-[#A5A69F] uppercase tracking-wider">OUTPUT PEAK</div>
@@ -93,7 +93,7 @@ export const LimiterModule: React.FC<LimiterModuleProps> = ({
         <div className="flex flex-col items-center justify-between h-full py-1">
           <div className="text-[9px] font-mono text-[#A5A69F] uppercase">OUTPUT</div>
           
-          <div className="w-8 h-28 bg-[#090A08] border border-[#222420] rounded-lg p-1 flex flex-col justify-end relative shadow-inner">
+          <div className="w-8 h-28 bg-[#090A08] border border-[#222420] rounded-sm p-1 flex flex-col justify-end relative shadow-inner">
             {/* Ceiling marker line */}
             <div className="absolute inset-x-0 top-[15%] h-px bg-[#E56B6B] z-20" title="Ceiling -1.0 dBFS" />
 

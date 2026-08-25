@@ -55,7 +55,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-56 xl:w-60 bg-[#0A0C0F] border-r border-[#222420] flex flex-col justify-between p-3.5 shrink-0 select-none hidden md:flex">
+    <aside className="w-full bg-[var(--bg-secondary)] border-r border-[var(--border-subtle)] flex flex-col justify-between p-4 shrink-0 select-none hidden md:flex">
       {/* Top Navigation Links */}
       <div className="space-y-1">
         <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[#686A63] mb-1">
@@ -70,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => handleSelect(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition cursor-pointer relative ${
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-sm text-xs font-medium transition cursor-pointer relative ${
                 isActive
                   ? 'bg-[#1C162E] text-[#F2F2EE] shadow-sm'
                   : 'text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#12161D]'
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Bottom PRO Card & Version */}
       <div className="space-y-3 pt-4 border-t border-[#222420]">
         {/* PRO PLAN Support Card */}
-        <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3 space-y-2.5 shadow-sm">
+        <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3 space-y-2.5 shadow-sm">
           <div className="flex items-center gap-1.5">
             <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#B7F000] text-\[#F2F2EE\]">
               PRO
@@ -118,7 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <button
             onClick={handleUpgrade}
-            className="w-full py-2 px-3 text-xs font-semibold rounded-lg text-\[#F2F2EE\] bg-gradient-to-r from-[#B7F000] to-[#8CA800] hover:from-[#9333EA] hover:to-[#7C3AED] transition shadow-[0_0_12px_rgba(139,92,246,0.25)] flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full py-2 px-3 text-xs font-semibold rounded-sm text-\[#F2F2EE\] bg-gradient-to-r from-[#B7F000] to-[#8CA800] hover:from-[#9333EA] hover:to-[#7C3AED] transition shadow-[0_0_12px_rgba(139,92,246,0.25)] flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>Manage Subscription</span>
           </button>

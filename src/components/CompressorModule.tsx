@@ -105,7 +105,7 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
   }, [effectiveGR, isBypassed]);
 
   return (
-    <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 flex flex-col justify-between h-full relative group shadow-lg">
+    <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
       {/* Rack corner bolt aesthetic */}
       <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
       <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
@@ -245,7 +245,7 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
           </div>
 
           {/* Real-time GR Canvas */}
-          <div className="w-full h-24 rounded-lg bg-[#090A08] border border-[#222420] overflow-hidden relative shadow-inner">
+          <div className="w-full h-24 rounded-sm bg-[#090A08] border border-[#222420] overflow-hidden relative shadow-inner">
             <canvas ref={canvasRef} width={200} height={96} className="w-full h-full block" />
             <div className="absolute left-1.5 top-1 text-[8px] font-mono text-[#686A63]">0 dB</div>
             <div className="absolute left-1.5 bottom-1 text-[8px] font-mono text-[#686A63]">-18 dB</div>

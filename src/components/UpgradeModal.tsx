@@ -27,7 +27,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#090A08]/85 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#0E1013] border border-[#B7F000] rounded-2xl w-full max-w-lg shadow-[0_0_30px_rgba(214,175,98,0.15)] overflow-hidden flex flex-col">
+      <div className="bg-[#0E1013] border border-[#B7F000] rounded-sm w-full max-w-lg shadow-[0_0_30px_rgba(214,175,98,0.15)] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
           <div className="flex items-center gap-2">
@@ -37,7 +37,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-lg hover:bg-[#151714] transition cursor-pointer"
+            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-sm hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -46,7 +46,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
         {/* Body */}
         <div className="p-6 space-y-5 text-xs">
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#1C170E] border border-[#B7F000]/40 flex items-center justify-center mx-auto shadow-[0_0_15px_rgba(214,175,98,0.2)]">
+            <div className="w-12 h-12 rounded-sm bg-[#1C170E] border border-[#B7F000]/40 flex items-center justify-center mx-auto shadow-[0_0_15px_rgba(214,175,98,0.2)]">
               <Sparkles className="w-6 h-6 text-[#B7F000]" />
             </div>
             <h3 className="text-lg font-bold text-[#F2F2EE]">
@@ -58,7 +58,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
 
           {/* Value Highlights */}
-          <div className="bg-[#090A08] p-4 rounded-xl border border-[#222420] space-y-2.5">
+          <div className="bg-[#090A08] p-4 rounded-sm border border-[#222420] space-y-2.5">
             <div className="text-[#B7F000] font-semibold text-[11px] font-mono">
               MASTERINGLOCAL.PRO PRO INCLUDES:
             </div>
@@ -83,7 +83,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
 
           {/* Pricing mini-banner */}
-          <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#151714] border border-[#222420] text-[11px] font-mono">
+          <div className="flex items-center justify-between px-3 py-2 rounded-sm bg-[#151714] border border-[#222420] text-[11px] font-mono">
             <span className="text-[#A5A69F]">Studio Pass</span>
             <div className="text-right">
               <span className="font-semibold text-[#B7F000]">From €12.50 / mo</span>
@@ -96,7 +96,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             <button
               id="upgrade-modal-cta"
               onClick={handleUpgrade}
-              className="w-full py-3 rounded-lg font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] shadow-md shadow-[#B7F000]/20 transition flex items-center justify-center gap-2 cursor-pointer text-xs uppercase tracking-wider"
+              className="w-full py-3 rounded-sm font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] shadow-md shadow-[#B7F000]/20 transition flex items-center justify-center gap-2 cursor-pointer text-xs uppercase tracking-wider"
             >
               <span>UPGRADE TO PRO STUDIO</span>
               <ArrowRight className="w-4 h-4" />

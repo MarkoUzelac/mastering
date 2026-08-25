@@ -30,7 +30,7 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
       <section className="space-y-4 text-sm text-[#A0A6B2]">
         <h2 className="text-lg font-semibold text-[#F2F2EE]">1. Subscription Plans and Rates</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-5 rounded-xl bg-[#121418] border border-[#2A2E35] space-y-3">
+          <div className="p-5 rounded-sm bg-[#121418] border border-[#2A2E35] space-y-3">
             <div className="flex justify-between items-baseline">
               <span className="font-semibold text-[#F2F2EE]">MasteringPro Pro Monthly</span>
               <span className="text-xl font-bold text-[#B7F000]">€19<span className="text-xs text-[#8E95A2] font-normal"> / month</span></span>
@@ -40,7 +40,7 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
             </p>
           </div>
 
-          <div className="p-5 rounded-xl bg-[#121418] border border-[#B7F000]/30 space-y-3">
+          <div className="p-5 rounded-sm bg-[#121418] border border-[#B7F000]/30 space-y-3">
             <div className="flex justify-between items-baseline">
               <div>
                 <span className="font-semibold text-[#F2F2EE]">MasteringPro Pro Annual</span>
@@ -88,7 +88,7 @@ export const SubscriptionTermsView: React.FC<SubscriptionTermsViewProps> = ({
       </section>
 
       {/* Contact */}
-      <section className="p-4 rounded-lg bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
+      <section className="p-4 rounded-sm bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
         <div className="font-semibold text-[#F2F2EE]">Billing Support</div>
         <div>Entity: {LEGAL_CONFIG.businessName}</div>
         <div>Direct Billing Inquiries: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#B7F000] underline">{LEGAL_CONFIG.supportEmail}</a></div>

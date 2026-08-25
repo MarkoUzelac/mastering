@@ -76,7 +76,7 @@ export const DynamicsMeters: React.FC<DynamicsMetersProps> = ({
   };
 
   return (
-    <div className="bg-[#07170c] rounded-xl p-4 border border-[#0d381c] shadow-lg flex flex-col justify-between crt-overlay h-full">
+    <div className="bg-[#07170c] rounded-sm p-4 border border-[#0d381c] shadow-lg flex flex-col justify-between crt-overlay h-full">
       <div className="flex items-center justify-between border-b border-[#0d381c] pb-2 mb-3">
         <span className="text-xs font-bold font-mono uppercase tracking-wider text-[#00ff66] flex items-center gap-1.5 glow-phosphor">
           <Volume2 className="w-3.5 h-3.5" />
@@ -92,7 +92,7 @@ export const DynamicsMeters: React.FC<DynamicsMetersProps> = ({
 
       <div className="grid grid-cols-3 gap-2.5 items-end">
         {/* Input Meters */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020] flex flex-col items-center">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020] flex flex-col items-center">
           <span className="text-[10px] font-mono uppercase font-bold text-[#00aa44] mb-2">INPUT SIGNAL</span>
           <div className="flex gap-2 w-full justify-center">
             {renderChannelMeter(inPeakL, inRmsL, 'L')}
@@ -101,7 +101,7 @@ export const DynamicsMeters: React.FC<DynamicsMetersProps> = ({
         </div>
 
         {/* Gain Reduction (GR) Meter */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020] flex flex-col items-center">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020] flex flex-col items-center">
           <span className="text-[10px] font-mono uppercase font-bold text-[#ffaa00] mb-2">GAIN RED.</span>
           <div className="w-full max-w-[36px] h-36 bg-[#030d06] rounded p-1 flex flex-col justify-start relative border border-[#0f4020]">
             {/* GR Fill going downwards */}
@@ -116,7 +116,7 @@ export const DynamicsMeters: React.FC<DynamicsMetersProps> = ({
         </div>
 
         {/* Output Meters */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020] flex flex-col items-center">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020] flex flex-col items-center">
           <span className="text-[10px] font-mono uppercase font-bold text-[#00ff66] mb-2">MASTER OUT</span>
           <div className="flex gap-2 w-full justify-center">
             {renderChannelMeter(outPeakL, outRmsL, 'L')}

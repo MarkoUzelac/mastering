@@ -33,7 +33,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
           <div className="flex items-center gap-2.5">
@@ -48,7 +48,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -59,7 +59,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
           {module === 'eq' && (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <span className="text-[11px] font-mono text-[#06B6D4] mb-2 font-semibold">Low Band</span>
                   <RotaryKnob
                     label="Gain"
@@ -75,7 +75,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                   </div>
                 </div>
 
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <span className="text-[11px] font-mono text-[#06B6D4] mb-2 font-semibold">Mid Band</span>
                   <RotaryKnob
                     label="Gain"
@@ -91,7 +91,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                   </div>
                 </div>
 
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <span className="text-[11px] font-mono text-[#06B6D4] mb-2 font-semibold">High Band</span>
                   <RotaryKnob
                     label="Gain"
@@ -108,7 +108,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                 </div>
               </div>
 
-              <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex items-center justify-between text-xs">
+              <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex items-center justify-between text-xs">
                 <div>
                   <div className="font-semibold text-[#F2F2EE]">Linear Phase Processing</div>
                   <div className="text-[11px] text-[#686A63]">Zero phase shift across frequency crossovers</div>
@@ -123,7 +123,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
           {module === 'dynamics' && (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Threshold"
                     value={params.threshold}
@@ -134,7 +134,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onParamChange('threshold', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Ratio"
                     value={params.ratio}
@@ -145,7 +145,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onParamChange('ratio', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Knee"
                     value={advancedParams.knee}
@@ -159,7 +159,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Attack"
                     value={advancedParams.attack}
@@ -170,7 +170,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onAdvancedParamChange('attack', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Release"
                     value={advancedParams.release}
@@ -188,7 +188,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
           {module === 'saturation' && (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Drive"
                     value={advancedParams.drive}
@@ -199,7 +199,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onAdvancedParamChange('drive', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Warmth"
                     value={advancedParams.warmth}
@@ -210,7 +210,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onAdvancedParamChange('warmth', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Dry/Wet"
                     value={advancedParams.mix}
@@ -228,7 +228,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
           {module === 'stereo' && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Stereo Width"
                     value={advancedParams.width}
@@ -239,7 +239,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onAdvancedParamChange('width', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Balance"
                     value={advancedParams.balance}
@@ -252,7 +252,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                 </div>
               </div>
 
-              <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex items-center justify-between text-xs">
+              <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex items-center justify-between text-xs">
                 <div>
                   <div className="font-semibold text-[#F2F2EE]">Mono Bass Below 120 Hz</div>
                   <div className="text-[11px] text-[#686A63]">Sums sub frequencies to center for tight vinyl/club playback</div>
@@ -267,7 +267,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
           {module === 'limiter' && (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Ceiling"
                     value={advancedParams.ceiling}
@@ -278,7 +278,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onAdvancedParamChange('ceiling', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Release"
                     value={advancedParams.limiterRelease}
@@ -289,7 +289,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                     onChange={(v) => onAdvancedParamChange('limiterRelease', v)}
                   />
                 </div>
-                <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex flex-col items-center">
+                <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex flex-col items-center">
                   <RotaryKnob
                     label="Lookahead"
                     value={advancedParams.lookahead}
@@ -302,7 +302,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
                 </div>
               </div>
 
-              <div className="bg-[#07090C] p-3 rounded-xl border border-[#181C22] flex items-center justify-between text-xs">
+              <div className="bg-[#07090C] p-3 rounded-sm border border-[#181C22] flex items-center justify-between text-xs">
                 <div>
                   <div className="font-semibold text-[#F2F2EE]">True Peak ISP Oversampling</div>
                   <div className="text-[11px] text-[#686A63]">Prevents D/A converter clipping during streaming encode</div>
@@ -319,7 +319,7 @@ export const AdvancedModuleModal: React.FC<AdvancedModuleModalProps> = ({
         <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Done
           </button>

@@ -81,11 +81,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#090A08]/85 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#0E1013] border border-[#222420] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
+      <div className="bg-[#0E1013] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
+            <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
               <CreditCard className="w-4 h-4" />
             </div>
             <div>
@@ -98,7 +98,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {!isCompleted && (
             <button
               onClick={onClose}
-              className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-lg hover:bg-[#151714] transition cursor-pointer"
+              className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-sm hover:bg-[#151714] transition cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -121,7 +121,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   Receipt ID: {orderReceiptId} · Entitlements Synchronized
                 </p>
               </div>
-              <div className="bg-[#090A08] p-3.5 rounded-xl border border-[#222420] text-[11px] font-mono text-[#A5A69F] space-y-1 text-left max-w-sm mx-auto">
+              <div className="bg-[#090A08] p-3.5 rounded-sm border border-[#222420] text-[11px] font-mono text-[#A5A69F] space-y-1 text-left max-w-sm mx-auto">
                 <div className="flex justify-between">
                   <span>Active Plan:</span>
                   <span className="font-semibold text-[#B7F000]">{plan.name}</span>
@@ -146,7 +146,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="grid grid-cols-2 gap-2">
                   <div
                     onClick={() => setSelectedPlan('pro_monthly')}
-                    className={`p-3 rounded-xl border cursor-pointer transition ${
+                    className={`p-3 rounded-sm border cursor-pointer transition ${
                       selectedPlan === 'pro_monthly'
                         ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
                         : 'bg-[#090A08] border-[#222420] text-[#A5A69F] hover:border-[#222420]'
@@ -158,7 +158,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                   <div
                     onClick={() => setSelectedPlan('pro_yearly')}
-                    className={`p-3 rounded-xl border cursor-pointer transition relative ${
+                    className={`p-3 rounded-sm border cursor-pointer transition relative ${
                       selectedPlan === 'pro_yearly'
                         ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
                         : 'bg-[#090A08] border-[#222420] text-[#A5A69F] hover:border-[#222420]'
@@ -179,7 +179,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="grid grid-cols-3 gap-2">
                   <div
                     onClick={() => setPaymentMethod('card')}
-                    className={`p-2 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition ${
+                    className={`p-2 rounded-sm border flex items-center justify-center gap-2 cursor-pointer transition ${
                       paymentMethod === 'card'
                         ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
                         : 'bg-[#090A08] border-[#222420] text-[#A5A69F] hover:border-[#222420]'
@@ -190,7 +190,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
                   <div
                     onClick={() => setPaymentMethod('gpay')}
-                    className={`p-2 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition ${
+                    className={`p-2 rounded-sm border flex items-center justify-center gap-2 cursor-pointer transition ${
                       paymentMethod === 'gpay'
                         ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
                         : 'bg-[#090A08] border-[#222420] text-[#A5A69F] hover:border-[#222420]'
@@ -200,7 +200,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
                   <div
                     onClick={() => setPaymentMethod('carrier')}
-                    className={`p-2 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition ${
+                    className={`p-2 rounded-sm border flex items-center justify-center gap-2 cursor-pointer transition ${
                       paymentMethod === 'carrier'
                         ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
                         : 'bg-[#090A08] border-[#222420] text-[#A5A69F] hover:border-[#222420]'
@@ -213,7 +213,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
 
               {/* Order Summary */}
-              <div className="bg-[#090A08] p-3 rounded-xl border border-[#222420] space-y-1.5 text-[11px] font-mono">
+              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1.5 text-[11px] font-mono">
                 <div className="flex justify-between text-[#A5A69F]">
                   <span>Plan:</span>
                   <span className="font-semibold text-[#F2F2EE]">{plan.name}</span>
@@ -239,7 +239,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       value={cardName}
                       onChange={(e) => setCardName(e.target.value)}
-                      className="w-full bg-[#090A08] border border-[#222420] rounded-lg px-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+                      className="w-full bg-[#090A08] border border-[#222420] rounded-sm px-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
                     />
                   </div>
 
@@ -254,7 +254,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         required
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
-                        className="w-full bg-[#090A08] border border-[#222420] rounded-lg pl-9 pr-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+                        className="w-full bg-[#090A08] border border-[#222420] rounded-sm pl-9 pr-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
                       />
                       <CreditCard className="w-4 h-4 text-[#A5A69F] absolute left-3 top-2.5" />
                     </div>
@@ -268,7 +268,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         required
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
-                        className="w-full bg-[#090A08] border border-[#222420] rounded-lg px-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+                        className="w-full bg-[#090A08] border border-[#222420] rounded-sm px-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
                       />
                     </div>
                     <div className="space-y-1">
@@ -278,7 +278,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         required
                         value={cardCvc}
                         onChange={(e) => setCardCvc(e.target.value)}
-                        className="w-full bg-[#090A08] border border-[#222420] rounded-lg px-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+                        className="w-full bg-[#090A08] border border-[#222420] rounded-sm px-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
                       />
                     </div>
                   </div>
@@ -301,7 +301,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         required
                         value={carrierNumber}
                         onChange={(e) => setCarrierNumber(e.target.value)}
-                        className="w-full bg-[#090A08] border border-[#222420] rounded-lg pl-9 pr-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+                        className="w-full bg-[#090A08] border border-[#222420] rounded-sm pl-9 pr-3 py-2 text-xs text-[#F2F2EE] focus:border-[#B7F000] outline-none"
                       />
                       <Smartphone className="w-4 h-4 text-[#A5A69F] absolute left-3 top-2.5" />
                     </div>
@@ -312,7 +312,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               {/* Error Message */}
               {errorMsg && (
-                <div className="p-3 bg-[#1C1012] border border-[#E56B6B]/40 rounded-lg text-[#E56B6B] flex items-center gap-2 text-[11px]">
+                <div className="p-3 bg-[#1C1012] border border-[#E56B6B]/40 rounded-sm text-[#E56B6B] flex items-center gap-2 text-[11px]">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
@@ -323,7 +323,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 id="submit-payment-btn"
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 rounded-lg font-semibold font-mono bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] shadow-md shadow-[#B7F000]/20 transition flex items-center justify-center gap-2 cursor-pointer text-xs uppercase tracking-wider"
+                className="w-full py-3 rounded-sm font-semibold font-mono bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] shadow-md shadow-[#B7F000]/20 transition flex items-center justify-center gap-2 cursor-pointer text-xs uppercase tracking-wider"
               >
                 {isLoading ? (
                   <>

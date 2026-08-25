@@ -17,16 +17,16 @@ export const RefundPolicyView: React.FC = () => {
       </div>
 
       {/* Distinction Section */}
-      <div className="p-5 rounded-xl bg-[#121418] border border-[#2A2E35] space-y-3">
+      <div className="p-5 rounded-sm bg-[#121418] border border-[#2A2E35] space-y-3">
         <div className="flex items-center gap-2 text-sm font-semibold text-[#F2F2EE]">
           <CheckCircle className="w-4 h-4 text-[#6FCF97]" />
           <span>Understanding Cancellation vs. Refunds</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-[#A0A6B2]">
-          <div className="p-3 bg-[#0E1013] rounded-lg border border-[#242830]">
+          <div className="p-3 bg-[#0E1013] rounded-sm border border-[#242830]">
             <strong className="text-[#F2F2EE]">Subscription Cancellation:</strong> Stop future automatic renewals at any time with one click. Access continues until the prepaid period ends.
           </div>
-          <div className="p-3 bg-[#0E1013] rounded-lg border border-[#242830]">
+          <div className="p-3 bg-[#0E1013] rounded-sm border border-[#242830]">
             <strong className="text-[#F2F2EE]">Refund Requests:</strong> Return of funds charged for a specific billing cycle under statutory rights or verified billing errors.
           </div>
         </div>
@@ -38,7 +38,7 @@ export const RefundPolicyView: React.FC = () => {
         <p>
           Under European Union consumer protection rules, consumers residing in the EU generally have the right to withdraw from a distance contract within 14 days without giving any reason.
         </p>
-        <div className="p-4 rounded-lg bg-[#14171D] border border-[#2E3540] text-xs text-[#8E95A2] space-y-2">
+        <div className="p-4 rounded-sm bg-[#14171D] border border-[#2E3540] text-xs text-[#8E95A2] space-y-2">
           <div className="font-semibold text-[#B7F000]">Digital Content Performance Exception (Directive 2011/83/EU Art. 16(m))</div>
           <p>
             When you purchase a digital subscription and immediately utilize pro features (such as rendering and downloading 24-bit/32-bit high-resolution master audio files), you acknowledge and explicitly agree during checkout that the performance of the digital service begins immediately, and you acknowledge that you lose your statutory right of withdrawal once the digital service has begun.

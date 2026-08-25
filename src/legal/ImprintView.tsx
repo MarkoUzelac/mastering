@@ -18,7 +18,7 @@ export const ImprintView: React.FC = () => {
 
       {/* Configuration Status Notice if placeholders are present */}
       {!LEGAL_CONFIG.isConfigurationComplete && (
-        <div className="p-4 rounded-xl bg-[#171A20] border border-[#2D333F] flex items-start gap-3">
+        <div className="p-4 rounded-sm bg-[#171A20] border border-[#2D333F] flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-[#B7F000] shrink-0 mt-0.5" />
           <div className="text-xs text-[#8E95A2] space-y-1">
             <span className="font-semibold text-[#F2F2EE]">Statutory Compliance Disclosure:</span>
@@ -31,7 +31,7 @@ export const ImprintView: React.FC = () => {
 
       {/* Main Entity Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-        <div className="p-5 rounded-xl bg-[#121418] border border-[#242830] space-y-3">
+        <div className="p-5 rounded-sm bg-[#121418] border border-[#242830] space-y-3">
           <div className="font-semibold text-[#F2F2EE] flex items-center gap-2">
             <Building2 className="w-4 h-4 text-[#B7F000]" />
             <span>Service Provider & Legal Entity</span>
@@ -46,7 +46,7 @@ export const ImprintView: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-5 rounded-xl bg-[#121418] border border-[#242830] space-y-3">
+        <div className="p-5 rounded-sm bg-[#121418] border border-[#242830] space-y-3">
           <div className="font-semibold text-[#F2F2EE] flex items-center gap-2">
             <Mail className="w-4 h-4 text-[#B7F000]" />
             <span>Contact & Representative</span>

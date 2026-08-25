@@ -40,7 +40,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
       {/* 2. Subscriptions, Fees, and Renewals */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
         <h2 className="text-lg font-semibold text-[#F2F2EE]">2. Subscriptions, Pricing & Automatic Renewal</h2>
-        <div className="p-4 rounded-xl bg-[#121418] border border-[#2A2E35] space-y-2 text-xs">
+        <div className="p-4 rounded-sm bg-[#121418] border border-[#2A2E35] space-y-2 text-xs">
           <div className="flex items-center gap-2 font-semibold text-[#F2F2EE]">
             <DollarSign className="w-4 h-4 text-[#B7F000]" />
             <span>Subscription Plans & Pricing Structure</span>
@@ -59,7 +59,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
       {/* 3. Audio Ownership & Commercial Release Rights */}
       <section className="space-y-3 text-sm text-[#A0A6B2] leading-relaxed">
         <h2 className="text-lg font-semibold text-[#F2F2EE]">3. User Content & 100% Commercial Release Rights</h2>
-        <div className="p-4 rounded-xl bg-[#121418] border border-[#2E3540] space-y-2 text-xs">
+        <div className="p-4 rounded-sm bg-[#121418] border border-[#2E3540] space-y-2 text-xs">
           <div className="flex items-center gap-2 font-semibold text-[#6FCF97]">
             <Award className="w-4 h-4 text-[#6FCF97]" />
             <span>Full Intellectual Property Ownership</span>
@@ -102,7 +102,7 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({
       </section>
 
       {/* 7. Contact */}
-      <section className="p-4 rounded-lg bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
+      <section className="p-4 rounded-sm bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
         <div className="font-semibold text-[#F2F2EE]">Legal Notice & Inquiries</div>
         <div>Entity: {LEGAL_CONFIG.businessName}</div>
         <div>Support: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#B7F000] underline">{LEGAL_CONFIG.supportEmail}</a></div>

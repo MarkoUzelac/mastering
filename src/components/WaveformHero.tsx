@@ -232,7 +232,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
   const totalDuration = duration > 0 ? duration : 225.782;
 
   return (
-    <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3 sm:p-3.5 space-y-2 shadow-sm">
+    <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3 sm:p-3.5 space-y-2 shadow-sm">
       {/* Top Header of Card: Timeline, Loop & Zoom */}
       <div className="flex items-center justify-between text-xs font-mono text-[#A5A69F]">
         <div className="flex items-center gap-2">
@@ -297,7 +297,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
       {/* Waveform Canvas Container */}
       <div
         ref={containerRef}
-        className="relative w-full h-32 sm:h-40 rounded-lg overflow-hidden bg-[#07090C] border border-[#181C22] cursor-crosshair select-none touch-none"
+        className="relative w-full h-32 sm:h-40 rounded-sm overflow-hidden bg-[#07090C] border border-[#181C22] cursor-crosshair select-none touch-none"
         onPointerLeave={() => {
           setHoverTime(null);
           setHoverX(null);

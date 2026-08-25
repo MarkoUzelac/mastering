@@ -244,7 +244,7 @@ export const WaveformView: React.FC<WaveformViewProps> = ({
   };
 
   return (
-    <div className="bg-[#07170c] rounded-xl p-4 border border-[#0d381c] shadow-lg relative overflow-hidden crt-overlay">
+    <div className="bg-[#07170c] rounded-sm p-4 border border-[#0d381c] shadow-lg relative overflow-hidden crt-overlay">
       {/* Header controls */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -271,7 +271,7 @@ export const WaveformView: React.FC<WaveformViewProps> = ({
       {/* Waveform Canvas */}
       <div
         ref={containerRef}
-        className="relative w-full aspect-[800/140] rounded-lg overflow-hidden border border-[#0f4020] bg-[#030d06] cursor-crosshair select-none"
+        className="relative w-full aspect-[800/140] rounded-sm overflow-hidden border border-[#0f4020] bg-[#030d06] cursor-crosshair select-none"
       >
         <canvas
           ref={canvasRef}

@@ -25,7 +25,7 @@ export const CookiePolicyView: React.FC<CookiePolicyViewProps> = ({ onNavigateTo
       </div>
 
       {/* Summary Box */}
-      <div className="p-5 rounded-xl bg-[#121418] border border-[#2A2E35] space-y-3">
+      <div className="p-5 rounded-sm bg-[#121418] border border-[#2A2E35] space-y-3">
         <div className="flex items-center gap-2 text-sm font-semibold text-[#F2F2EE]">
           <Shield className="w-4 h-4 text-[#B7F000]" />
           <span>Core Privacy Principle</span>
@@ -37,7 +37,7 @@ export const CookiePolicyView: React.FC<CookiePolicyViewProps> = ({ onNavigateTo
           <button
             type="button"
             onClick={handleOpenConsentModal}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#1F232B] hover:bg-[#282F3A] border border-[#343B48] text-xs font-semibold text-[#F2F2EE] transition-colors"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm bg-[#1F232B] hover:bg-[#282F3A] border border-[#343B48] text-xs font-semibold text-[#F2F2EE] transition-colors"
           >
             <Settings className="w-3.5 h-3.5 text-[#B7F000]" />
             Manage Your Cookie Preferences
@@ -60,7 +60,7 @@ export const CookiePolicyView: React.FC<CookiePolicyViewProps> = ({ onNavigateTo
           Below is the complete, transparent inventory of first-party storage keys used by the MasteringLocal.Pro application:
         </p>
 
-        <div className="overflow-x-auto border border-[#242830] rounded-xl bg-[#0E1013]">
+        <div className="overflow-x-auto border border-[#242830] rounded-sm bg-[#0E1013]">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-[#242830] bg-[#14171D] text-[#F2F2EE]">
@@ -108,7 +108,7 @@ export const CookiePolicyView: React.FC<CookiePolicyViewProps> = ({ onNavigateTo
       </section>
 
       {/* Section 4: Contact */}
-      <section className="p-4 rounded-lg bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
+      <section className="p-4 rounded-sm bg-[#14171D] border border-[#242830] text-xs text-[#8E95A2] space-y-1">
         <div className="font-semibold text-[#F2F2EE]">Data Protection Questions</div>
         <div>Entity: {LEGAL_CONFIG.businessName}</div>
         <div>Support & Privacy Contact: <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[#B7F000] underline">{LEGAL_CONFIG.supportEmail}</a></div>

@@ -56,11 +56,11 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
       aria-label="Cookie and Privacy Consent"
       className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-xl z-50 animate-fade-in"
     >
-      <div className="bg-[#121418] border border-[#2A2E35] rounded-xl p-5 shadow-2xl backdrop-blur-md">
+      <div className="bg-[#121418] border border-[#2A2E35] rounded-sm p-5 shadow-2xl backdrop-blur-md">
         {!isCustomizeOpen ? (
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-[#1B1F26] border border-[#2E3440] text-[#B7F000] shrink-0">
+              <div className="p-2 rounded-sm bg-[#1B1F26] border border-[#2E3440] text-[#B7F000] shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div className="space-y-1 text-left">
@@ -86,7 +86,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
               <button
                 type="button"
                 onClick={() => setIsCustomizeOpen(true)}
-                className="order-3 sm:order-1 px-3 py-2 text-xs font-medium text-[#A0A6B2] hover:text-[#F2F2EE] bg-transparent hover:bg-[#1B1F26] rounded-lg transition-colors flex items-center justify-center gap-1.5 border border-transparent hover:border-[#2E3440]"
+                className="order-3 sm:order-1 px-3 py-2 text-xs font-medium text-[#A0A6B2] hover:text-[#F2F2EE] bg-transparent hover:bg-[#1B1F26] rounded-sm transition-colors flex items-center justify-center gap-1.5 border border-transparent hover:border-[#2E3440]"
               >
                 <Settings className="w-3.5 h-3.5" />
                 Customize
@@ -96,7 +96,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
                 <button
                   type="button"
                   onClick={handleRejectNonEssential}
-                  className="w-full sm:w-auto px-4 py-2 text-xs font-medium text-[#F2F2EE] bg-[#1E222A] hover:bg-[#262C36] border border-[#343B47] rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-2 text-xs font-medium text-[#F2F2EE] bg-[#1E222A] hover:bg-[#262C36] border border-[#343B47] rounded-sm transition-colors flex items-center justify-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" />
                   Reject Non-Essential
@@ -104,7 +104,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#E5C37A] rounded-lg transition-colors shadow-sm flex items-center justify-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#E5C37A] rounded-sm transition-colors shadow-sm flex items-center justify-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5" />
                   Accept All
@@ -133,7 +133,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
 
             <div className="space-y-3 max-h-60 overflow-y-auto pr-1 text-left text-xs">
               {/* Strictly Necessary */}
-              <div className="p-3 bg-[#171A20] rounded-lg border border-[#242830] flex items-start justify-between gap-3">
+              <div className="p-3 bg-[#171A20] rounded-sm border border-[#242830] flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-1.5 font-semibold text-[#F2F2EE]">
                     <span>Strictly Necessary</span>
@@ -152,7 +152,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
               </div>
 
               {/* Preferences */}
-              <div className="p-3 bg-[#171A20] rounded-lg border border-[#242830] flex items-start justify-between gap-3">
+              <div className="p-3 bg-[#171A20] rounded-sm border border-[#242830] flex items-start justify-between gap-3">
                 <div>
                   <div className="font-semibold text-[#F2F2EE]">User Preferences</div>
                   <p className="text-[11px] text-[#8E95A2] mt-0.5">
@@ -169,7 +169,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
               </div>
 
               {/* Analytics */}
-              <div className="p-3 bg-[#171A20] rounded-lg border border-[#242830] flex items-start justify-between gap-3">
+              <div className="p-3 bg-[#171A20] rounded-sm border border-[#242830] flex items-start justify-between gap-3">
                 <div>
                   <div className="font-semibold text-[#F2F2EE]">Anonymous Analytics</div>
                   <p className="text-[11px] text-[#8E95A2] mt-0.5">
@@ -186,7 +186,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
               </div>
 
               {/* Marketing */}
-              <div className="p-3 bg-[#171A20] rounded-lg border border-[#242830] flex items-start justify-between gap-3">
+              <div className="p-3 bg-[#171A20] rounded-sm border border-[#242830] flex items-start justify-between gap-3">
                 <div>
                   <div className="font-semibold text-[#F2F2EE]">Marketing & Referrals</div>
                   <p className="text-[11px] text-[#8E95A2] mt-0.5">
@@ -207,14 +207,14 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onOpen
               <button
                 type="button"
                 onClick={handleRejectNonEssential}
-                className="px-3 py-1.5 text-xs text-[#A0A6B2] hover:text-[#F2F2EE] bg-[#1B1F26] hover:bg-[#242A34] rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs text-[#A0A6B2] hover:text-[#F2F2EE] bg-[#1B1F26] hover:bg-[#242A34] rounded-sm transition-colors"
               >
                 Reject Non-Essential
               </button>
               <button
                 type="button"
                 onClick={handleSaveCustom}
-                className="px-4 py-1.5 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#E5C37A] rounded-lg transition-colors"
+                className="px-4 py-1.5 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#E5C37A] rounded-sm transition-colors"
               >
                 Save Preferences
               </button>

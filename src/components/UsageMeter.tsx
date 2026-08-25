@@ -63,7 +63,7 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({
   }
 
   return (
-    <div className="bg-[#030d06] p-3 rounded-xl border border-[#0f4020] space-y-2 font-mono text-xs">
+    <div className="bg-[#030d06] p-3 rounded-sm border border-[#0f4020] space-y-2 font-mono text-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Activity className="w-4 h-4 text-[#00ff66]" />

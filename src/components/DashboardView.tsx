@@ -76,7 +76,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   return (
     <div className="max-w-[1400px] mx-auto space-y-8 py-4">
       {/* Top Banner / Welcome */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0E1013] border border-[#222420] rounded-xl p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0E1013] border border-[#222420] rounded-sm p-6">
         <div>
           <div className="text-[10px] font-mono text-[#B7F000] uppercase tracking-widest">
             PROJECT OVERVIEW
@@ -92,7 +92,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={() => handleTriggerDemo('synthwave')}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-lg transition shadow-md cursor-pointer font-mono"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-sm transition shadow-md cursor-pointer font-mono"
           >
             <Plus className="w-4 h-4" />
             <span>NEW MASTER</span>
@@ -103,7 +103,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Total Masters */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-5 space-y-2">
+        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-5 space-y-2">
           <div className="flex items-center justify-between text-xs font-mono text-[#A5A69F]">
             <span className="uppercase tracking-wider">TOTAL MASTERS</span>
             <span className="text-[#B7F000]">+4 this week</span>
@@ -117,7 +117,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Total Exports */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-5 space-y-2">
+        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-5 space-y-2">
           <div className="flex items-center justify-between text-xs font-mono text-[#A5A69F]">
             <span className="uppercase tracking-wider">EXPORTS THIS MONTH</span>
             <span className="text-[#6FCF97]">Active</span>
@@ -131,7 +131,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Storage Used */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-5 space-y-2">
+        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-5 space-y-2">
           <div className="flex items-center justify-between text-xs font-mono text-[#A5A69F]">
             <span className="uppercase tracking-wider">STORAGE USED</span>
             <span className="text-[#A5A69F]">12%</span>
@@ -147,7 +147,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Recent Masters Table */}
-      <div className="bg-[#0E1013] border border-[#222420] rounded-xl overflow-hidden">
+      <div className="bg-[#0E1013] border border-[#222420] rounded-sm overflow-hidden">
         <div className="p-4 border-b border-[#222420] flex items-center justify-between">
           <div className="text-xs font-semibold font-mono tracking-wider text-[#F2F2EE] uppercase">
             RECENT MASTERS
@@ -195,14 +195,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleTriggerDemo('synthwave')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#151714] hover:bg-[#1B1F24] text-[#F2F2EE] border border-[#222420] rounded-lg transition cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#151714] hover:bg-[#1B1F24] text-[#F2F2EE] border border-[#222420] rounded-sm transition cursor-pointer"
                 >
                   <Play className="w-3.5 h-3.5 fill-current text-[#B7F000]" />
                   <span>Open</span>
                 </button>
                 <button
                   onClick={onOpenExportModal}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#B7F000]/10 hover:bg-[#B7F000]/20 text-[#C7FF18] border border-[#B7F000]/30 rounded-lg transition cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#B7F000]/10 hover:bg-[#B7F000]/20 text-[#C7FF18] border border-[#B7F000]/30 rounded-sm transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Export</span>

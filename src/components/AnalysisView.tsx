@@ -605,7 +605,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playButtonTap();
                 onOpenParity();
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#B7F000] hover:bg-[#151714] border border-[#B7F000]/30 rounded-lg transition cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#B7F000] hover:bg-[#151714] border border-[#B7F000]/30 rounded-sm transition cursor-pointer active:scale-95"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Bit-Identical Parity</span>
@@ -615,7 +615,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       </div>
 
       {/* Main Full-Width Spectrum Analyzer Card */}
-      <div className="bg-[#0A0C0F] border border-[#222420] rounded-xl p-4 sm:p-5 space-y-3.5 shadow-xl">
+      <div className="bg-[#0A0C0F] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-3.5 shadow-xl">
         {/* Top Control Bar with Feature Toggles */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#181C22] pb-3">
           <div className="flex items-center gap-2">
@@ -636,7 +636,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playSwitchSound(!showFftOverlay);
                 setShowFftOverlay((prev) => !prev);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition cursor-pointer active:scale-95 border ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showFftOverlay
                   ? 'bg-[#10B981]/20 border-[#10B981]/60 text-[#A7F3D0] shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                   : 'bg-[#151714] border-[#222420] text-[#686A63] hover:text-[#A5A69F]'
@@ -660,7 +660,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playSwitchSound(!showEqOverlay);
                 setShowEqOverlay((prev) => !prev);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition cursor-pointer active:scale-95 border ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showEqOverlay
                   ? 'bg-[#B7F000]/20 border-[#B7F000]/60 text-[#D4FF5C] shadow-[0_0_12px_rgba(139,92,246,0.3)]'
                   : 'bg-[#151714] border-[#222420] text-[#686A63] hover:text-[#A5A69F]'
@@ -684,7 +684,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playButtonTap();
                 setShowPreDsp((prev) => !prev);
               }}
-              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-lg transition cursor-pointer active:scale-95 border ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showPreDsp
                   ? 'bg-[#151714] border-[#4A505A] text-[#A5A69F]'
                   : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
@@ -701,7 +701,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playButtonTap();
                 setShowPostDsp((prev) => !prev);
               }}
-              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-lg transition cursor-pointer active:scale-95 border ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showPostDsp
                   ? 'bg-[#1C170E] border-[#B7F000]/50 text-[#C7FF18]'
                   : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
@@ -718,7 +718,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playButtonTap();
                 setShowPeakHold((prev) => !prev);
               }}
-              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-lg transition cursor-pointer active:scale-95 border ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showPeakHold
                   ? 'bg-[#1F190E] border-[#F59E0B]/40 text-[#FBBF24]'
                   : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
@@ -735,7 +735,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playButtonTap();
                 setShowTiltGuide((prev) => !prev);
               }}
-              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-lg transition cursor-pointer active:scale-95 border ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showTiltGuide
                   ? 'bg-[#B7F000]/15 border-[#B7F000]/40 text-[#D4FF5C]'
                   : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
@@ -749,7 +749,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         </div>
 
         {/* Spectrum Canvas Container */}
-        <div className="w-full aspect-[1200/380] sm:aspect-[1200/340] rounded-lg overflow-hidden border border-[#181C22] bg-[#090A08] relative select-none touch-none">
+        <div className="w-full aspect-[1200/380] sm:aspect-[1200/340] rounded-sm overflow-hidden border border-[#181C22] bg-[#090A08] relative select-none touch-none">
           <canvas
             ref={spectrumCanvasRef}
             width={1200}
@@ -785,7 +785,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
           {/* Interactive Cursor Readout Tooltip */}
           {hoverInfo && (
             <div
-              className="absolute pointer-events-none z-20 px-2.5 py-1.5 bg-[#0D1117]/95 border border-[#2F353C] rounded-lg shadow-xl backdrop-blur-md text-[10px] font-mono space-y-0.5"
+              className="absolute pointer-events-none z-20 px-2.5 py-1.5 bg-[#0D1117]/95 border border-[#2F353C] rounded-sm shadow-xl backdrop-blur-md text-[10px] font-mono space-y-0.5"
               style={{
                 left: `${Math.min(hoverInfo.x + 12, (spectrumCanvasRef.current?.clientWidth || 600) - 150)}px`,
                 top: `${Math.max(10, hoverInfo.y - 65)}px`,
@@ -827,7 +827,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
 
         {/* Live EQ Visual Feedback & Interactive Controls (Shown when EQ Overlay is ON) */}
         {showEqOverlay && onParamChange && (
-          <div className="pt-3 border-t border-[#181C22] bg-[#0D0E0C] rounded-lg p-3 sm:p-4">
+          <div className="pt-3 border-t border-[#181C22] bg-[#0D0E0C] rounded-sm p-3 sm:p-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-semibold text-[#F2F2EE] uppercase flex items-center gap-1.5">
@@ -877,7 +877,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
             {/* 3-Band Horizontal Live EQ Sliders */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* LOW BAND */}
-              <div className="bg-[#151714] border border-[#222420] rounded-lg p-2.5 space-y-1.5">
+              <div className="bg-[#151714] border border-[#222420] rounded-sm p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-[#10B981] font-semibold">LOW SHELF · 120 Hz</span>
                   <span className="text-[#F2F2EE] font-bold tabular-nums">
@@ -900,7 +900,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               </div>
 
               {/* MID BAND */}
-              <div className="bg-[#151714] border border-[#222420] rounded-lg p-2.5 space-y-1.5">
+              <div className="bg-[#151714] border border-[#222420] rounded-sm p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-[#3B82F6] font-semibold">MID BELL · 1.2 kHz</span>
                   <span className="text-[#F2F2EE] font-bold tabular-nums">
@@ -923,7 +923,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               </div>
 
               {/* HIGH BAND */}
-              <div className="bg-[#151714] border border-[#222420] rounded-lg p-2.5 space-y-1.5">
+              <div className="bg-[#151714] border border-[#222420] rounded-sm p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-[#EC4899] font-semibold">HIGH SHELF · 8.5 kHz</span>
                   <span className="text-[#F2F2EE] font-bold tabular-nums">
@@ -952,13 +952,13 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       {/* Lower Row: Vectorscope, Loudness Stats & Phase Correlation */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {/* Vectorscope / Goniometer */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 sm:p-5 space-y-3 flex flex-col items-center shadow-lg">
+        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-3 flex flex-col items-center shadow-lg">
           <div className="w-full flex items-center justify-between text-xs font-mono">
             <span className="text-[#F2F2EE] uppercase font-semibold">STEREO VECTORSCOPE</span>
             <span className="text-[#B7F000]">+0.94 Corr</span>
           </div>
 
-          <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-lg overflow-hidden border border-[#222420] bg-[#090A08]">
+          <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-sm overflow-hidden border border-[#222420] bg-[#090A08]">
             <canvas ref={phaseCanvasRef} width={192} height={192} className="w-full h-full block" />
           </div>
 
@@ -969,7 +969,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         </div>
 
         {/* EBU R128 Compliance */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 sm:p-5 space-y-4 shadow-lg">
+        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-4 shadow-lg">
           <div className="text-xs font-semibold font-mono text-[#F2F2EE] uppercase">
             EBU R128 LOUDNESS TELEMETRY
           </div>
@@ -1007,7 +1007,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         </div>
 
         {/* Dynamic Crest & DSP Architecture */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 sm:p-5 space-y-4 shadow-lg">
+        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-4 shadow-lg">
           <div className="text-xs font-semibold font-mono text-[#F2F2EE] uppercase">
             ENGINE PURITY &amp; ARCHITECTURE
           </div>

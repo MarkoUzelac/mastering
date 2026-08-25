@@ -53,7 +53,7 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
       {/* 1. GLOBAL CONTROLS */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-4 flex flex-col justify-between shadow-sm">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-4 flex flex-col justify-between shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE] flex items-center gap-1.5">
             <Sliders className="w-3.5 h-3.5 text-[#B7F000]" />
@@ -95,13 +95,13 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
 
         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#1E232B] mt-2">
           {/* Oversampling Selector */}
-          <div className="flex items-center justify-between bg-[#151714] border border-[#222420] rounded-lg px-2 py-1.5">
+          <div className="flex items-center justify-between bg-[#151714] border border-[#222420] rounded-sm px-2 py-1.5">
             <span className="text-[11px] text-[#A5A69F] font-medium">Oversample</span>
             <span className="text-xs font-mono font-semibold text-[#B7F000]">4x Ultra</span>
           </div>
 
           {/* Dither Toggle */}
-          <div className="flex items-center justify-between px-2 py-1.5 rounded-lg border text-xs font-medium bg-[#1C162E] text-[#C7FF18] border-[#B7F000]/50 shadow-sm">
+          <div className="flex items-center justify-between px-2 py-1.5 rounded-sm border text-xs font-medium bg-[#1C162E] text-[#C7FF18] border-[#B7F000]/50 shadow-sm">
             <span className="text-[11px]">Dither TPDF</span>
             <span className="font-mono font-semibold text-[11px]">On</span>
           </div>
@@ -109,7 +109,7 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
       </div>
 
       {/* 2. PRESETS */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-4 flex flex-col justify-between shadow-sm">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-4 flex flex-col justify-between shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE] flex items-center gap-1.5">
             <Bookmark className="w-3.5 h-3.5 text-[#B7F000]" />
@@ -133,7 +133,7 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
           </div>
         </div>
 
-        <div className="bg-[#08090C] border border-[#1E232B] rounded-lg p-2.5 my-auto">
+        <div className="bg-[#08090C] border border-[#1E232B] rounded-sm p-2.5 my-auto">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#F2F2EE]">
               {currentPreset?.name || 'Modern Streaming Master'}
@@ -150,14 +150,14 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
 
         <button
           onClick={onOpenFullPresets}
-          className="w-full py-1.5 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer mt-2"
+          className="w-full py-1.5 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer mt-2"
         >
           Browse Presets
         </button>
       </div>
 
       {/* 3. HISTORY */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-4 flex flex-col justify-between shadow-sm">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-4 flex flex-col justify-between shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE] flex items-center gap-1.5">
             <History className="w-3.5 h-3.5 text-[#B7F000]" />
@@ -188,7 +188,7 @@ export const BottomCards: React.FC<BottomCardsProps> = ({
 
         <button
           onClick={onOpenFullHistory}
-          className="w-full py-1.5 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer mt-2"
+          className="w-full py-1.5 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer mt-2"
         >
           View Full History
         </button>

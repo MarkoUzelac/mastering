@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Sparkles,
-  ChevronDown,
-  Check,
-  Zap,
-  Settings2,
-  Disc3,
-  Layers,
-  Flame,
-  Sliders,
-  Filter,
-} from 'lucide-react';
+  IconSparkles as Sparkles,
+  IconChevronDown as ChevronDown,
+  IconCheck as Check,
+  IconZap as Zap,
+  IconSettings2 as Settings2,
+  IconDisc3 as Disc3,
+  IconLayers as Layers,
+  IconFlame as Flame,
+  IconSliders as Sliders,
+  IconFilter as Filter,
+} from './Icons';
 import { MasteringPreset } from '../types';
 import { ProBadge } from './ProBadge';
 import { FeatureGates } from '../billing/feature-gates';
@@ -119,7 +119,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
     : presets.filter((p) => p.category === selectedFooterCategory);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3 px-5 bg-[#0E1013] border border-[#222420] rounded-xl shadow-lg relative">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3 px-5 bg-[#0E1013] border border-[#222420] rounded-sm shadow-lg relative">
       {/* Left: Mastering Profile Selector with Categorization */}
       <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
         <span className="text-[10px] font-mono font-medium tracking-widest text-[#A5A69F] uppercase whitespace-nowrap hidden md:inline">
@@ -131,7 +131,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
             id="footer-preset-selector-btn"
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] hover:border-[#3A4048] rounded-lg text-xs text-[#F2F2EE] font-medium transition cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] hover:border-[#3A4048] rounded-sm text-xs text-[#F2F2EE] font-medium transition cursor-pointer"
           >
             {activePreset && getCategoryIcon(activePreset.category)}
             <span className="max-w-[150px] sm:max-w-[200px] truncate">
@@ -152,7 +152,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
 
           {/* Categorized Preset Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute bottom-full mb-2 left-0 w-80 sm:w-96 bg-[#151714] border border-[#222420] rounded-xl shadow-2xl z-40 overflow-hidden">
+            <div className="absolute bottom-full mb-2 left-0 w-80 sm:w-96 bg-[#151714] border border-[#222420] rounded-sm shadow-2xl z-40 overflow-hidden">
               {/* Category Filter Tabs Header */}
               <div className="bg-[#0A0C0E] border-b border-[#222420] p-2 space-y-1.5">
                 <div className="flex items-center justify-between px-1">
@@ -199,7 +199,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
                       key={preset.id}
                       type="button"
                       onClick={() => handlePresetSelect(preset)}
-                      className={`w-full text-left px-3 py-2 text-xs rounded-lg flex items-center justify-between transition cursor-pointer border ${
+                      className={`w-full text-left px-3 py-2 text-xs rounded-sm flex items-center justify-between transition cursor-pointer border ${
                         isSelected
                           ? 'bg-[#1C170E] text-[#B7F000] font-semibold border-[#B7F000]/40'
                           : 'text-[#F2F2EE] hover:bg-[#1B1F24] border-transparent hover:border-[#222420]'
@@ -245,7 +245,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
           id="hero-master-render-btn"
           onClick={handleMasterClick}
           disabled={isProcessing}
-          className={`w-full sm:w-auto px-8 py-2.5 rounded-lg text-xs sm:text-sm font-semibold tracking-wide font-mono transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 ${
+          className={`w-full sm:w-auto px-8 py-2.5 rounded-sm text-xs sm:text-sm font-semibold tracking-wide font-mono transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 ${
             isProcessing
               ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40 animate-pulse'
               : masteredRecently
@@ -276,7 +276,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
       <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
         {/* A/B Quick Toggle Buttons */}
         {onToggleBypass && (
-          <div className="flex items-center p-0.5 bg-[#151714] border border-[#222420] rounded-lg">
+          <div className="flex items-center p-0.5 bg-[#151714] border border-[#222420] rounded-sm">
             <button
               id="ab-bypass-btn-a"
               onClick={() => {
@@ -313,7 +313,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
           <button
             id="footer-parity-shortcut-btn"
             onClick={onOpenParityModal}
-            className="p-2 text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] rounded-lg transition cursor-pointer"
+            className="p-2 text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] rounded-sm transition cursor-pointer"
             title="Open DSP Parity Verification & Diagnostic Suite"
           >
             <Settings2 className="w-4 h-4" />

@@ -172,7 +172,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
         <button
           type="button"
           onClick={onTryMastering}
-          className="px-4 py-2 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 shrink-0 self-start md:self-auto"
+          className="px-4 py-2 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-sm transition-colors flex items-center gap-2 shrink-0 self-start md:self-auto"
         >
           Try MasteringLocal Free
           <ArrowRight className="w-3.5 h-3.5" />
@@ -190,7 +190,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
               key={slug}
               type="button"
               onClick={() => setActiveSlug(slug)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${
+              className={`px-3.5 py-2 rounded-sm text-xs font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${
                 isActive
                   ? 'bg-[#B7F000] text-[#0E1013] font-semibold'
                   : 'bg-[#14171D] hover:bg-[#1B2028] text-[#8E95A2] hover:text-[#F2F2EE] border border-[#242830]'
@@ -204,7 +204,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
       </div>
 
       {/* Active Guide Content */}
-      <article className="p-6 md:p-8 rounded-2xl bg-[#121418] border border-[#242830] space-y-6">
+      <article className="p-6 md:p-8 rounded-sm bg-[#121418] border border-[#242830] space-y-6">
         <div className="space-y-2 border-b border-[#242830] pb-6">
           <div className="flex items-center gap-3 text-xs text-[#8E95A2]">
             <span className="text-[#B7F000] font-semibold">{guide.category}</span>
@@ -224,7 +224,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
               ))}
 
               {section.tips && section.tips.length > 0 && (
-                <div className="p-4 rounded-xl bg-[#171A20] border border-[#2A313D] space-y-1.5 mt-3">
+                <div className="p-4 rounded-sm bg-[#171A20] border border-[#2A313D] space-y-1.5 mt-3">
                   <div className="text-xs font-semibold text-[#B7F000]">Engineering Pro-Tip:</div>
                   <ul className="list-disc list-inside space-y-1 text-xs text-[#E1E4EA] pl-1">
                     {section.tips.map((tip, tIdx) => (
@@ -238,7 +238,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
         </div>
 
         {/* CTA banner inside guide */}
-        <div className="p-5 rounded-xl bg-gradient-to-r from-[#171B22] to-[#121418] border border-[#2E3542] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-8">
+        <div className="p-5 rounded-sm bg-gradient-to-r from-[#171B22] to-[#121418] border border-[#2E3542] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-8">
           <div>
             <div className="text-sm font-bold text-[#F2F2EE]">Ready to master your tracks?</div>
             <div className="text-xs text-[#8E95A2]">100% browser-based. Zero audio uploads. Instant WAV download.</div>
@@ -246,7 +246,7 @@ export const LearnGuidesView: React.FC<LearnGuidesViewProps> = ({
           <button
             type="button"
             onClick={onTryMastering}
-            className="px-4 py-2 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] text-xs font-semibold rounded-sm transition-colors flex items-center gap-2"
           >
             Start Free Master
             <ArrowRight className="w-3.5 h-3.5" />

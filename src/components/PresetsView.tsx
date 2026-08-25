@@ -133,7 +133,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search profiles or tone..."
-              className="w-full pl-9 pr-8 py-2 bg-[#0E1013] border border-[#222420] focus:border-[#B7F000] rounded-lg text-xs text-[#F2F2EE] placeholder-[#686A63] focus:outline-none transition-colors"
+              className="w-full pl-9 pr-8 py-2 bg-[#0E1013] border border-[#222420] focus:border-[#B7F000] rounded-sm text-xs text-[#F2F2EE] placeholder-[#686A63] focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
@@ -161,7 +161,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
       </div>
 
       {/* Category Navigation Filter Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0E1013] border border-[#222420] p-2 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0E1013] border border-[#222420] p-2 rounded-sm">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
           {PRESET_CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;
@@ -173,7 +173,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                 id={`filter-tab-${cat.id.toLowerCase()}`}
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-sm text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
                   isSelected
                     ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40 font-semibold shadow-sm'
                     : 'bg-[#151714] text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#1B1F24] border border-transparent'
@@ -203,7 +203,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
 
       {/* Preset Cards Grid or Empty State */}
       {filteredPresets.length === 0 ? (
-        <div className="py-16 text-center bg-[#0E1013] border border-[#222420] rounded-xl p-8 space-y-3">
+        <div className="py-16 text-center bg-[#0E1013] border border-[#222420] rounded-sm p-8 space-y-3">
           <div className="w-10 h-10 rounded-full bg-[#151714] border border-[#222420] text-[#A5A69F] mx-auto flex items-center justify-center">
             <Filter className="w-5 h-5" />
           </div>
@@ -218,7 +218,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedCategory('All')}
-                className="px-3.5 py-1.5 rounded-lg bg-[#151714] hover:bg-[#222420] text-xs font-mono text-[#B7F000] border border-[#222420] transition-colors"
+                className="px-3.5 py-1.5 rounded-sm bg-[#151714] hover:bg-[#222420] text-xs font-mono text-[#B7F000] border border-[#222420] transition-colors"
               >
                 Show All Categories
               </button>
@@ -227,7 +227,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="px-3.5 py-1.5 rounded-lg bg-[#151714] hover:bg-[#222420] text-xs font-mono text-[#F2F2EE] border border-[#222420] transition-colors"
+                className="px-3.5 py-1.5 rounded-sm bg-[#151714] hover:bg-[#222420] text-xs font-mono text-[#F2F2EE] border border-[#222420] transition-colors"
               >
                 Clear Search Query
               </button>
@@ -245,7 +245,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               <div
                 key={preset.id}
                 id={`preset-card-${preset.id}`}
-                className={`bg-[#0E1013] border rounded-xl p-5 flex flex-col justify-between transition-all relative ${
+                className={`bg-[#0E1013] border rounded-sm p-5 flex flex-col justify-between transition-all relative ${
                   isSelected
                     ? 'border-[#B7F000] shadow-[0_0_20px_rgba(214,175,98,0.15)] bg-gradient-to-b from-[#151714] to-[#0E1013]'
                     : 'border-[#222420] hover:border-[#3A4048]'
@@ -281,7 +281,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                   </p>
 
                   {/* Target Telemetry Pills */}
-                  <div className="grid grid-cols-3 gap-2 bg-[#090A08] border border-[#222420] rounded-lg p-2.5 text-center font-mono text-xs mb-4">
+                  <div className="grid grid-cols-3 gap-2 bg-[#090A08] border border-[#222420] rounded-sm p-2.5 text-center font-mono text-xs mb-4">
                     <div>
                       <span className="text-[9px] text-[#686A63] block">TARGET</span>
                       <span className="text-[#F2F2EE] font-semibold">
@@ -305,7 +305,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                 <button
                   id={`preset-apply-btn-${preset.id}`}
                   onClick={() => handleApply(preset)}
-                  className={`w-full py-2 px-3 text-xs font-semibold font-mono rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`w-full py-2 px-3 text-xs font-semibold font-mono rounded-sm transition flex items-center justify-center gap-1.5 cursor-pointer ${
                     isSelected
                       ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40'
                       : isLocked

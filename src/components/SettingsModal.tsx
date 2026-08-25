@@ -40,7 +40,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-[#030a05]/85 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#07170c] border border-[#0d381c] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden crt-overlay">
+      <div className="bg-[#07170c] border border-[#0d381c] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden crt-overlay">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#0d381c] bg-[#030d06]/80">
           <div className="flex items-center gap-2.5">
@@ -51,7 +51,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-[#00aa44] hover:text-[#00ff66] p-1 rounded-lg hover:bg-[#0f4020] transition cursor-pointer"
+            className="text-[#00aa44] hover:text-[#00ff66] p-1 rounded-sm hover:bg-[#0f4020] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -70,7 +70,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <button
                   key={t.id}
                   onClick={() => onThemeChange(t.id)}
-                  className={`w-full p-3.5 rounded-xl border text-left flex items-start gap-3 transition cursor-pointer ${
+                  className={`w-full p-3.5 rounded-sm border text-left flex items-start gap-3 transition cursor-pointer ${
                     currentTheme === t.id
                       ? 'bg-[#0f4020]/60 border-[#00ff66] text-[#e2fce9] shadow-md shadow-[#00ff66]/10'
                       : 'bg-[#030d06] border-[#0d381c] text-[#00aa44] hover:bg-[#071c0e]'
@@ -94,7 +94,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
 
           {/* Audio Engine Specs */}
-          <div className="bg-[#030d06] p-3.5 rounded-xl border border-[#0f4020] text-xs font-mono space-y-1.5 text-[#00cc55]">
+          <div className="bg-[#030d06] p-3.5 rounded-sm border border-[#0f4020] text-xs font-mono space-y-1.5 text-[#00cc55]">
             <div className="font-bold text-[#00ff66] flex items-center gap-1.5 mb-1">
               <Cpu className="w-3.5 h-3.5" />
               DSP Architecture Specifications:
@@ -109,7 +109,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex justify-end pt-2 border-t border-[#0d381c]">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-xs font-bold bg-[#00ff66] hover:bg-[#00dd55] text-[#030d06] rounded-xl shadow-lg shadow-[#00ff66]/20 transition cursor-pointer"
+              className="px-4 py-2 text-xs font-bold bg-[#00ff66] hover:bg-[#00dd55] text-[#030d06] rounded-sm shadow-lg shadow-[#00ff66]/20 transition cursor-pointer"
             >
               Apply & Close
             </button>

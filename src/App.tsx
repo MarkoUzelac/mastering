@@ -515,35 +515,37 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container Layout */}
-      <div className="flex-1 flex w-full max-w-[1920px] mx-auto">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-12 w-full max-w-[1600px] mx-auto">
         {/* Left Sidebar */}
-        <Sidebar
-          activeItem={activeTab}
-          onSelectItem={(item) => {
-            if (item === 'stems') {
-              setIsStemsModalOpen(true);
-            } else if (item === 'loudness') {
-              setIsLoudnessModalOpen(true);
-            } else if (item === 'history') {
-              setIsHistoryModalOpen(true);
-            } else if (item === 'settings') {
-              handleOpenAccount('subscription');
-            } else {
-              setActiveTab(item);
-            }
-          }}
-          onUpgradeClick={() => setIsPricingModalOpen(true)}
-        />
+        <div className="hidden md:flex md:col-span-3 xl:col-span-2">
+          <Sidebar
+            activeItem={activeTab}
+            onSelectItem={(item) => {
+              if (item === 'stems') {
+                setIsStemsModalOpen(true);
+              } else if (item === 'loudness') {
+                setIsLoudnessModalOpen(true);
+              } else if (item === 'history') {
+                setIsHistoryModalOpen(true);
+              } else if (item === 'settings') {
+                handleOpenAccount('subscription');
+              } else {
+                setActiveTab(item);
+              }
+            }}
+            onUpgradeClick={() => setIsPricingModalOpen(true)}
+          />
+        </div>
 
         {/* Center Workspace & Right Column */}
-        <main className="flex-1 min-w-0 p-3 sm:p-4 lg:p-5 pb-24 md:pb-5 overflow-y-auto">
+        <main className="md:col-span-9 xl:col-span-10 min-w-0 p-4 lg:p-8 lg:px-12 pb-24 md:pb-12 overflow-y-auto">
           {/* Back button for legal pages */}
           {isLegalView && (
             <div className="max-w-4xl mx-auto mb-4">
               <button
                 type="button"
                 onClick={() => setActiveTab('mastering')}
-                className="px-3.5 py-1.5 rounded-lg bg-[#14171D] hover:bg-[#1C2028] text-xs font-mono text-[#B7F000] border border-[#242830] transition-colors flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-1.5 rounded-sm bg-[#14171D] hover:bg-[#1C2028] text-xs font-mono text-[#B7F000] border border-[#242830] transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Return to Mastering Workstation

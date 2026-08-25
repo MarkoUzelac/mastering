@@ -57,7 +57,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   };
 
   return (
-    <div className="bg-[#0A0C0F] border border-[#222420] rounded-xl p-3 sm:p-3.5 shadow-sm space-y-2.5">
+    <div className="bg-[#0A0C0F] border border-[#222420] rounded-sm p-3 sm:p-3.5 shadow-sm space-y-2.5">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -116,7 +116,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
               soundHaptics.playButtonTap();
               fileInputRef.current?.click();
             }}
-            className="flex items-center gap-1.5 px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition cursor-pointer active:scale-95"
           >
             <Upload className="w-3.5 h-3.5 text-[#B7F000]" />
             <span>Import New</span>
@@ -129,14 +129,14 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
                 soundHaptics.playButtonTap();
                 setDropdownOpen(!dropdownOpen);
               }}
-              className="p-2 sm:p-1.5 min-w-[40px] min-h-[40px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center text-xs text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition cursor-pointer active:scale-95"
+              className="p-2 sm:p-1.5 min-w-[40px] min-h-[40px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center text-xs text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition cursor-pointer active:scale-95"
               title="Select Reference Demos"
             >
               <ChevronDown className="w-4 h-4" />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-60 bg-[#0D0E0C] border border-[#222420] rounded-xl shadow-2xl p-1.5 z-40 space-y-1">
+              <div className="absolute right-0 mt-1.5 w-60 bg-[#0D0E0C] border border-[#222420] rounded-sm shadow-2xl p-1.5 z-40 space-y-1">
                 <div className="px-2 py-1 text-[10px] font-mono text-[#686A63] uppercase tracking-wider">
                   Reference Audio Tracks
                 </div>
@@ -146,7 +146,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
                     onSelectDemo('synthwave');
                     setDropdownOpen(false);
                   }}
-                  className="w-full text-left p-2 text-xs text-[#F2F2EE] hover:bg-[#151714] rounded-lg flex items-center gap-2 transition"
+                  className="w-full text-left p-2 text-xs text-[#F2F2EE] hover:bg-[#151714] rounded-sm flex items-center gap-2 transition"
                 >
                   <Music2 className="w-4 h-4 text-[#B7F000]" />
                   <div>
@@ -160,7 +160,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
                     onSelectDemo('acoustic');
                     setDropdownOpen(false);
                   }}
-                  className="w-full text-left p-2 text-xs text-[#F2F2EE] hover:bg-[#151714] rounded-lg flex items-center gap-2 transition"
+                  className="w-full text-left p-2 text-xs text-[#F2F2EE] hover:bg-[#151714] rounded-sm flex items-center gap-2 transition"
                 >
                   <FileAudio className="w-4 h-4 text-[#B7F000]" />
                   <div>
@@ -179,7 +179,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
               onTriggerMaster();
             }}
             disabled={isMastering}
-            className={`flex items-center gap-2 px-4 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] text-xs font-semibold rounded-lg text-\[#F2F2EE\] transition shadow-[0_0_16px_rgba(139,92,246,0.45)] cursor-pointer active:scale-95 select-none ${
+            className={`flex items-center gap-2 px-4 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] text-xs font-semibold rounded-sm text-\[#F2F2EE\] transition shadow-[0_0_16px_rgba(139,92,246,0.45)] cursor-pointer active:scale-95 select-none ${
               isMastering
                 ? 'bg-[#8CA800] animate-pulse cursor-wait'
                 : masterStage === 'MASTER READY'

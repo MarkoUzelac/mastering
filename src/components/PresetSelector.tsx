@@ -47,7 +47,7 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
   };
 
   return (
-    <div className="bg-[#07170c] rounded-xl p-5 border border-[#0d381c] shadow-lg crt-overlay">
+    <div className="bg-[#07170c] rounded-sm p-5 border border-[#0d381c] shadow-lg crt-overlay">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#0d381c] pb-3 mb-4">
         <div className="flex items-center gap-2">
           <Bookmark className="w-4 h-4 text-[#00ff66]" />
@@ -62,7 +62,7 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-2.5 py-1 text-xs font-mono rounded-lg transition cursor-pointer ${
+              className={`px-2.5 py-1 text-xs font-mono rounded-sm transition cursor-pointer ${
                 selectedCategory === cat.id
                   ? 'bg-[#00ff66] text-[#030d06] font-bold shadow-sm shadow-[#00ff66]/30'
                   : 'bg-[#030d06] text-[#00aa44] hover:text-[#00ff66] border border-[#0f4020]'
@@ -85,7 +85,7 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
               key={preset.id}
               onClick={() => handleClickPreset(preset)}
               disabled={isBypassed}
-              className={`p-3.5 rounded-xl border text-left transition relative flex flex-col justify-between cursor-pointer ${
+              className={`p-3.5 rounded-sm border text-left transition relative flex flex-col justify-between cursor-pointer ${
                 active
                   ? 'bg-[#0f4020]/70 border-[#00ff66] text-\[#F2F2EE\] shadow-md shadow-[#00ff66]/15'
                   : isLocked

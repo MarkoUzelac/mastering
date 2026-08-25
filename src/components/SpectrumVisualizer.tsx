@@ -138,7 +138,7 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
   }, [isPlaying, isBypassed, viewMode]);
 
   return (
-    <div className="bg-[#07170c] rounded-xl p-4 border border-[#0d381c] shadow-lg crt-overlay">
+    <div className="bg-[#07170c] rounded-sm p-4 border border-[#0d381c] shadow-lg crt-overlay">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold font-mono uppercase tracking-wider text-[#00ff66] flex items-center gap-1.5 glow-phosphor">
@@ -148,7 +148,7 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
         </div>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center bg-[#030d06] p-0.5 rounded-lg border border-[#0f4020] text-[11px] font-mono">
+        <div className="flex items-center bg-[#030d06] p-0.5 rounded-sm border border-[#0f4020] text-[11px] font-mono">
           <button
             onClick={() => setViewMode('spectrum')}
             className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition cursor-pointer font-semibold ${
@@ -174,7 +174,7 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
         </div>
       </div>
 
-      <div className="relative w-full aspect-[800/180] select-none rounded-lg overflow-hidden border border-[#0f4020]">
+      <div className="relative w-full aspect-[800/180] select-none rounded-sm overflow-hidden border border-[#0f4020]">
         <canvas
           ref={canvasRef}
           width={800}

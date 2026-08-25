@@ -2,74 +2,27 @@
 
 @layer base {
   :root {
-    --bg-base: #08090B;
-    --bg-surface: #0E1013;
-    --bg-elevated: #14171B;
-    --bg-hover: #1B1F24;
-    --border-subtle: #24282D;
-    --border-medium: #2F353C;
-    --border-accent: rgba(214, 175, 98, 0.35);
+    --bg-primary: #090A08;
+    --bg-secondary: #0D0E0C;
+    --bg-elevated: #151714;
+    
+    --border-subtle: #222420;
+    
+    --text-primary: #F2F2EE;
+    --text-secondary: #A5A69F;
+    --text-tertiary: #686A63;
+    
+    --accent-lime: #B7F000;
+    --accent-lime-hover: #C7FF18;
 
-    --text-primary: #F4F3EF;
-    --text-secondary: #9A9EA6;
-    --text-muted: #646A73;
-
-    --accent-gold: #D6AF62;
-    --accent-gold-bright: #E7C77F;
-    --accent-gold-dim: #A6833D;
-    --accent-gold-bg: rgba(214, 175, 98, 0.08);
-
-    --status-success: #6FCF97;
-    --status-warning: #E5B85C;
-    --status-error: #E56B6B;
-  }
-
-  [data-studio-skin="titanium-slate"] {
-    --bg-base: #0B111A;
-    --bg-surface: #111A24;
-    --bg-elevated: #182330;
-    --bg-hover: #202F40;
-    --border-subtle: #1E2D3D;
-    --border-medium: #2A3E54;
-    --border-accent: rgba(56, 189, 248, 0.4);
-    --accent-gold: #38BDF8;
-    --accent-gold-bright: #7DD3FC;
-    --accent-gold-dim: #0284C7;
-    --accent-gold-bg: rgba(56, 189, 248, 0.08);
-  }
-
-  [data-studio-skin="cyber-matrix"] {
-    --bg-base: #050E07;
-    --bg-surface: #091A0D;
-    --bg-elevated: #0F2815;
-    --bg-hover: #163B1F;
-    --border-subtle: #12381C;
-    --border-medium: #1C542B;
-    --border-accent: rgba(0, 255, 102, 0.4);
-    --accent-gold: #00FF66;
-    --accent-gold-bright: #55FF99;
-    --accent-gold-dim: #00AA44;
-    --accent-gold-bg: rgba(0, 255, 102, 0.08);
-  }
-
-  [data-studio-skin="midnight-studio"] {
-    --bg-base: #070709;
-    --bg-surface: #0F0F12;
-    --bg-elevated: #17171C;
-    --bg-hover: #22222A;
-    --border-subtle: #202026;
-    --border-medium: #2E2E38;
-    --border-accent: rgba(226, 232, 240, 0.4);
-    --accent-gold: #E2E8F0;
-    --accent-gold-bright: #FFFFFF;
-    --accent-gold-dim: #94A3B8;
-    --accent-gold-bg: rgba(226, 232, 240, 0.08);
+    --radius-sm: 4px;
+    --radius-xs: 2px;
   }
 
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg-base);
-    color: #F4F3EF;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     overflow-x: hidden;
     letter-spacing: -0.01em;
   }
@@ -93,16 +46,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #08090B;
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #24282D;
-  border-radius: 2px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-xs);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3A4048;
+  background: var(--text-tertiary);
 }
 
 /* Premium Audio Sliders (Horizontal) */
@@ -120,27 +73,27 @@ input[type=range]::-webkit-slider-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50%;
-  background: #F4F3EF;
+  background: var(--text-primary);
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(214, 175, 98, 0.4);
-  border: 2px solid #0E1013;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--bg-secondary);
   margin-top: -5px;
   transition: transform 0.1s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 input[type=range]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
-  background: #E7C77F;
-  box-shadow: 0 2px 8px rgba(214, 175, 98, 0.6), 0 0 0 3px rgba(214, 175, 98, 0.6);
+  background: var(--accent-lime);
+  box-shadow: 0 0 8px rgba(183, 240, 0, 0.4);
 }
 
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
   cursor: pointer;
-  background: #1E2228;
-  border-radius: 2px;
-  border: 1px solid #282E36;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
 }
 
 /* Vertical range slider for EQ faders */
@@ -157,30 +110,36 @@ input[type=range].fader-vertical::-webkit-slider-thumb {
   margin-top: 0;
   width: 18px;
   height: 10px;
-  border-radius: 2px;
-  background: #F4F3EF;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.6), 0 0 0 1px rgba(214, 175, 98, 0.5);
-  border: 1px solid #08090B;
+  border-radius: var(--radius-xs);
+  background: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  border: 1px solid var(--bg-primary);
 }
 
 input[type=range].fader-vertical::-webkit-slider-thumb:hover {
-  background: #E7C77F;
-  box-shadow: 0 0 10px rgba(214, 175, 98, 0.8);
+  background: var(--accent-lime);
+  box-shadow: 0 0 10px rgba(183, 240, 0, 0.6);
 }
 
 input[type=range].fader-vertical::-webkit-slider-runnable-track {
   width: 4px;
   height: 100%;
-  background: #171A1F;
-  border: 1px solid #24282D;
-  border-radius: 2px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
 }
 
-/* Subtle Accent Glow */
-.gold-glow {
-  box-shadow: 0 0 20px rgba(214, 175, 98, 0.15);
+/* Signature Outline Typography */
+.text-outline {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px var(--text-tertiary);
 }
 
-.gold-border-glow {
-  box-shadow: 0 0 0 1px rgba(214, 175, 98, 0.4), 0 0 15px rgba(214, 175, 98, 0.1);
+.text-outline:hover {
+  -webkit-text-stroke: 1px var(--text-secondary);
+}
+
+.text-outline-active {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px var(--accent-lime);
 }

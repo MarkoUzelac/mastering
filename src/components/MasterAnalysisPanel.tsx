@@ -40,7 +40,7 @@ export const MasterAnalysisPanel: React.FC<MasterAnalysisPanelProps> = ({
   const stereoWidth = '94%';
 
   return (
-    <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 flex flex-col justify-between">
+    <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 flex flex-col justify-between">
       {/* Top Header */}
       <div className="flex items-center justify-between border-b border-[#222420] pb-2.5 mb-3">
         <span className="text-[10px] font-mono font-medium tracking-widest text-[#A5A69F] uppercase">
@@ -110,7 +110,7 @@ export const MasterAnalysisPanel: React.FC<MasterAnalysisPanelProps> = ({
         </div>
 
         {/* Vertical Precision Dual Meters (LUFS & dBTP) */}
-        <div className="flex items-center gap-3 bg-[#090A08] border border-[#222420] rounded-lg p-3 shrink-0 self-center lg:self-stretch">
+        <div className="flex items-center gap-3 bg-[#090A08] border border-[#222420] rounded-sm p-3 shrink-0 self-center lg:self-stretch">
           {/* Scale Labels */}
           <div className="flex flex-col justify-between h-28 text-[9px] font-mono text-[#686A63] text-right pr-1 select-none">
             <span>0</span>

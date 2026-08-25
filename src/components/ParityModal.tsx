@@ -26,11 +26,11 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
 
   return (
     <div className="fixed inset-0 z-50 bg-[#090A08]/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[#0E1013] border border-[#222420] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-[#0E1013] border border-[#222420] rounded-sm w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
+            <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
@@ -44,7 +44,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
           </div>
           <button
             onClick={onClose}
-            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-lg hover:bg-[#151714] transition cursor-pointer"
+            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-sm hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -90,7 +90,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
         {/* Content Body */}
         <div className="p-6 space-y-4 overflow-y-auto flex-1 text-xs font-mono">
           {/* Baseline info note */}
-          <div className="bg-[#090A08] p-3 rounded-xl border border-[#222420] space-y-1 text-[11px] text-[#A5A69F]">
+          <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1 text-[11px] text-[#A5A69F]">
             <div className="flex items-center gap-2">
               <FileCode2 className="w-4 h-4 text-[#B7F000]" />
               <strong className="text-[#F2F2EE]">Numerical Baseline:</strong>
@@ -106,7 +106,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
               {/* Summary card */}
               {result && (
                 <div
-                  className={`p-4 rounded-xl border ${
+                  className={`p-4 rounded-sm border ${
                     result.passed
                       ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
                       : 'bg-[#1C1012] border-[#E56B6B] text-[#E56B6B]'
@@ -161,7 +161,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                 ]).map((gate) => (
                   <div
                     key={gate.id}
-                    className={`p-3 rounded-lg border flex items-center justify-between gap-3 ${
+                    className={`p-3 rounded-sm border flex items-center justify-between gap-3 ${
                       result
                         ? gate.passed
                           ? 'bg-[#090A08] border-[#222420]'
@@ -209,7 +209,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
 
           {activeTab === 'diagnostics' && (
             <div className="space-y-3 text-[11px] text-[#A5A69F]">
-              <div className="bg-[#090A08] p-3 rounded-lg border border-[#222420] space-y-1">
+              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1">
                 <span className="font-semibold text-[#F2F2EE] block">Level 1: Coefficient Comparison (Double Precision)</span>
                 <p className="text-[#A5A69F] text-[10px]">
                   Evaluates exact mathematical RBJ LowShelf, Peaking, and HighShelf intermediate terms: A, omega, sine, cosine, alpha, sqrtA, b0, b1, b2, a0, a1, a2 and normalized values against C++ machine epsilon.
@@ -219,7 +219,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                 </div>
               </div>
 
-              <div className="bg-[#090A08] p-3 rounded-lg border border-[#222420] space-y-1">
+              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1">
                 <span className="font-semibold text-[#F2F2EE] block">Level 2: 1024-Sample Dirac Impulse Response</span>
                 <p className="text-[#A5A69F] text-[10px]">
                   Confirms Direct Form II Transposed (DF2T) channel filter state allocation, z1/z2 storage ordering, and zero initial condition symmetry.
@@ -229,7 +229,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                 </div>
               </div>
 
-              <div className="bg-[#090A08] p-3 rounded-lg border border-[#222420] space-y-1">
+              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1">
                 <span className="font-semibold text-[#F2F2EE] block">Level 3: Dynamics Ballistics &amp; Limiter Recovery</span>
                 <p className="text-[#A5A69F] text-[10px]">
                   Evaluates stereo-linked envelope detector, 20ms attack, 240ms release, and hard -1.0 dBFS brickwall ceiling recovery.
@@ -242,7 +242,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
           )}
 
           {activeTab === 'terminal' && (
-            <div className="bg-[#090A08] p-4 rounded-xl border border-[#222420] font-mono text-[11px] space-y-1 text-[#A5A69F]">
+            <div className="bg-[#090A08] p-4 rounded-sm border border-[#222420] font-mono text-[11px] space-y-1 text-[#A5A69F]">
               <div className="text-[#686A63]">$ node tests/production_reference.js</div>
               <div>[INFO] Generating production reference: 100,000 stereo frames @ 48000 Hz</div>
               <div>[INFO] Production JS baseline loaded: src/audio/dsp-core.js</div>
@@ -274,7 +274,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
             id="run-parity-benchmark-btn"
             disabled={isRunning}
             onClick={handleRunCheck}
-            className="flex items-center gap-2 px-5 py-2 text-xs font-mono font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-lg shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2 text-xs font-mono font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-sm shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
           >
             <PlayCircle className="w-4 h-4" />
             <span>{isRunning ? 'RUNNING BENCHMARK...' : 'RUN PARITY BENCHMARK (100k)'}</span>

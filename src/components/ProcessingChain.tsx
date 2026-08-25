@@ -95,7 +95,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 relative">
       {/* 1. EQUALIZER MODULE (CYAN) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-sm p-3.5 transition-all shadow-sm ${
           bypasses.eq || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#06B6D4]/40'
         }`}
       >
@@ -117,7 +117,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         </div>
 
         {/* Mini Frequency Curve Graph */}
-        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-lg relative overflow-hidden mb-3.5 flex items-center justify-center">
+        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-sm relative overflow-hidden mb-3.5 flex items-center justify-center">
           <svg className="w-full h-full" viewBox="0 0 160 64" preserveAspectRatio="none">
             <line x1="0" y1="32" x2="160" y2="32" stroke="#1A2028" strokeWidth="1" strokeDasharray="3 3" />
             <line x1="45" y1="0" x2="45" y2="64" stroke="#141920" strokeWidth="1" />
@@ -196,7 +196,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('eq')}
-          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -204,7 +204,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 2. DYNAMICS MODULE (GREEN) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-sm p-3.5 transition-all shadow-sm ${
           bypasses.dynamics || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#10B981]/40'
         }`}
       >
@@ -226,7 +226,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         </div>
 
         {/* Mini Compression Transfer Curve Graph */}
-        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-lg relative overflow-hidden mb-3.5 flex items-center justify-center">
+        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-sm relative overflow-hidden mb-3.5 flex items-center justify-center">
           <svg className="w-full h-full" viewBox="0 0 160 64" preserveAspectRatio="none">
             <line x1="10" y1="54" x2="150" y2="10" stroke="#1A2028" strokeWidth="1" strokeDasharray="2 2" />
 
@@ -314,7 +314,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('dynamics')}
-          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -322,7 +322,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 3. SATURATION MODULE (AMBER) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-sm p-3.5 transition-all shadow-sm ${
           bypasses.saturation || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#F59E0B]/40'
         }`}
       >
@@ -344,7 +344,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         </div>
 
         {/* Mini Analog Harmonic Sine Wave Graph */}
-        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-lg relative overflow-hidden mb-3.5 flex items-center justify-center">
+        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-sm relative overflow-hidden mb-3.5 flex items-center justify-center">
           <svg className="w-full h-full" viewBox="0 0 160 64" preserveAspectRatio="none">
             <line x1="0" y1="32" x2="160" y2="32" stroke="#1A2028" strokeWidth="1" strokeDasharray="3 3" />
 
@@ -417,7 +417,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('saturation')}
-          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -425,7 +425,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 4. STEREO MODULE (VIOLET) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-sm p-3.5 transition-all shadow-sm ${
           bypasses.stereo || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#B7F000]/40'
         }`}
       >
@@ -447,7 +447,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         </div>
 
         {/* Mini Stereo Width Vectorscope */}
-        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-lg relative overflow-hidden mb-3.5 flex items-center justify-center">
+        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-sm relative overflow-hidden mb-3.5 flex items-center justify-center">
           <svg className="w-full h-full" viewBox="0 0 160 64" preserveAspectRatio="none">
             <line x1="80" y1="0" x2="80" y2="64" stroke="#1A2028" strokeWidth="1" strokeDasharray="3 3" />
             <line x1="0" y1="32" x2="160" y2="32" stroke="#1A2028" strokeWidth="1" strokeDasharray="3 3" />
@@ -540,7 +540,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('stereo')}
-          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
         >
           Advanced
         </button>
@@ -548,7 +548,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
 
       {/* 5. LIMITER MODULE (RED) */}
       <div
-        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-xl p-3.5 transition-all shadow-sm ${
+        className={`relative flex flex-col justify-between bg-[#0D0E0C] border rounded-sm p-3.5 transition-all shadow-sm ${
           bypasses.limiter || isBypassed ? 'border-[#1E232B] opacity-60' : 'border-[#222420] hover:border-[#EF4444]/40'
         }`}
       >
@@ -570,7 +570,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         </div>
 
         {/* Mini Brickwall Limiter Curve Graph */}
-        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-lg relative overflow-hidden mb-3.5 flex items-center justify-center">
+        <div className="w-full h-16 bg-[#07090C] border border-[#181C22] rounded-sm relative overflow-hidden mb-3.5 flex items-center justify-center">
           <svg className="w-full h-full" viewBox="0 0 160 64" preserveAspectRatio="none">
             <line x1="0" y1="18" x2="160" y2="18" stroke="#EF4444" strokeWidth="1" strokeDasharray="3 3" />
 
@@ -644,7 +644,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({
         {/* Advanced Button */}
         <button
           onClick={() => handleOpenModal('limiter')}
-          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-[11px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
         >
           Advanced
         </button>

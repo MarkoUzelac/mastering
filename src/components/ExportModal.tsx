@@ -100,11 +100,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-[#090A08]/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[#0E1013] border border-[#222420] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in">
+      <div className="bg-[#0E1013] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
+            <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
               <Download className="w-4 h-4" />
             </div>
             <div>
@@ -116,7 +116,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-lg hover:bg-[#151714] transition cursor-pointer"
+            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-sm hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -125,7 +125,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         {/* Content */}
         <div className="p-6 space-y-5 text-xs">
           {/* Source Track details */}
-          <div className="bg-[#090A08] p-3.5 rounded-xl border border-[#222420] flex items-center justify-between gap-3">
+          <div className="bg-[#090A08] p-3.5 rounded-sm border border-[#222420] flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <FileAudio className="w-6 h-6 text-[#B7F000] shrink-0" />
               <div className="min-w-0">
@@ -150,7 +150,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Quota Error Banner */}
           {quotaError && (
-            <div className="p-3 bg-[#1C1012] border border-[#E56B6B]/40 rounded-xl text-[#E56B6B] space-y-2">
+            <div className="p-3 bg-[#1C1012] border border-[#E56B6B]/40 rounded-sm text-[#E56B6B] space-y-2">
               <div className="flex items-center gap-2 font-medium">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>{quotaError}</span>
@@ -158,7 +158,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               {onUpgradeClick && (
                 <button
                   onClick={() => onUpgradeClick('UNLIMITED_EXPORTS')}
-                  className="w-full py-1.5 bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-lg font-semibold text-xs cursor-pointer transition flex items-center justify-center gap-1.5 font-mono"
+                  className="w-full py-1.5 bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-sm font-semibold text-xs cursor-pointer transition flex items-center justify-center gap-1.5 font-mono"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>UPGRADE FOR UNLIMITED EXPORTS</span>
@@ -189,7 +189,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     key={item.depth}
                     onClick={() => handleSelectBitDepth(item.depth)}
                     disabled={isExporting}
-                    className={`p-3 rounded-xl border text-left transition cursor-pointer relative ${
+                    className={`p-3 rounded-sm border text-left transition cursor-pointer relative ${
                       bitDepth === item.depth
                         ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE] shadow-sm'
                         : locked
@@ -209,7 +209,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           </div>
 
           {/* Active Settings Summary */}
-          <div className="bg-[#090A08] p-3 rounded-lg border border-[#222420] text-[11px] font-mono text-[#A5A69F] space-y-1">
+          <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] text-[11px] font-mono text-[#A5A69F] space-y-1">
             <div className="text-[#B7F000] font-semibold text-[10px] uppercase">Active Master Chain:</div>
             <div className="flex justify-between">
               <span>EQ Low / Mid / High:</span>
@@ -248,7 +248,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Success Download Banner */}
           {downloadUrl && (
-            <div className="bg-[#1C170E] p-3.5 rounded-xl border border-[#B7F000] flex items-center justify-between">
+            <div className="bg-[#1C170E] p-3.5 rounded-sm border border-[#B7F000] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-[#6FCF97]" />
                 <span className="text-xs font-semibold text-[#F2F2EE] truncate max-w-[240px]">
@@ -257,7 +257,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               </div>
               <button
                 onClick={handleDownload}
-                className="px-3 py-1.5 bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] text-xs font-semibold rounded-lg transition cursor-pointer font-mono shadow-sm"
+                className="px-3 py-1.5 bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] text-xs font-semibold rounded-sm transition cursor-pointer font-mono shadow-sm"
               >
                 SAVE FILE
               </button>
@@ -277,7 +277,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <button
                 onClick={handleStartExport}
                 disabled={isExporting || !track}
-                className="flex items-center gap-2 px-5 py-2 text-xs font-semibold font-mono bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-lg shadow-md shadow-[#B7F000]/20 transition cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 text-xs font-semibold font-mono bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-sm shadow-md shadow-[#B7F000]/20 transition cursor-pointer disabled:opacity-50"
               >
                 {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Disc className="w-4 h-4" />}
                 <span>{isExporting ? 'PROCESSING DSP...' : `RENDER ${bitDepth}-BIT MASTER`}</span>
@@ -285,7 +285,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             ) : (
               <button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-5 py-2 text-xs font-semibold font-mono bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-lg shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2 text-xs font-semibold font-mono bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-sm shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 <span>DOWNLOAD MASTER</span>

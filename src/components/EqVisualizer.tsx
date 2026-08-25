@@ -76,7 +76,7 @@ export const EqVisualizer: React.FC<EqVisualizerProps> = ({
   const gridDbs = [-12, -6, 0, 6, 12];
 
   return (
-    <div className="bg-[#07170c] rounded-xl p-4 border border-[#0d381c] shadow-lg relative overflow-hidden crt-overlay">
+    <div className="bg-[#07170c] rounded-sm p-4 border border-[#0d381c] shadow-lg relative overflow-hidden crt-overlay">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold font-mono uppercase tracking-wider text-[#00ff66] glow-phosphor">
@@ -107,7 +107,7 @@ export const EqVisualizer: React.FC<EqVisualizerProps> = ({
       <div className="relative w-full aspect-[800/220] select-none">
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="w-full h-full rounded-lg bg-[#030d06] border border-[#0f4020]"
+          className="w-full h-full rounded-sm bg-[#030d06] border border-[#0f4020]"
         >
           {/* Defs for gradients */}
           <defs>

@@ -20,7 +20,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ onOpenAdmin, o
     return (
       <button
         onClick={signInWithGoogle}
-        className="flex items-center gap-2 px-3 py-1.5 bg-[#B7F000]/10 hover:bg-[#B7F000]/20 text-[#C7FF18] border border-[#B7F000]/30 rounded-lg text-sm font-semibold transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 bg-[#B7F000]/10 hover:bg-[#B7F000]/20 text-[#C7FF18] border border-[#B7F000]/30 rounded-sm text-sm font-semibold transition-colors"
       >
         <LogIn className="w-4 h-4" />
         Sign In with Google
@@ -46,7 +46,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ onOpenAdmin, o
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
-          <div className="absolute right-0 mt-2 w-56 bg-[#0D0E0C] border border-[#222420] rounded-xl shadow-2xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-150">
+          <div className="absolute right-0 mt-2 w-56 bg-[#0D0E0C] border border-[#222420] rounded-sm shadow-2xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-150">
             <div className="px-4 py-3 border-b border-[#222420] bg-[#151714]">
               <p className="text-sm font-semibold text-\[#F2F2EE\] truncate">{profile.displayName}</p>
               <p className="text-xs text-[#A5A69F] truncate">{profile.email}</p>

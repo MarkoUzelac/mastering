@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
-  Play,
-  Pause,
-  Square,
-  Repeat,
-  SkipBack,
-  SkipForward,
-  Volume2,
-  VolumeX,
-  Scale,
-  Headphones,
-  ShieldCheck,
-  Check,
-} from 'lucide-react';
+  IconPlay as Play,
+  IconPause as Pause,
+  IconSquare as Square,
+  IconRepeat as Repeat,
+  IconSkipBack as SkipBack,
+  IconSkipForward as SkipForward,
+  IconVolume2 as Volume2,
+  IconVolumeX as VolumeX,
+  IconScale as Scale,
+  IconHeadphones as Headphones,
+  IconShieldCheck as ShieldCheck,
+  IconCheck as Check,
+} from './Icons';
 import { AudioTrackInfo } from '../types';
 import { soundHaptics } from '../utils/sound-haptics';
 
@@ -116,14 +116,14 @@ export const TransportBar: React.FC<TransportBarProps> = ({
   return (
     <div className="space-y-2 mt-2">
       {/* Main Transport Controls Card */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-[#0A0C0F] border border-[#222420] rounded-xl shadow-lg">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-[#0A0C0F] border border-[#222420] rounded-sm shadow-lg">
         {/* Left: Transport Buttons & Timecode */}
         <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2 sm:gap-3">
           <div className="flex items-center gap-1">
             {/* Rewind */}
             <button
               onClick={handleSkipBack}
-              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-lg transition cursor-pointer active:scale-95"
+              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-sm transition cursor-pointer active:scale-95"
               title="Rewind 5 seconds"
             >
               <SkipBack className="w-4 h-4" />
@@ -133,7 +133,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             {!isPlaying ? (
               <button
                 onClick={handlePlayClick}
-                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-gradient-to-r from-[#B7F000] to-[#7C3AED] hover:from-[#9333EA] hover:to-[#B7F000] text-\[#F2F2EE\] flex items-center justify-center transition shadow-[0_0_14px_rgba(139,92,246,0.45)] cursor-pointer active:scale-95"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] flex items-center justify-center transition cursor-pointer active:scale-95"
                 title="Play Master Preview (Space)"
               >
                 <Play className="w-4 h-4 fill-current ml-0.5" />
@@ -141,7 +141,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             ) : (
               <button
                 onClick={handlePauseClick}
-                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-[#B7F000] hover:bg-[#7C3AED] text-\[#F2F2EE\] flex items-center justify-center transition shadow-[0_0_14px_rgba(139,92,246,0.45)] cursor-pointer active:scale-95"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] flex items-center justify-center transition cursor-pointer active:scale-95"
                 title="Pause Master Preview (Space)"
               >
                 <Pause className="w-4 h-4 fill-current" />
@@ -151,7 +151,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             {/* Stop */}
             <button
               onClick={handleStopClick}
-              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-lg transition cursor-pointer active:scale-95"
+              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-sm transition cursor-pointer active:scale-95"
               title="Stop Playback"
             >
               <Square className="w-3.5 h-3.5 fill-current" />
@@ -160,7 +160,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             {/* Forward */}
             <button
               onClick={handleSkipForward}
-              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-lg transition cursor-pointer active:scale-95"
+              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-sm transition cursor-pointer active:scale-95"
               title="Forward 5 seconds"
             >
               <SkipForward className="w-4 h-4" />
@@ -173,7 +173,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
                   soundHaptics.playButtonTap();
                   onToggleLoop();
                 }}
-                className={`p-2 min-w-[38px] min-h-[38px] flex items-center justify-center rounded-lg transition cursor-pointer active:scale-95 ${
+                className={`p-2 min-w-[38px] min-h-[38px] flex items-center justify-center rounded-sm transition cursor-pointer active:scale-95 ${
                   isLooping
                     ? 'text-[#D4FF5C] bg-[#B7F000]/20 border border-[#B7F000]/40'
                     : 'text-[#686A63] hover:text-[#A5A69F] hover:bg-[#151714]'
@@ -196,7 +196,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
         {/* Right: Master/Original Switch, Mono Check, Volume */}
         <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-3">
           {/* Mastered vs Original Bypass Toggle */}
-          <div className="flex items-center p-0.5 bg-[#151714] border border-[#222420] rounded-lg text-xs font-medium">
+          <div className="flex items-center p-0.5 bg-[#151714] border border-[#222420] rounded-sm text-xs font-medium">
             <button
               onClick={() => handleBypassSwitch(true)}
               className={`px-3 py-1.5 rounded-md transition cursor-pointer active:scale-95 flex items-center gap-1.5 ${
@@ -227,7 +227,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
                 soundHaptics.playSwitchSound(!isMono);
                 onToggleMono();
               }}
-              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-lg transition cursor-pointer border active:scale-95 ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-sm transition cursor-pointer border active:scale-95 ${
                 isMono
                   ? 'bg-[#F59E0B]/20 border-[#F59E0B]/50 text-[#FBBF24]'
                   : 'bg-[#151714] border-[#222420] text-[#686A63] hover:text-[#A5A69F]'

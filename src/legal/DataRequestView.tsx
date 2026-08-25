@@ -46,7 +46,7 @@ export const DataRequestView: React.FC = () => {
         </p>
       </div>
 
-      <div className="p-4 rounded-xl bg-[#121418] border border-[#2A2E35] flex items-start gap-3">
+      <div className="p-4 rounded-sm bg-[#121418] border border-[#2A2E35] flex items-start gap-3">
         <Shield className="w-4 h-4 text-[#B7F000] shrink-0 mt-0.5" />
         <div className="text-xs text-[#8E95A2] space-y-1">
           <span className="font-semibold text-[#F2F2EE]">Audio Privacy Reminder:</span>
@@ -57,13 +57,13 @@ export const DataRequestView: React.FC = () => {
       </div>
 
       {!statusMessage ? (
-        <form onSubmit={handleSubmit} className="p-6 rounded-xl bg-[#121418] border border-[#242830] space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="p-6 rounded-sm bg-[#121418] border border-[#242830] space-y-4 text-xs">
           <div className="space-y-1">
             <label className="text-[#A0A6B2]">Request Type <span className="text-[#B7F000]">*</span></label>
             <select
               value={requestType}
               onChange={(e) => setRequestType(e.target.value as any)}
-              className="w-full px-3 py-2 bg-[#0E1013] border border-[#2E3440] rounded-lg text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+              className="w-full px-3 py-2 bg-[#0E1013] border border-[#2E3440] rounded-sm text-[#F2F2EE] focus:border-[#B7F000] outline-none"
             >
               <option value="access">Right of Access (Art. 15 GDPR) — Download personal data copy</option>
               <option value="erasure">Right to Erasure / Deletion (Art. 17 GDPR) — Delete account & profile</option>
@@ -81,7 +81,7 @@ export const DataRequestView: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="artist@masteringlocal.pro"
-              className="w-full px-3 py-2 bg-[#0E1013] border border-[#2E3440] rounded-lg text-[#F2F2EE] focus:border-[#B7F000] outline-none"
+              className="w-full px-3 py-2 bg-[#0E1013] border border-[#2E3440] rounded-sm text-[#F2F2EE] focus:border-[#B7F000] outline-none"
             />
           </div>
 
@@ -92,21 +92,21 @@ export const DataRequestView: React.FC = () => {
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               placeholder="Provide any additional context or specific instructions for our Data Protection Officer."
-              className="w-full px-3 py-2 bg-[#0E1013] border border-[#2E3440] rounded-lg text-[#F2F2EE] focus:border-[#B7F000] outline-none resize-none"
+              className="w-full px-3 py-2 bg-[#0E1013] border border-[#2E3440] rounded-sm text-[#F2F2EE] focus:border-[#B7F000] outline-none resize-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto px-5 py-2.5 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-5 py-2.5 bg-[#B7F000] hover:bg-[#E5C37A] text-[#0E1013] font-semibold rounded-sm transition-colors flex items-center justify-center gap-2"
           >
             <Send className="w-3.5 h-3.5" />
             {isSubmitting ? 'Submitting...' : 'Submit GDPR Request'}
           </button>
         </form>
       ) : (
-        <div className="p-6 rounded-xl bg-[#121418] border border-[#2E3540] text-center space-y-3">
+        <div className="p-6 rounded-sm bg-[#121418] border border-[#2E3540] text-center space-y-3">
           <CheckCircle className="w-10 h-10 text-[#6FCF97] mx-auto" />
           <div className="text-base font-semibold text-[#F2F2EE]">Request Logged Successfully</div>
           <p className="text-xs text-[#8E95A2] max-w-md mx-auto">

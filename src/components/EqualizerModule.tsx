@@ -44,7 +44,7 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
   };
 
   return (
-    <div className="bg-[#0E1013] border border-[#222420] rounded-xl p-4 flex flex-col justify-between h-full relative group shadow-lg">
+    <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
       {/* Rack corner bolt aesthetic */}
       <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
       <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />

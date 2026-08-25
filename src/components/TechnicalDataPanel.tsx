@@ -26,7 +26,7 @@ export const TechnicalDataPanel: React.FC<TechnicalDataPanelProps> = ({
   const estMb = (estBytes / (1024 * 1024)).toFixed(2);
 
   return (
-    <div className="bg-[#07170c] rounded-xl p-4 border border-[#0d381c] shadow-lg text-xs font-mono space-y-3 crt-overlay">
+    <div className="bg-[#07170c] rounded-sm p-4 border border-[#0d381c] shadow-lg text-xs font-mono space-y-3 crt-overlay">
       <div className="flex items-center justify-between border-b border-[#0d381c] pb-2">
         <span className="font-bold uppercase tracking-wider text-[#00ff66] flex items-center gap-1.5 glow-phosphor">
           <Gauge className="w-4 h-4" />
@@ -43,7 +43,7 @@ export const TechnicalDataPanel: React.FC<TechnicalDataPanelProps> = ({
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* Metric 1: Integrated LUFS */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020]">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020]">
           <span className="text-[10px] text-[#00aa44] uppercase block">Integrated Loudness</span>
           <span className="text-base font-bold text-[#00ff66] glow-phosphor">
             {meterData.integratedLufs ? `${meterData.integratedLufs.toFixed(1)} LUFS` : '-14.0 LUFS'}
@@ -52,7 +52,7 @@ export const TechnicalDataPanel: React.FC<TechnicalDataPanelProps> = ({
         </div>
 
         {/* Metric 2: True Peak Output */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020]">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020]">
           <span className="text-[10px] text-[#00aa44] uppercase block">Max True Peak</span>
           <span className={`text-base font-bold ${outPeak >= -1.0 ? 'text-[#00ff66]' : 'text-[#88ffaa]'}`}>
             {outPeak > -60 ? `${outPeak.toFixed(2)} dBFS` : '-inf'}
@@ -61,7 +61,7 @@ export const TechnicalDataPanel: React.FC<TechnicalDataPanelProps> = ({
         </div>
 
         {/* Metric 3: Dynamic Crest Factor */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020]">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020]">
           <span className="text-[10px] text-[#00aa44] uppercase block">Crest Factor (DR)</span>
           <span className="text-base font-bold text-[#00ff66] glow-phosphor">
             {meterData.crestFactor ? `${meterData.crestFactor.toFixed(1)} dB` : '12.0 dB'}
@@ -70,7 +70,7 @@ export const TechnicalDataPanel: React.FC<TechnicalDataPanelProps> = ({
         </div>
 
         {/* Metric 4: Dynamic Gain Reduction */}
-        <div className="bg-[#030d06] p-2.5 rounded-lg border border-[#0f4020]">
+        <div className="bg-[#030d06] p-2.5 rounded-sm border border-[#0f4020]">
           <span className="text-[10px] text-[#00aa44] uppercase block">Active Dynamics GR</span>
           <span className={`text-base font-bold ${meterData.gainReductionDb > 0.1 ? 'text-[#ffbb33]' : 'text-[#00ff66]'}`}>
             {meterData.gainReductionDb > 0.05 ? `-${meterData.gainReductionDb.toFixed(2)} dB` : '0.00 dB'}
@@ -82,7 +82,7 @@ export const TechnicalDataPanel: React.FC<TechnicalDataPanelProps> = ({
       </div>
 
       {/* Stream & Engine Invariants Bar */}
-      <div className="bg-[#030d06] p-3 rounded-lg border border-[#0f4020] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#00cc55]">
+      <div className="bg-[#030d06] p-3 rounded-sm border border-[#0f4020] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#00cc55]">
         <div className="flex items-center gap-4 flex-wrap">
           <span>
             <strong className="text-[#00ff66]">Sample Rate:</strong> {track ? `${track.sampleRate} Hz` : '48,000 Hz'}

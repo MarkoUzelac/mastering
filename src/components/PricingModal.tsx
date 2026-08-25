@@ -37,11 +37,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#090A08]/85 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#0E1013] border border-[#222420] rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="bg-[#0E1013] border border-[#222420] rounded-sm w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
+            <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
@@ -55,7 +55,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1.5 rounded-lg hover:bg-[#151714] transition cursor-pointer"
+            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1.5 rounded-sm hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -76,7 +76,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           {/* Pricing Cards Comparison */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             {/* Free Tier Card */}
-            <div className="bg-[#090A08] rounded-xl border border-[#222420] p-5 flex flex-col justify-between space-y-4">
+            <div className="bg-[#090A08] rounded-sm border border-[#222420] p-5 flex flex-col justify-between space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-[#F2F2EE]">{freePlan.name}</span>
@@ -108,14 +108,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <button
                 disabled={currentPlan === 'free'}
                 onClick={() => handleSelect('free')}
-                className="w-full py-2.5 rounded-lg text-center font-mono text-xs font-medium border border-[#222420] bg-[#151714] text-[#686A63] cursor-default"
+                className="w-full py-2.5 rounded-sm text-center font-mono text-xs font-medium border border-[#222420] bg-[#151714] text-[#686A63] cursor-default"
               >
                 {currentPlan === 'free' ? 'Current Plan' : 'Select Free'}
               </button>
             </div>
 
             {/* Pro Monthly Card */}
-            <div className="bg-[#0E1013] rounded-xl border border-[#2A2E35] p-5 flex flex-col justify-between space-y-4 hover:border-[#B7F000]/50 transition-colors">
+            <div className="bg-[#0E1013] rounded-sm border border-[#2A2E35] p-5 flex flex-col justify-between space-y-4 hover:border-[#B7F000]/50 transition-colors">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-[#F2F2EE]">{proMonthly.name}</span>
@@ -145,14 +145,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <button
                 id="select-pro-monthly-btn"
                 onClick={() => handleSelect('pro_monthly')}
-                className="w-full py-2.5 rounded-lg text-center font-mono text-xs font-semibold bg-[#1C2028] hover:bg-[#252B36] border border-[#3A4354] text-[#F2F2EE] transition cursor-pointer"
+                className="w-full py-2.5 rounded-sm text-center font-mono text-xs font-semibold bg-[#1C2028] hover:bg-[#252B36] border border-[#3A4354] text-[#F2F2EE] transition cursor-pointer"
               >
                 Subscribe for €19/month
               </button>
             </div>
 
             {/* Pro Annual Card (Featured) */}
-            <div className="bg-[#0E1013] rounded-xl border-2 border-[#B7F000] p-5 flex flex-col justify-between space-y-4 shadow-[0_0_25px_rgba(214,175,98,0.15)] relative">
+            <div className="bg-[#0E1013] rounded-sm border-2 border-[#B7F000] p-5 flex flex-col justify-between space-y-4 shadow-[0_0_25px_rgba(214,175,98,0.15)] relative">
               <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-[#B7F000] text-[#090A08] text-[10px] font-mono font-bold tracking-wider">
                 BEST VALUE
               </div>
@@ -188,7 +188,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <button
                 id="select-pro-annual-btn"
                 onClick={() => handleSelect('pro_yearly')}
-                className="w-full py-2.5 rounded-lg text-center font-mono text-xs font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
+                className="w-full py-2.5 rounded-sm text-center font-mono text-xs font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
               >
                 Subscribe for €169/year
               </button>
@@ -196,7 +196,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           {/* Privacy & Guarantee Notice */}
-          <div className="bg-[#090A08] p-4 rounded-xl border border-[#222420] flex items-center gap-3">
+          <div className="bg-[#090A08] p-4 rounded-sm border border-[#222420] flex items-center gap-3">
             <Shield className="w-6 h-6 text-[#6FCF97] shrink-0" />
             <div className="space-y-0.5 text-[11px] text-[#A5A69F]">
               <strong className="text-[#F2F2EE]">Local Audio Privacy Guarantee:</strong>

@@ -70,7 +70,7 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
           <div className="flex items-center gap-2.5">
@@ -82,7 +82,7 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -100,7 +100,7 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
                   onSelectTarget(target);
                   onClose();
                 }}
-                className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${
+                className={`p-3 rounded-sm border transition cursor-pointer flex items-center justify-between ${
                   isSelected
                     ? 'bg-[#1C162E] border-[#B7F000] text-[#F2F2EE]'
                     : 'bg-[#07090C] border-[#181C22] hover:border-[#222420] text-[#A5A69F]'
@@ -138,7 +138,7 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
         <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Done
           </button>

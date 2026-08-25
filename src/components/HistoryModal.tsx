@@ -70,7 +70,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
     >
       <div 
         ref={modalRef}
-        className="bg-[#0D0E0C] border border-[#222420] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+        className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
@@ -83,7 +83,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -94,10 +94,10 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
           {historyList.map((entry, index) => (
             <div
               key={entry.id || index}
-              className="p-3 rounded-xl bg-[#07090C] border border-[#181C22] hover:border-[#222420] transition flex items-center justify-between"
+              className="p-3 rounded-sm bg-[#07090C] border border-[#181C22] hover:border-[#222420] transition flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-[#151714] border border-[#222420] text-[#B7F000]">
+                <div className="p-2 rounded-sm bg-[#151714] border border-[#222420] text-[#B7F000]">
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
@@ -111,7 +111,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                   onRestore(entry);
                   onClose();
                 }}
-                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#B7F000] hover:text-\[#F2F2EE\] bg-[#1C162E] hover:bg-[#B7F000] border border-[#B7F000]/40 rounded-lg transition cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#B7F000] hover:text-\[#F2F2EE\] bg-[#1C162E] hover:bg-[#B7F000] border border-[#B7F000]/40 rounded-sm transition cursor-pointer"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Restore</span>
@@ -124,7 +124,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
         <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Close
           </button>

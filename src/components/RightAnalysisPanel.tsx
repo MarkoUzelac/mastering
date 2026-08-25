@@ -115,7 +115,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
   return (
     <div className="w-full flex flex-col gap-3 shrink-0">
       {/* 1. OUTPUT METER */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Output Meter</span>
           <div className="flex items-center gap-1 bg-[#151714] border border-[#222420] rounded-md px-1.5 py-0.5">
@@ -132,7 +132,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
         </div>
 
         {/* Dual LED Meter Ladders */}
-        <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center bg-[#07090C] border border-[#181C22] rounded-lg p-2.5">
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center bg-[#07090C] border border-[#181C22] rounded-sm p-2.5">
           {/* L Channel */}
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-mono text-center text-[#686A63]">L</span>
@@ -182,7 +182,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 2. LOUDNESS TELEMETRY */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2.5">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2.5">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Loudness</span>
           <span className="text-[10px] font-mono text-[#B7F000] px-1.5 py-0.5 bg-[#B7F000]/10 rounded border border-[#B7F000]/20">
@@ -191,7 +191,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
         </div>
 
         {/* Big Bold Integrated Readout */}
-        <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-2.5 flex flex-col items-center justify-center">
+        <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-2.5 flex flex-col items-center justify-center">
           <span className="text-[10px] font-mono text-[#686A63] uppercase tracking-wider mb-0.5">
             Integrated
           </span>
@@ -203,19 +203,19 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
 
         {/* Secondary Metrics Grid */}
         <div className="grid grid-cols-3 gap-1.5 text-center">
-          <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-1.5">
+          <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-1.5">
             <div className="text-[9px] font-mono text-[#686A63]">Short Term</div>
             <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
               {shortTermLufs.toFixed(1)}
             </div>
           </div>
-          <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-1.5">
+          <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-1.5">
             <div className="text-[9px] font-mono text-[#686A63]">Range</div>
             <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
               {loudnessRange.toFixed(1)} LU
             </div>
           </div>
-          <div className="bg-[#07090C] border border-[#181C22] rounded-lg p-1.5">
+          <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-1.5">
             <div className="text-[9px] font-mono text-[#686A63]">True Peak</div>
             <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
               {truePeakDb.toFixed(1)} dB
@@ -225,20 +225,20 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
 
         <button
           onClick={onOpenLoudnessDetails}
-          className="w-full py-1 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-lg transition text-center cursor-pointer"
+          className="w-full py-1 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
         >
           Loudness Details
         </button>
       </div>
 
       {/* 3. REFERENCE TARGET */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Reference</span>
           <span className="text-[10px] font-mono text-[#686A63]">TARGET MATCH</span>
         </div>
 
-        <div className="flex items-center justify-between bg-[#07090C] border border-[#181C22] rounded-lg p-2">
+        <div className="flex items-center justify-between bg-[#07090C] border border-[#181C22] rounded-sm p-2">
           <div>
             <div className="text-xs font-semibold text-[#F2F2EE]">{referencePlatform}</div>
             <div className="text-[10px] font-mono text-[#B7F000]">
@@ -257,13 +257,13 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 4. CORRELATION (GONIOMETER) */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Correlation</span>
           <span className="text-[10px] font-mono text-[#686A63]">PHASE CLOUD</span>
         </div>
 
-        <div className="w-full h-20 bg-[#07090C] border border-[#181C22] rounded-lg overflow-hidden relative">
+        <div className="w-full h-20 bg-[#07090C] border border-[#181C22] rounded-sm overflow-hidden relative">
           <canvas
             ref={correlationCanvasRef}
             width={260}
@@ -281,7 +281,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 5. BALANCE */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-xl p-3.5 shadow-sm space-y-2">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Balance</span>
           <span className="text-[10px] font-mono text-[#E5E7EB] tabular-nums">0.02</span>

@@ -30,7 +30,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
           <div className="flex items-center gap-2.5">
@@ -47,7 +47,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -58,10 +58,10 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
           {stems.map((stem) => (
             <div
               key={stem.id}
-              className="bg-[#07090C] border border-[#181C22] rounded-xl p-3 flex items-center justify-between gap-4"
+              className="bg-[#07090C] border border-[#181C22] rounded-sm p-3 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#151714] border border-[#222420] flex items-center justify-center font-mono font-bold text-xs text-[#B7F000]">
+                <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center font-mono font-bold text-xs text-[#B7F000]">
                   {stem.name[0]}
                 </div>
                 <div>
@@ -122,7 +122,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
           <span className="text-[11px] text-[#686A63] font-mono">Summed into master DSP pipeline in 64-bit IEEE 754</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Apply Stems
           </button>

@@ -71,11 +71,11 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#0E1013] border border-[#222420] rounded-2xl shadow-2xl overflow-hidden flex flex-col font-sans">
+      <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#0E1013] border border-[#222420] rounded-sm shadow-2xl overflow-hidden flex flex-col font-sans">
         {/* Top Header Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#B7F000]/10 border border-[#B7F000]/30 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-sm bg-[#B7F000]/10 border border-[#B7F000]/30 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-[#B7F000]" />
             </div>
             <div>
@@ -97,14 +97,14 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
             <button
               onClick={startAudit}
               disabled={isRunning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#C7FF18] disabled:opacity-50 rounded-lg transition shadow cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#C7FF18] disabled:opacity-50 rounded-sm transition shadow cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
               <span>{isRunning ? 'Auditing...' : 'Re-Run All'}</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#222420] rounded-lg transition cursor-pointer"
+              className="p-1.5 text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#222420] rounded-sm transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -130,7 +130,7 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
         {/* Audit Metrics Banner */}
         {summary && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 py-4 bg-[#090A08] border-b border-[#222420]">
-            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-xl">
+            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-sm">
               <div className="text-[10px] font-mono text-[#A5A69F] uppercase">OVERALL VERDICT</div>
               <div className="flex items-center gap-1.5 mt-1">
                 <CheckCircle2 className="w-4 h-4 text-[#6FCF97]" />
@@ -138,14 +138,14 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
               </div>
             </div>
 
-            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-xl">
+            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-sm">
               <div className="text-[10px] font-mono text-[#A5A69F] uppercase">TESTS PASSED</div>
               <div className="text-sm font-bold text-[#F2F2EE] font-mono mt-1">
                 {summary.passedCount} / {summary.totalTests}
               </div>
             </div>
 
-            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-xl">
+            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-sm">
               <div className="text-[10px] font-mono text-[#A5A69F] uppercase">EXECUTION TIME</div>
               <div className="flex items-center gap-1 mt-1 text-sm font-bold text-[#B7F000] font-mono">
                 <Clock className="w-3.5 h-3.5" />
@@ -153,7 +153,7 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
               </div>
             </div>
 
-            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-xl">
+            <div className="p-3 bg-[#0E1013] border border-[#222420] rounded-sm">
               <div className="text-[10px] font-mono text-[#A5A69F] uppercase">PRIVACY AUDIT</div>
               <div className="text-sm font-bold text-[#6FCF97] font-mono mt-1">
                 0 BYTES LEAKED
@@ -167,7 +167,7 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
           {summary?.results.map((test, idx) => (
             <div
               key={test.id}
-              className="p-4 bg-[#151714] hover:bg-[#181C22] border border-[#222420] rounded-xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              className="p-4 bg-[#151714] hover:bg-[#181C22] border border-[#222420] rounded-sm transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -200,14 +200,14 @@ export const RuntimeAuditModal: React.FC<RuntimeAuditModalProps> = ({ isOpen, on
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyReport}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#F2F2EE] bg-[#222420] hover:bg-[#282E36] border border-[#2F353C] rounded-lg transition cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#F2F2EE] bg-[#222420] hover:bg-[#282E36] border border-[#2F353C] rounded-sm transition cursor-pointer"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-[#6FCF97]" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied JSON' : 'Copy Report'}</span>
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-1.5 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#C7FF18] rounded-lg transition cursor-pointer"
+              className="px-4 py-1.5 text-xs font-semibold text-[#0E1013] bg-[#B7F000] hover:bg-[#C7FF18] rounded-sm transition cursor-pointer"
             >
               Close
             </button>

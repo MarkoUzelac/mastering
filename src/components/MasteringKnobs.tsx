@@ -32,7 +32,7 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
   };
 
   return (
-    <div className="bg-[#0E1013] rounded-xl p-5 border border-[#222420] shadow-xl">
+    <div className="bg-[#0E1013] rounded-sm p-5 border border-[#222420] shadow-xl">
       <div className="flex items-center justify-between border-b border-[#222420] pb-3 mb-5">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-[#B7F000]" />
@@ -52,7 +52,7 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* EQ Section */}
-        <div className="space-y-4 bg-[#090A08] p-4 rounded-xl border border-[#222420]">
+        <div className="space-y-4 bg-[#090A08] p-4 rounded-sm border border-[#222420]">
           <div className="flex items-center justify-between border-b border-[#222420] pb-2">
             <span className="text-xs font-bold font-mono text-[#B7F000] uppercase tracking-wider">
               3-Band Parametric EQ
@@ -161,7 +161,7 @@ export const MasteringKnobs: React.FC<MasteringKnobsProps> = ({
         </div>
 
         {/* Dynamics & Maximizer Section */}
-        <div className="space-y-4 bg-[#090A08] p-4 rounded-xl border border-[#222420]">
+        <div className="space-y-4 bg-[#090A08] p-4 rounded-sm border border-[#222420]">
           <div className="flex items-center justify-between border-b border-[#222420] pb-2">
             <span className="text-xs font-bold font-mono text-[#B7F000] uppercase tracking-wider">
               Dynamics & Maximizer

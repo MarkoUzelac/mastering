@@ -23,7 +23,7 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
           <div className="flex items-center gap-2.5">
@@ -35,7 +35,7 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -44,7 +44,7 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
         {/* Body */}
         <div className="p-5 space-y-4">
           {/* Main Integrated Box */}
-          <div className="bg-[#07090C] border border-[#181C22] rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-4 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-mono uppercase tracking-wider text-[#686A63]">
                 Program Loudness (Integrated)
@@ -69,7 +69,7 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
 
           {/* Grid of detailed indicators */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[#07090C] border border-[#181C22] rounded-xl p-3">
+            <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-3">
               <div className="text-[10px] font-mono text-[#686A63]">Momentary Max</div>
               <div className="text-base font-mono font-bold text-[#E5E7EB] mt-1">
                 {shortTerm.toFixed(1)} LUFS
@@ -77,13 +77,13 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
               <div className="text-[10px] text-[#686A63] mt-0.5">400ms sliding RMS window</div>
             </div>
 
-            <div className="bg-[#07090C] border border-[#181C22] rounded-xl p-3">
+            <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-3">
               <div className="text-[10px] font-mono text-[#686A63]">Loudness Range (LRA)</div>
               <div className="text-base font-mono font-bold text-[#E5E7EB] mt-1">{lra.toFixed(1)} LU</div>
               <div className="text-[10px] text-[#686A63] mt-0.5">Dynamic variation statistical span</div>
             </div>
 
-            <div className="bg-[#07090C] border border-[#181C22] rounded-xl p-3">
+            <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-3">
               <div className="text-[10px] font-mono text-[#686A63]">Max True Peak</div>
               <div className="text-base font-mono font-bold text-[#E5E7EB] mt-1">
                 {truePeak.toFixed(1)} dBTP
@@ -91,7 +91,7 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
               <div className="text-[10px] text-[#686A63] mt-0.5">4x inter-sample peak detector</div>
             </div>
 
-            <div className="bg-[#07090C] border border-[#181C22] rounded-xl p-3">
+            <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-3">
               <div className="text-[10px] font-mono text-[#686A63]">Crest Factor</div>
               <div className="text-base font-mono font-bold text-[#E5E7EB] mt-1">
                 {crestFactor.toFixed(1)} dB
@@ -105,7 +105,7 @@ export const LoudnessDetailsModal: React.FC<LoudnessDetailsModalProps> = ({
         <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-lg transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Done
           </button>
