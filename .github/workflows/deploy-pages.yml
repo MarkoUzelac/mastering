@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+      deployments: write
 
     steps:
       - name: Checkout
@@ -33,12 +34,27 @@ jobs:
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
 
       - name: Verify frontend output
-        run: test -f dist/index.html
+        run: |
+          test -f dist/index.html
+          test -s dist/index.html
+
+      - name: Package static hosting ZIP
+        run: |
+          cd dist
+          zip -r ../masteringlocal-pro-static.zip .
+
+      - name: Upload static hosting ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: masteringlocal-pro-static
+          path: masteringlocal-pro-static.zip
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: masteringlocal-pro
-          directory: dist
+          command: pages deploy dist --project-name=masteringlocal-pro
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
