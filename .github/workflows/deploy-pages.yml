@@ -14,28 +14,22 @@ jobs:
     permissions:
       contents: read
       deployments: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
-
       - name: Install dependencies
         # TEMPORARY: use npm install until package-lock.json is generated and committed.
         run: npm install --no-audit --no-fund
-
       - name: Typecheck
         run: npx tsc --noEmit
-
       - name: Build frontend
         run: npm run build:client
         env:
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-
       - name: Verify AudioWorklet asset
         shell: bash
         run: |
@@ -50,17 +44,14 @@ jobs:
           fi
           echo "✅ AudioWorklet exists and does not contain an HTML SPA fallback."
           wc -c "$WORKLET"
-
       - name: Verify frontend output
         run: |
           test -f dist/index.html
           test -s dist/index.html
-
       - name: Package static hosting ZIP
         run: |
           cd dist
           zip -r ../masteringlocal-pro-static.zip .
-
       - name: Upload static hosting ZIP
         uses: actions/upload-artifact@v4
         with:
@@ -68,7 +59,6 @@ jobs:
           path: masteringlocal-pro-static.zip
           if-no-files-found: error
           retention-days: 7
-
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
