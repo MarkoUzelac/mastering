@@ -1,1 +1,0 @@
-sed -i 's/const x = (i \/ numBuckets) \* width;/const time = (i \/ numBuckets) * totalDurationRender;\n        const x = ((time - viewStart) \/ visibleDuration) * width;/' src/components/WaveformHero.tsx
