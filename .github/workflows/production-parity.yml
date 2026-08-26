@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - main
       - feat/production-parity
 
 permissions:
@@ -54,6 +55,7 @@ jobs:
             -sEXPORT_ES6=1 \
             -sENVIRONMENT=node \
             -sEXPORTED_FUNCTIONS='["_run_production_test","_free_buffer","_malloc","_free"]' \
+            -sEXPORTED_RUNTIME_METHODS='["HEAPF32"]' \
             -o tests/production_engine.js
 
       - name: Run production WASM
