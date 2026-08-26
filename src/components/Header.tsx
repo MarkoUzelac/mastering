@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IconCpu as Cpu,
   IconUndo as RotateCcw,
   IconRedo as RotateCw,
   IconSettings as Settings,
-  IconChevronDown as ChevronDown,
-  IconEdit as Edit3,
-  IconArrowUp as ArrowUp,
 } from './Icons';
 import { UserEntitlement, UserUsage } from '../billing/entitlement-service';
 import { soundHaptics } from '../utils/sound-haptics';
-import { themeSkinService, STUDIO_SKINS, StudioSkinId } from '../utils/theme-skin';
 import { UserProfileMenu } from './UserProfileMenu';
+import { audioEngineEvents } from '../utils/audio-engine';
+import { StudioAiReleaseModal } from './StudioAiReleaseModal';
 
 export type ActiveTab = 'mastering' | 'analysis' | 'presets' | 'dashboard' | 'landing' | 'learn';
 
@@ -40,10 +38,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onSelectTab,
-  onOpenParityModal,
-  onOpenAuditModal,
   onOpenExportModal,
-  onOpenPricingModal,
   onOpenAccountModal,
   onOpenSettingsModal,
   onOpenAdmin,
@@ -56,85 +51,145 @@ export const Header: React.FC<HeaderProps> = ({
   isPlaying,
   entitlement,
   usage,
-  onUploadClick,
 }) => {
+  const [aiModal, setAiModal] = useState<'assistant' | 'release' | null>(null);
+  const [liveMeters, setLiveMeters] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent).detail;
+      if (detail) setLiveMeters(detail);
+    };
+    audioEngineEvents.addEventListener('meterupdate', handler);
+    return () => audioEngineEvents.removeEventListener('meterupdate', handler);
+  }, []);
+
+  const audioSnapshot = hasAudio
+    ? {
+        durationSeconds: 0,
+        sampleRate: 48000,
+        channels: 2,
+        integratedLufs: typeof liveMeters?.integratedLufs === 'number' ? liveMeters.integratedLufs : null,
+        momentaryLufs: typeof liveMeters?.momentaryLufs === 'number' ? liveMeters.momentaryLufs : null,
+        truePeakDbtp:
+          typeof liveMeters?.outputPeakL === 'number'
+            ? 20 * Math.log10(Math.max(1e-6, Math.max(liveMeters.outputPeakL, liveMeters.outputPeakR || 0)))
+            : null,
+        rmsDb:
+          typeof liveMeters?.outputRmsL === 'number'
+            ? 20 * Math.log10(Math.max(1e-6, Math.max(liveMeters.outputRmsL, liveMeters.outputRmsR || 0)))
+            : null,
+        crestFactorDb: typeof liveMeters?.crestFactor === 'number' ? liveMeters.crestFactor : null,
+        clippingDetected:
+          typeof liveMeters?.outputPeakL === 'number'
+            ? Math.max(liveMeters.outputPeakL, liveMeters.outputPeakR || 0) >= 0.999
+            : null,
+        dcOffsetDetected: null,
+        stereoWidth: null,
+        dynamicRangeDb: null,
+      }
+    : null;
+
+  const navigate = (tab: ActiveTab) => {
+    soundHaptics.playButtonTap();
+    onSelectTab(tab);
+  };
+
   return (
-    <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] px-6 py-4 transition-colors font-sans select-none sticky top-0 z-40">
-      <div className="w-full mx-auto flex items-center justify-between gap-4">
-        {/* Left: Brand / Logo */}
-        <div className="flex items-center gap-8">
-          <div
-            onClick={() => {
-              soundHaptics.playSliderTick(1600);
-              onSelectTab('mastering');
-            }}
-            className="flex items-center gap-3 cursor-pointer group select-none"
-          >
-            {/* Minimalist Logo */}
-            <div className="flex items-center justify-center gap-[2px] text-[var(--accent-lime)] h-6 w-6">
-              <div className="w-[3px] h-4 bg-current" />
-              <div className="w-[3px] h-6 bg-current" />
-              <div className="w-[3px] h-3 bg-current" />
-            </div>
-            
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
-                MasteringPro
-              </span>
-              <span className="text-xl font-light text-[var(--accent-lime)]">
-                Local
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Status and Navigation */}
-        <div className="flex items-center gap-8">
-          {isPlaying ? (
-            <div className="flex items-center gap-2 px-3 py-1 bg-[#D4FF5C]/10 border border-[#D4FF5C]/30 rounded-full animate-pulse-slow">
-              <div className="flex items-center gap-0.5 h-3">
-                <div className="w-[2px] h-full bg-[#D4FF5C] animate-[bounce_1s_infinite_0ms]" />
-                <div className="w-[2px] h-2/3 bg-[#D4FF5C] animate-[bounce_1s_infinite_200ms]" />
-                <div className="w-[2px] h-full bg-[#D4FF5C] animate-[bounce_1s_infinite_400ms]" />
+    <>
+      <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] px-4 sm:px-6 py-3 transition-colors font-sans select-none sticky top-0 z-40">
+        <div className="w-full mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 xl:gap-7 min-w-0">
+            <div onClick={() => navigate('landing')} className="flex items-center gap-3 cursor-pointer group select-none shrink-0">
+              <div className="flex items-end justify-center gap-[2px] text-[var(--accent-lime)] h-6 w-6">
+                <div className="w-[3px] h-4 bg-current" />
+                <div className="w-[3px] h-6 bg-current" />
+                <div className="w-[3px] h-3 bg-current" />
               </div>
-              <span className="text-[10px] font-mono font-bold tracking-widest text-[#D4FF5C] uppercase">PLAYING</span>
+              <div className="hidden sm:flex items-baseline gap-1.5">
+                <span className="text-lg font-bold tracking-tight text-[var(--text-primary)]">MasteringLocal</span>
+                <span className="text-lg font-light text-[var(--accent-lime)]">Studio AI</span>
+              </div>
             </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--accent-lime)] shadow-[0_0_8px_var(--accent-lime)]" />
-              <span className="text-[10px] font-mono tracking-widest text-[var(--text-secondary)] uppercase">PROCESSING LOCAL</span>
+
+            <nav className="hidden lg:flex items-center gap-1" aria-label="Primary navigation">
+              {[
+                ['landing', 'STUDIO'],
+                ['analysis', 'ANALYZE'],
+                ['mastering', 'MASTER'],
+                ['dashboard', 'PROJECTS'],
+              ].map(([tab, label]) => (
+                <button
+                  key={tab}
+                  onClick={() => navigate(tab as ActiveTab)}
+                  className={`px-3 py-2 rounded-sm text-[10px] font-mono tracking-[0.15em] transition ${
+                    activeTab === tab
+                      ? 'text-[var(--accent-lime)] bg-[var(--accent-lime)]/8'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              <button
+                onClick={() => setAiModal('release')}
+                className="px-3 py-2 rounded-sm text-[10px] font-mono tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition"
+              >
+                RELEASE
+              </button>
+              <button
+                onClick={() => onOpenAccountModal('subscription')}
+                className="px-3 py-2 rounded-sm text-[10px] font-mono tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition"
+              >
+                ACCOUNT
+              </button>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-4">
+            {isPlaying && (
+              <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-[#D4FF5C]/10 border border-[#D4FF5C]/30 rounded-full animate-pulse-slow">
+                <div className="flex items-center gap-0.5 h-3">
+                  <div className="w-[2px] h-full bg-[#D4FF5C] animate-[bounce_1s_infinite_0ms]" />
+                  <div className="w-[2px] h-2/3 bg-[#D4FF5C] animate-[bounce_1s_infinite_200ms]" />
+                  <div className="w-[2px] h-full bg-[#D4FF5C] animate-[bounce_1s_infinite_400ms]" />
+                </div>
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#D4FF5C] uppercase">PLAYING</span>
+              </div>
+            )}
+
+            <button
+              onClick={() => setAiModal('assistant')}
+              className="hidden sm:flex items-center gap-2 border border-[var(--accent-lime)]/30 text-[var(--accent-lime)] hover:bg-[var(--accent-lime)]/10 px-3 py-2 rounded-sm transition text-[10px] font-mono tracking-widest"
+            >
+              <Cpu className="w-3.5 h-3.5" />
+              AI ENGINEER
+            </button>
+
+            <div className="hidden md:flex items-center gap-1">
+              <button onClick={onUndo} disabled={!canUndo} className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30" title="Undo"><RotateCcw className="w-4 h-4" /></button>
+              <button onClick={onRedo} disabled={!canRedo} className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30" title="Redo"><RotateCw className="w-4 h-4" /></button>
             </div>
-          )}
 
-          <button
-            onClick={() => onSelectTab('landing')}
-            className="hidden md:block text-[11px] font-mono tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
-          >
-            ABOUT
-          </button>
-          
-          <button
-            onClick={onOpenSettingsModal}
-            className="hidden md:block text-[11px] font-mono tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
-          >
-            SETTINGS
-          </button>
+            <button
+              onClick={onOpenExportModal}
+              className="hidden md:block border border-[var(--border-subtle)] text-[10px] font-mono tracking-widest text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] px-3 py-2 rounded-sm transition"
+            >
+              EXPORTS <span className="text-[var(--text-secondary)]">{usage.exportsUsed}</span>
+            </button>
 
-          <button
-            onClick={() => {
-              soundHaptics.playButtonTap();
-              onOpenExportModal();
-            }}
-            className="border border-[var(--border-subtle)] text-[11px] font-mono tracking-widest text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] px-4 py-2 rounded-xs transition"
-          >
-            EXPORTS <span className="text-[var(--text-secondary)]">0</span>
-          </button>
+            <button onClick={onOpenSettingsModal} className="hidden md:block p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]" title="Settings">
+              <Settings className="w-4 h-4" />
+            </button>
 
-          <div className="border-l border-[var(--border-subtle)] pl-8 ml-2">
             <UserProfileMenu onOpenAdmin={onOpenAdmin} onOpenBilling={onOpenBilling} />
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {aiModal && (
+        <StudioAiReleaseModal mode={aiModal} onClose={() => setAiModal(null)} audioSnapshot={audioSnapshot} />
+      )}
+    </>
   );
 };
