@@ -26,12 +26,43 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        # TEMPORARY: use npm install until package-lock.json is committed and verified.
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        run: npx tsc --noEmit
 
       - name: Build frontend
         run: npm run build:client
         env:
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+
+      - name: Verify AudioWorklet asset
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          WORKLET="dist/dsp-worklet.js"
+
+          echo "🔎 Checking ${WORKLET}..."
+
+          if [ ! -f "$WORKLET" ]; then
+            echo "::error::Missing AudioWorklet: $WORKLET"
+            exit 1
+          fi
+
+          if [ ! -s "$WORKLET" ]; then
+            echo "::error::AudioWorklet is empty: $WORKLET"
+            exit 1
+          fi
+
+          if grep -qiE '<!DOCTYPE[[:space:]]+html|<html[[:space:]>]' "$WORKLET"; then
+            echo "::error::AudioWorklet contains HTML instead of JavaScript: $WORKLET"
+            exit 1
+          fi
+
+          echo "✅ AudioWorklet exists and does not contain an HTML SPA fallback."
+          wc -c "$WORKLET"
 
       - name: Verify frontend output
         run: |
