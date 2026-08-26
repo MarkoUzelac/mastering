@@ -33,8 +33,10 @@ export async function processStripeEvent({
     );
   }
 
-  const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
-  const subscription = subscriptionResponse.data;
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const subscriptionItem = subscription.items.data[0];
+  const currentPeriodStart = subscriptionItem?.current_period_start ?? null;
+  const currentPeriodEnd = subscriptionItem?.current_period_end ?? null;
   const metadataUid = subscription.metadata?.firebaseUid ?? null;
 
   const uid = metadataUid;
@@ -72,8 +74,8 @@ export async function processStripeEvent({
       entitlementStatus: 'PRO',
       billingStatus: subscription.status,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      currentPeriodStart: subscription.current_period_start,
-      currentPeriodEnd: subscription.current_period_end,
+      currentPeriodStart,
+      currentPeriodEnd,
       lastStripeEventId: event.id,
       lastStripeEventCreated: event.created,
       updatedAt: new Date(),
