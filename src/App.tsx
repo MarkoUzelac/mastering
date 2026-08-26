@@ -13,6 +13,7 @@ import {
 import { Header, ActiveTab } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { TrackHeader } from './components/TrackHeader';
+import { HeroEmptyState } from './components/HeroEmptyState';
 import { MobileBottomNav } from './components/MobileBottomNav';
 
 // Workstation DSP Components
@@ -21,6 +22,7 @@ import { ProcessingChain, AdvancedParamsState } from './components/ProcessingCha
 import { BottomCards, HistorySnapshotItem } from './components/BottomCards';
 import { RightAnalysisPanel } from './components/RightAnalysisPanel';
 import { TransportBar } from './components/TransportBar';
+import { DSPStateCompare, DSPStateSlot } from './components/DSPStateCompare';
 
 // Alternative Views
 import { DashboardView } from './components/DashboardView';
@@ -54,6 +56,7 @@ import { ExportModal } from './components/ExportModal';
 import { PricingModal } from './components/PricingModal';
 import { CheckoutModal } from './components/CheckoutModal';
 import { AccountModal } from './components/AccountModal';
+import { AuthModal } from './components/AuthModal';
 import { UpgradeModal } from './components/UpgradeModal';
 import { AdvancedModuleModal } from './components/AdvancedModuleModal';
 import { ReferenceTargetModal, REFERENCE_TARGETS, ReferenceTarget } from './components/ReferenceTargetModal';
@@ -66,10 +69,12 @@ import { entitlementService, UserEntitlement, UserUsage } from './billing/entitl
 import { PlanId, FeatureKey } from './billing/billing-config';
 import { FeatureGates } from './billing/feature-gates';
 import { soundHaptics } from './utils/sound-haptics';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Download, Upload, Sparkles, ChevronDown } from 'lucide-react';
+import { SplashScreen } from './components/SplashScreen';
 
 export const App: React.FC = () => {
   // Navigation & View State
+  const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('mastering');
   const [initialGuideSlug, setInitialGuideSlug] = useState<GuideSlug>('how-to-master-music-online');
 
@@ -113,6 +118,61 @@ export const App: React.FC = () => {
   const [selectedTarget, setSelectedTarget] = useState<ReferenceTarget>(REFERENCE_TARGETS[0]);
   const [isMasteringInProgress, setIsMasteringInProgress] = useState<boolean>(false);
 
+  // A/B DSP State Comparison Slots
+  const [activeDspSlot, setActiveDspSlot] = useState<'A' | 'B'>('A');
+  const [slotA, setSlotA] = useState<DSPStateSlot>({
+    params: { ...DEFAULT_PARAMS },
+    advancedParams: {
+      lowFreq: 80,
+      midFreq: 1200,
+      highFreq: 8000,
+      lowQ: 0.707,
+      midQ: 1.0,
+      highQ: 0.707,
+      knee: 4.0,
+      attack: 25.0,
+      release: 120.0,
+      drive: 35.0,
+      warmth: 40.0,
+      mix: 100.0,
+      width: 110.0,
+      balance: 0.0,
+      phaseInvert: false,
+      ceiling: -1.0,
+      limiterRelease: 80.0,
+      lookahead: 3.0,
+      truePeak: true,
+    },
+    presetName: 'Modern Streaming',
+    timestamp: Date.now(),
+  });
+  const [slotB, setSlotB] = useState<DSPStateSlot>({
+    params: { ...DEFAULT_PARAMS, low: 1.5, mid: -0.5, high: 1.2, threshold: -16.0, ratio: 3.5, gain: 1.0 },
+    advancedParams: {
+      lowFreq: 80,
+      midFreq: 1200,
+      highFreq: 8000,
+      lowQ: 0.707,
+      midQ: 1.0,
+      highQ: 0.707,
+      knee: 4.0,
+      attack: 25.0,
+      release: 120.0,
+      drive: 45.0,
+      warmth: 50.0,
+      mix: 100.0,
+      width: 125.0,
+      balance: 0.0,
+      phaseInvert: false,
+      ceiling: -1.0,
+      limiterRelease: 80.0,
+      lookahead: 3.0,
+      truePeak: true,
+    },
+    presetName: 'Warm Analog Push',
+    timestamp: Date.now(),
+  });
+
   // Undo / Redo History Stack
   const historyStack = useRef<MasteringParams[]>([{ ...DEFAULT_PARAMS }]);
   const historyIndex = useRef<number>(0);
@@ -152,6 +212,7 @@ export const App: React.FC = () => {
   const [isReferenceModalOpen, setIsReferenceModalOpen] = useState<boolean>(false);
   const [isLoudnessModalOpen, setIsLoudnessModalOpen] = useState<boolean>(false);
   const [isStemsModalOpen, setIsStemsModalOpen] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState<boolean>(false);
   const [isParityModalOpen, setIsParityModalOpen] = useState<boolean>(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
@@ -238,8 +299,12 @@ export const App: React.FC = () => {
 
   // Initialize engine and synchronize entitlements
   useEffect(() => {
-    loadDemoTrack('synthwave');
+    if (!showSplash) {
+      loadDemoTrack('synthwave');
+    }
+  }, [showSplash]);
 
+  useEffect(() => {
     const unsubscribe = entitlementService.subscribe((newEnt, newUsage) => {
       setEntitlement(newEnt);
       setUsage(newUsage);
@@ -248,12 +313,12 @@ export const App: React.FC = () => {
     entitlementService.fetchServerEntitlements().catch(console.error);
 
     audioEngine.setTimeUpdateCallback((time, totalDuration) => {
-      setCurrentTime(time);
+      // setCurrentTime(time); // THROTLED / REMOVED to prevent 60fps re-renders
       if (totalDuration && totalDuration > 0) setDuration(totalDuration);
     });
 
     audioEngine.setMeterUpdateCallback((meters) => {
-      setMeterData(meters);
+      // setMeterData(meters); // THROTLED / REMOVED to prevent rapid re-renders
     });
 
     return () => {
@@ -310,6 +375,114 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleSelectDspSlot = useCallback((slot: 'A' | 'B') => {
+    if (slot === activeDspSlot) return;
+    setActiveDspSlot(slot);
+    const targetSlot = slot === 'A' ? slotA : slotB;
+    setParams({ ...targetSlot.params });
+    setAdvancedParams({ ...targetSlot.advancedParams });
+    audioEngine.setParams({ ...targetSlot.params });
+    pushHistory({ ...targetSlot.params });
+    soundHaptics.playButtonTap();
+  }, [activeDspSlot, slotA, slotB]);
+
+  const handleCaptureToOppositeSlot = useCallback(() => {
+    const opposite = activeDspSlot === 'A' ? 'B' : 'A';
+    const currentSlotData: DSPStateSlot = {
+      params: { ...params },
+      advancedParams: { ...advancedParams },
+      presetName: MASTERING_PRESETS.find((p) => p.id === activePresetId)?.name || 'Custom',
+      timestamp: Date.now(),
+    };
+    if (opposite === 'B') {
+      setSlotB(currentSlotData);
+    } else {
+      setSlotA(currentSlotData);
+    }
+  }, [activeDspSlot, params, advancedParams, activePresetId]);
+
+  const handleCopyDspSlot = useCallback((from: 'A' | 'B', to: 'A' | 'B') => {
+    const source = from === 'A' ? slotA : slotB;
+    const copied: DSPStateSlot = {
+      params: { ...source.params },
+      advancedParams: { ...source.advancedParams },
+      presetName: source.presetName,
+      timestamp: Date.now(),
+    };
+    if (to === 'B') {
+      setSlotB(copied);
+      if (activeDspSlot === 'B') {
+        setParams({ ...copied.params });
+        setAdvancedParams({ ...copied.advancedParams });
+        audioEngine.setParams({ ...copied.params });
+      }
+    } else {
+      setSlotA(copied);
+      if (activeDspSlot === 'A') {
+        setParams({ ...copied.params });
+        setAdvancedParams({ ...copied.advancedParams });
+        audioEngine.setParams({ ...copied.params });
+      }
+    }
+  }, [slotA, slotB, activeDspSlot]);
+
+  const handleSwapDspSlots = useCallback(() => {
+    const tempA = { ...slotA };
+    const tempB = { ...slotB };
+    setSlotA(tempB);
+    setSlotB(tempA);
+    const activeNow = activeDspSlot === 'A' ? tempB : tempA;
+    setParams({ ...activeNow.params });
+    setAdvancedParams({ ...activeNow.advancedParams });
+    audioEngine.setParams({ ...activeNow.params });
+  }, [slotA, slotB, activeDspSlot]);
+
+  const handleResetDspSlot = useCallback((slot: 'A' | 'B') => {
+    const resetData: DSPStateSlot = {
+      params: { ...DEFAULT_PARAMS },
+      advancedParams: {
+        lowFreq: 80,
+        midFreq: 1200,
+        highFreq: 8000,
+        lowQ: 0.707,
+        midQ: 1.0,
+        highQ: 0.707,
+        knee: 4.0,
+        attack: 25.0,
+        release: 120.0,
+        drive: 35.0,
+        warmth: 40.0,
+        mix: 100.0,
+        width: 110.0,
+        balance: 0.0,
+        phaseInvert: false,
+        ceiling: -1.0,
+        limiterRelease: 80.0,
+        lookahead: 3.0,
+        truePeak: true,
+      },
+      presetName: 'Default',
+      timestamp: Date.now(),
+    };
+    if (slot === 'A') {
+      setSlotA(resetData);
+      if (activeDspSlot === 'A') {
+        setParams({ ...DEFAULT_PARAMS });
+        setAdvancedParams(resetData.advancedParams);
+        audioEngine.setParams({ ...DEFAULT_PARAMS });
+        pushHistory({ ...DEFAULT_PARAMS });
+      }
+    } else {
+      setSlotB(resetData);
+      if (activeDspSlot === 'B') {
+        setParams({ ...DEFAULT_PARAMS });
+        setAdvancedParams(resetData.advancedParams);
+        audioEngine.setParams({ ...DEFAULT_PARAMS });
+        pushHistory({ ...DEFAULT_PARAMS });
+      }
+    }
+  }, [activeDspSlot]);
+
   const handleParamChange = useCallback((param: keyof MasteringParams, value: number) => {
     setParams((prev) => {
       const updated = { ...prev, [param]: value };
@@ -317,13 +490,39 @@ export const App: React.FC = () => {
       pushHistory(updated);
       return updated;
     });
-  }, []);
+    if (activeDspSlot === 'A') {
+      setSlotA((prev) => ({
+        ...prev,
+        params: { ...prev.params, [param]: value },
+        timestamp: Date.now(),
+      }));
+    } else {
+      setSlotB((prev) => ({
+        ...prev,
+        params: { ...prev.params, [param]: value },
+        timestamp: Date.now(),
+      }));
+    }
+  }, [activeDspSlot]);
 
   const handleAdvancedParamChange = useCallback(
     <K extends keyof AdvancedParamsState>(key: K, value: AdvancedParamsState[K]) => {
       setAdvancedParams((prev) => ({ ...prev, [key]: value }));
+      if (activeDspSlot === 'A') {
+        setSlotA((prev) => ({
+          ...prev,
+          advancedParams: { ...prev.advancedParams, [key]: value },
+          timestamp: Date.now(),
+        }));
+      } else {
+        setSlotB((prev) => ({
+          ...prev,
+          advancedParams: { ...prev.advancedParams, [key]: value },
+          timestamp: Date.now(),
+        }));
+      }
     },
-    []
+    [activeDspSlot]
   );
 
   const handleResetParams = () => {
@@ -331,6 +530,19 @@ export const App: React.FC = () => {
     audioEngine.setParams({ ...DEFAULT_PARAMS });
     pushHistory({ ...DEFAULT_PARAMS });
     soundHaptics.playResetSound();
+    if (activeDspSlot === 'A') {
+      setSlotA((prev) => ({
+        ...prev,
+        params: { ...DEFAULT_PARAMS },
+        timestamp: Date.now(),
+      }));
+    } else {
+      setSlotB((prev) => ({
+        ...prev,
+        params: { ...DEFAULT_PARAMS },
+        timestamp: Date.now(),
+      }));
+    }
   };
 
   const handleApplyPreset = (preset: MasteringPreset) => {
@@ -345,6 +557,22 @@ export const App: React.FC = () => {
     setParams({ ...preset.params });
     audioEngine.setParams({ ...preset.params });
     pushHistory({ ...preset.params });
+
+    if (activeDspSlot === 'A') {
+      setSlotA((prev) => ({
+        ...prev,
+        params: { ...preset.params },
+        presetName: preset.name,
+        timestamp: Date.now(),
+      }));
+    } else {
+      setSlotB((prev) => ({
+        ...prev,
+        params: { ...preset.params },
+        presetName: preset.name,
+        timestamp: Date.now(),
+      }));
+    }
 
     // Add to history snapshots
     const now = new Date();
@@ -480,20 +708,46 @@ export const App: React.FC = () => {
     }
   };
 
+  
+  // Sync Media Session and Document Title
+  useEffect(() => {
+    if (isPlaying) {
+      const trackTitle = currentTrack?.name || 'Audio Session';
+      document.title = `▶ ${trackTitle} - MasteringLocal.Pro`;
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: trackTitle,
+          artist: 'MasteringLocal.Pro',
+          album: 'Studio Editor',
+          artwork: [
+            { src: 'https://masteringlocal.pro/icon.png', sizes: '512x512', type: 'image/png' }
+          ]
+        });
+        navigator.mediaSession.playbackState = 'playing';
+      }
+    } else {
+      document.title = getSeoInfo().title;
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+    }
+  }, [isPlaying, currentTrack, getSeoInfo().title]);
+
   const seo = getSeoInfo();
 
   return (
     <HelmetProvider>
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       <Helmet>
-        <title>{seo.title}</title>
+        <title>{getSeoInfo().title}</title>
         <meta name="description" content={seo.description} />
-        <meta property="og:title" content={seo.title} />
+        <meta property="og:title" content={getSeoInfo().title} />
         <meta property="og:description" content={seo.description} />
         <meta property="og:url" content="https://masteringlocal.pro" />
-        <meta name="twitter:title" content={seo.title} />
+        <meta name="twitter:title" content={getSeoInfo().title} />
         <meta name="twitter:description" content={seo.description} />
       </Helmet>
-      <div className="min-h-screen bg-[#090A08] text-[#F2F2EE] flex flex-col font-sans selection:bg-[#B7F000]/30 selection:text-[#B7F000]">
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-[var(--accent-lime)]/30 selection:text-[var(--accent-lime)]">
       {/* Top Header */}
       <Header
         activeTab={activeTab as ActiveTab}
@@ -504,20 +758,23 @@ export const App: React.FC = () => {
         onOpenPricingModal={() => setIsPricingModalOpen(true)}
         onOpenAccountModal={handleOpenAccount}
         onOpenSettingsModal={() => handleOpenAccount('subscription')}
+        onOpenAdmin={() => {}}
+        onOpenBilling={() => handleOpenAccount('subscription')}
         onUndo={handleUndo}
         onRedo={handleRedo}
         canUndo={canUndo}
         canRedo={canRedo}
         hasAudio={!!currentTrack}
+        isPlaying={isPlaying}
         entitlement={entitlement}
         usage={usage}
         onUploadClick={() => loadDemoTrack('synthwave')}
       />
 
       {/* Main Container Layout */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-12 w-full max-w-[1600px] mx-auto">
-        {/* Left Sidebar */}
-        <div className="hidden md:flex md:col-span-3 xl:col-span-2">
+      <div className="flex-1 flex w-full">
+        {/* Left Sidebar (2 cols) */}
+        <div className="">
           <Sidebar
             activeItem={activeTab}
             onSelectItem={(item) => {
@@ -537,15 +794,15 @@ export const App: React.FC = () => {
           />
         </div>
 
-        {/* Center Workspace & Right Column */}
-        <main className="md:col-span-9 xl:col-span-10 min-w-0 p-4 lg:p-8 lg:px-12 pb-24 md:pb-12 overflow-y-auto">
+        {/* Center Workspace & Right Column (10 cols) */}
+        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-10 xl:p-16 pb-24 md:pb-10 overflow-y-auto w-full max-w-[100vw]">
           {/* Back button for legal pages */}
           {isLegalView && (
             <div className="max-w-4xl mx-auto mb-4">
               <button
                 type="button"
                 onClick={() => setActiveTab('mastering')}
-                className="px-3.5 py-1.5 rounded-sm bg-[#14171D] hover:bg-[#1C2028] text-xs font-mono text-[#B7F000] border border-[#242830] transition-colors flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-1.5 rounded-sm bg-[var(--bg-elevated)] hover:bg-[#1C2028] text-xs font-mono text-[var(--accent-lime)] border border-[var(--border-subtle)] transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Return to Mastering Workstation
@@ -554,10 +811,12 @@ export const App: React.FC = () => {
           )}
 
           {/* VIEW 1: MASTERING STUDIO WORKSPACE */}
-          {activeTab === 'mastering' && (
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-              {/* Center Main Console (Left 9 columns on XL screens) */}
-              <div className="xl:col-span-9 space-y-4">
+          {activeTab === 'mastering' && !currentTrack ? (
+            <HeroEmptyState onFileUpload={handleFileUpload} />
+          ) : activeTab === 'mastering' && (
+            <div className="grid grid-cols-1 lg:grid-cols-9 xl:grid-cols-10 gap-6 lg:gap-8 items-start">
+              {/* Center Main Console (Left 7 columns on XL, 6 on LG) */}
+              <div className="lg:col-span-6 xl:col-span-7 space-y-6">
                 {/* 1. Track Meta Header */}
                 <TrackHeader
                   track={currentTrack}
@@ -580,6 +839,20 @@ export const App: React.FC = () => {
                   onToggleLoop={handleToggleLoop}
                 />
 
+                {/* 2.5 A/B DSP Parameter State Comparison Bar */}
+                <DSPStateCompare
+                  activeSlot={activeDspSlot}
+                  slotA={slotA}
+                  slotB={slotB}
+                  currentParams={params}
+                  currentAdvancedParams={advancedParams}
+                  onSelectSlot={handleSelectDspSlot}
+                  onCaptureToOppositeSlot={handleCaptureToOppositeSlot}
+                  onCopySlot={handleCopyDspSlot}
+                  onSwapSlots={handleSwapDspSlots}
+                  onResetSlot={handleResetDspSlot}
+                />
+
                 {/* 3. 5-Module Processing Chain (EQ, Dynamics, Saturation, Stereo, Limiter) */}
                 <ProcessingChain
                   params={params}
@@ -588,8 +861,43 @@ export const App: React.FC = () => {
                   isBypassed={isBypassed}
                   onParamChange={handleParamChange}
                   onAdvancedParamChange={handleAdvancedParamChange}
-                  onOpenModuleModal={(mod) => setActiveAdvancedModal(mod)}
+                  onOpenAdvancedModal={(mod) => setActiveAdvancedModal(mod)}
                 />
+                {/* Massive Export Master Button */}
+                <button
+                  onClick={() => {
+                    soundHaptics.playMasterStart();
+                    handleTriggerMaster();
+                  }}
+                  disabled={isMasteringInProgress}
+                  className={`w-full flex items-center justify-between px-8 py-5 min-h-[72px] transition cursor-pointer active:scale-[0.99] select-none ${
+                    isMasteringInProgress
+                      ? 'bg-[var(--text-tertiary)] cursor-wait'
+                      : 'bg-[var(--accent-lime)] hover:bg-[#c9ff2e]'
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 border border-black/20 flex items-center justify-center">
+                      {false ? (
+                        <Download className="w-5 h-5 text-black" />
+                      ) : isMasteringInProgress ? (
+                        <Sparkles className="w-5 h-5 animate-spin text-black" style={{ animationDuration: '2s' }} />
+                      ) : (
+                        <Upload className="w-5 h-5 text-black" />
+                      )}
+                    </div>
+                    <span className="tracking-widest uppercase font-mono font-bold text-black text-2xl">
+                      {false ? 'EXPORT MASTER' : isMasteringInProgress ? 'MASTERING...' : 'EXPORT MASTER'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-mono text-black font-bold tracking-widest px-2 py-1 border border-black/20">
+                      24-BIT WAV
+                    </span>
+                    <ChevronDown className="w-5 h-5 text-black opacity-50" />
+                  </div>
+                </button>
+
 
                 {/* 4. Bottom Cards: Global Controls, Presets, History */}
                 <BottomCards
@@ -606,7 +914,7 @@ export const App: React.FC = () => {
                 />
 
                 {/* 5. Bottom Transport Bar & Trust Footer */}
-                <TransportBar
+                <div className="sticky bottom-16 md:static z-30"><TransportBar
                   isPlaying={isPlaying}
                   isBypassed={isBypassed}
                   currentTime={currentTime}
@@ -621,11 +929,11 @@ export const App: React.FC = () => {
                   onToggleLoop={handleToggleLoop}
                   isMono={isMono}
                   onToggleMono={handleToggleMono}
-                />
+                /></div>
               </div>
 
-              {/* Right Analysis Panel (Right 3 columns on XL screens) */}
-              <div className="xl:col-span-3 space-y-4">
+              {/* Right Analysis Panel (Right 3 columns) */}
+              <div className="lg:col-span-3 xl:col-span-3 space-y-6">
                 <RightAnalysisPanel
                   meterData={meterData}
                   isPlaying={isPlaying}
@@ -757,10 +1065,10 @@ export const App: React.FC = () => {
       </div>
 
       {/* Footer Legal & Navigation Bar */}
-      <footer className="border-t border-[#222420] bg-[#0A0C0F] px-6 py-4 text-xs text-[#8E95A2] select-none">
+      <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-6 py-4 text-xs text-[var(--text-tertiary)] select-none">
         <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 font-mono text-[11px]">
-            <span className="text-[#B7F000] font-semibold">MASTERINGLOCAL.PRO</span>
+            <span className="text-[var(--accent-lime)] font-semibold">MASTERINGLOCAL.PRO</span>
             <span>·</span>
             <span>Client-Side 64-bit Audio DSP</span>
             <span>·</span>
@@ -771,63 +1079,63 @@ export const App: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('learn')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Guides &amp; LUFS
             </button>
             <button
               type="button"
               onClick={() => setIsPricingModalOpen(true)}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Pricing &amp; Plans
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('privacy')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Privacy Policy
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('terms')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Terms of Service
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('subscriptions')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Subscription Terms
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('cookies')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Cookie Policy
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('refunds')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Refund Policy
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('legal')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Imprint / Legal
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('contact')}
-              className="hover:text-[#B7F000] transition-colors cursor-pointer"
+              className="hover:text-[var(--accent-lime)] transition-colors cursor-pointer"
             >
               Contact &amp; Support
             </button>
@@ -927,8 +1235,8 @@ export const App: React.FC = () => {
         }}
       />
 
-      <AccountModal
-        isOpen={isAccountModalOpen}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AccountModal isOpen={isAccountModalOpen}
         onClose={() => setIsAccountModalOpen(false)}
         onUpgradeClick={() => {
           setIsAccountModalOpen(false);

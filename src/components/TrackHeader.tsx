@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Upload, ChevronDown, Music2, FileAudio, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Upload, ChevronDown, Music2, FileAudio, Sparkles, CheckCircle2, Download } from 'lucide-react';
 import { AudioTrackInfo } from '../types';
 import { soundHaptics } from '../utils/sound-haptics';
 
@@ -41,162 +41,131 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
 
   const getStageLabel = () => {
     switch (masterStage) {
-      case 'ANALYZING':
-        return 'Analyzing...';
-      case 'MASTERING':
-        return 'Mastering...';
-      case 'MEASURING':
-        return 'Measuring...';
-      case 'FINALIZING':
-        return 'Finalizing...';
-      case 'MASTER READY':
-        return 'Master Ready!';
-      default:
-        return 'Master';
+      case 'ANALYZING': return 'ANALYZING...';
+      case 'MASTERING': return 'MASTERING...';
+      case 'MEASURING': return 'MEASURING...';
+      case 'FINALIZING': return 'FINALIZING...';
+      case 'MASTER READY': return 'EXPORT MASTER';
+      default: return 'RENDER MASTER';
     }
   };
 
   return (
-    <div className="bg-[#0A0C0F] border border-[#222420] rounded-sm p-3 sm:p-3.5 shadow-sm space-y-2.5">
-      {/* Hidden File Input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="audio/*,.wav,.flac,.mp3,.aif,.aiff,.ogg,.m4a"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            soundHaptics.playPresetClick();
-            onFileUpload(file);
-          }
-        }}
-        className="hidden"
-      />
+    <div className="flex flex-col gap-4">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 space-y-2.5">
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="audio/*,.wav,.flac,.mp3,.aif,.aiff,.ogg,.m4a"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              soundHaptics.playPresetClick();
+              onFileUpload(file);
+            }
+          }}
+          className="hidden"
+        />
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        {/* Left: Track Name & Specs */}
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="space-y-0.5 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse shrink-0" />
-              <h2 className="text-sm font-semibold text-[#F2F2EE] tracking-tight truncate">
-                {trackName}
-              </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Left: Track Name & Specs */}
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="space-y-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-lime)] animate-pulse shrink-0" />
+                <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-tight truncate">
+                  {trackName}
+                </h2>
+              </div>
+              <div className="text-[10px] font-mono text-[var(--text-tertiary)] tracking-widest uppercase">
+                {sampleRate} HZ / 24-BIT / {channels > 1 ? 'STEREO' : 'MONO'}
+              </div>
             </div>
-            <div className="text-[11px] font-mono text-[#686A63]">
-              {sampleRate} Hz · 24-bit · {channels > 1 ? 'Stereo' : 'Mono'}
-            </div>
-          </div>
 
-          {/* Vertical Divider */}
-          <div className="hidden md:block w-[1px] h-8 bg-[#222420]" />
+            {/* Vertical Divider */}
+            <div className="hidden md:block w-[1px] h-10 bg-[var(--border-subtle)]" />
 
-          {/* Metadata Telemetry Columns (Medium & Large screens) */}
-          <div className="hidden md:flex items-center gap-6 text-xs font-mono">
-            <div>
-              <div className="text-[9px] text-[#686A63] uppercase">Duration</div>
-              <div className="text-[#E5E7EB] font-medium">{formatTimecode(trackDuration)}</div>
-            </div>
-            <div>
-              <div className="text-[9px] text-[#686A63] uppercase">Channels</div>
-              <div className="text-[#E5E7EB] font-medium">{channels > 1 ? 'Stereo' : 'Mono'}</div>
-            </div>
-            <div>
-              <div className="text-[9px] text-[#686A63] uppercase">Peak</div>
-              <div className="text-[#E5E7EB] font-medium">-3.2 dB</div>
+            {/* Metadata Telemetry Columns (Medium & Large screens) */}
+            <div className="hidden md:flex items-center gap-8 text-[11px] font-mono">
+              <div>
+                <div className="text-[9px] text-[var(--text-tertiary)] uppercase tracking-widest">DURATION</div>
+                <div className="text-[var(--text-primary)] font-medium mt-0.5">{formatTimecode(trackDuration)}</div>
+              </div>
+              <div>
+                <div className="text-[9px] text-[var(--text-tertiary)] uppercase tracking-widest">CHANNELS</div>
+                <div className="text-[var(--text-primary)] font-medium mt-0.5">{channels > 1 ? 'STEREO' : 'MONO'}</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-          {/* Import New Button */}
-          <button
-            onClick={() => {
-              soundHaptics.playButtonTap();
-              fileInputRef.current?.click();
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition cursor-pointer active:scale-95"
-          >
-            <Upload className="w-3.5 h-3.5 text-[#B7F000]" />
-            <span>Import New</span>
-          </button>
-
-          {/* Demo Tracks Dropdown */}
-          <div className="relative">
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+            {/* Import New Button */}
             <button
               onClick={() => {
                 soundHaptics.playButtonTap();
-                setDropdownOpen(!dropdownOpen);
+                fileInputRef.current?.click();
               }}
-              className="p-2 sm:p-1.5 min-w-[40px] min-h-[40px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center text-xs text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition cursor-pointer active:scale-95"
-              title="Select Reference Demos"
+              className="flex items-center gap-1.5 px-4 py-2 min-h-[40px] text-[10px] font-mono tracking-widest uppercase text-[var(--text-primary)] bg-transparent border border-[var(--border-subtle)] hover:border-[var(--text-tertiary)] transition cursor-pointer active:scale-95"
             >
-              <ChevronDown className="w-4 h-4" />
+              <Upload className="w-3.5 h-3.5" />
+              <span>NEW</span>
             </button>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-60 bg-[#0D0E0C] border border-[#222420] rounded-sm shadow-2xl p-1.5 z-40 space-y-1">
-                <div className="px-2 py-1 text-[10px] font-mono text-[#686A63] uppercase tracking-wider">
-                  Reference Audio Tracks
+            {/* Demo Tracks Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  soundHaptics.playButtonTap();
+                  setDropdownOpen(!dropdownOpen);
+                }}
+                className="p-2 px-3 min-h-[40px] flex items-center justify-center text-[10px] font-mono tracking-widest text-[var(--text-primary)] uppercase bg-transparent border border-[var(--border-subtle)] hover:border-[var(--text-tertiary)] transition cursor-pointer active:scale-95 gap-2"
+              >
+                <span>DEMOS</span>
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-1.5 w-60 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] shadow-2xl p-1.5 z-40 space-y-1">
+                  <div className="px-2 py-1 text-[9px] font-mono text-[var(--text-tertiary)] uppercase tracking-widest">
+                    Reference Audio Tracks
+                  </div>
+                  <button
+                    onClick={() => {
+                      soundHaptics.playPresetClick();
+                      onSelectDemo('synthwave');
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full text-left p-2 text-[11px] text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] flex items-center gap-2 transition"
+                  >
+                    <Music2 className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
+                    <div>
+                      <div className="font-mono uppercase">Synthwave Master</div>
+                      <div className="text-[9px] font-mono text-[var(--text-tertiary)]">48 kHz 24-bit</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundHaptics.playPresetClick();
+                      onSelectDemo('acoustic');
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full text-left p-2 text-[11px] text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] flex items-center gap-2 transition"
+                  >
+                    <FileAudio className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
+                    <div>
+                      <div className="font-mono uppercase">Acoustic Harmonics</div>
+                      <div className="text-[9px] font-mono text-[var(--text-tertiary)]">Natural string timbre</div>
+                    </div>
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    soundHaptics.playPresetClick();
-                    onSelectDemo('synthwave');
-                    setDropdownOpen(false);
-                  }}
-                  className="w-full text-left p-2 text-xs text-[#F2F2EE] hover:bg-[#151714] rounded-sm flex items-center gap-2 transition"
-                >
-                  <Music2 className="w-4 h-4 text-[#B7F000]" />
-                  <div>
-                    <div className="font-medium">Synthwave Master Demo</div>
-                    <div className="text-[10px] text-[#686A63]">48 kHz 24-bit Electronic Stem</div>
-                  </div>
-                </button>
-                <button
-                  onClick={() => {
-                    soundHaptics.playPresetClick();
-                    onSelectDemo('acoustic');
-                    setDropdownOpen(false);
-                  }}
-                  className="w-full text-left p-2 text-xs text-[#F2F2EE] hover:bg-[#151714] rounded-sm flex items-center gap-2 transition"
-                >
-                  <FileAudio className="w-4 h-4 text-[#B7F000]" />
-                  <div>
-                    <div className="font-medium">Acoustic Harmonics</div>
-                    <div className="text-[10px] text-[#686A63]">Natural string timbre</div>
-                  </div>
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-
-          {/* Master CTA Button (Rich Violet with strong glow and active scale) */}
-          <button
-            onClick={() => {
-              soundHaptics.playMasterStart();
-              onTriggerMaster();
-            }}
-            disabled={isMastering}
-            className={`flex items-center gap-2 px-4 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] text-xs font-semibold rounded-sm text-\[#F2F2EE\] transition shadow-[0_0_16px_rgba(139,92,246,0.45)] cursor-pointer active:scale-95 select-none ${
-              isMastering
-                ? 'bg-[#8CA800] animate-pulse cursor-wait'
-                : masterStage === 'MASTER READY'
-                ? 'bg-gradient-to-r from-[#10B981] to-[#059669] shadow-[0_0_16px_rgba(16,185,129,0.45)]'
-                : 'bg-gradient-to-r from-[#B7F000] via-[#7C3AED] to-[#8CA800] hover:from-[#9333EA] hover:to-[#B7F000]'
-            }`}
-          >
-            {masterStage === 'MASTER READY' ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-\[#F2F2EE\]" />
-            ) : (
-              <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: isMastering ? '2s' : '0s' }} />
-            )}
-            <span className="tracking-wide uppercase font-bold">{getStageLabel()}</span>
-          </button>
         </div>
       </div>
+
     </div>
   );
 };
-

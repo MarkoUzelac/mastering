@@ -25,39 +25,39 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#090A08]/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[#0E1013] border border-[#222420] rounded-sm w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 bg-[var(--bg-primary)]/85 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#222420] bg-[#151714]/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center text-[#B7F000]">
+            <div className="w-8 h-8 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--accent-lime)]">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#F2F2EE] tracking-wider uppercase font-mono">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] tracking-wider uppercase font-mono">
                 DSP Verification &amp; Parity Suite
               </h3>
-              <p className="text-[10px] text-[#A5A69F] font-mono">
+              <p className="text-[10px] text-[var(--text-secondary)] font-mono">
                 Canonical Release Rule: NO MEASUREMENT = NO PASS
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-[#A5A69F] hover:text-[#F2F2EE] p-1 rounded-sm hover:bg-[#151714] transition cursor-pointer"
+            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 rounded-sm hover:bg-[var(--bg-elevated)] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center px-6 border-b border-[#222420] bg-[#0E1013] text-xs font-mono">
+        <div className="flex items-center px-6 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-xs font-mono">
           <button
             onClick={() => setActiveTab('gates')}
             className={`py-2.5 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'gates'
-                ? 'border-[#B7F000] text-[#B7F000]'
-                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
+                ? 'border-[var(--accent-lime)] text-[var(--accent-lime)]'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -67,8 +67,8 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
             onClick={() => setActiveTab('diagnostics')}
             className={`py-2.5 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'diagnostics'
-                ? 'border-[#B7F000] text-[#B7F000]'
-                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
+                ? 'border-[var(--accent-lime)] text-[var(--accent-lime)]'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
@@ -78,8 +78,8 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
             onClick={() => setActiveTab('terminal')}
             className={`py-2.5 px-4 font-semibold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'terminal'
-                ? 'border-[#B7F000] text-[#B7F000]'
-                : 'border-transparent text-[#A5A69F] hover:text-[#F2F2EE]'
+                ? 'border-[var(--accent-lime)] text-[var(--accent-lime)]'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
@@ -90,13 +90,13 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
         {/* Content Body */}
         <div className="p-6 space-y-4 overflow-y-auto flex-1 text-xs font-mono">
           {/* Baseline info note */}
-          <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1 text-[11px] text-[#A5A69F]">
+          <div className="bg-[var(--bg-primary)] p-3 rounded-sm border border-[var(--border-subtle)] space-y-1 text-[11px] text-[var(--text-secondary)]">
             <div className="flex items-center gap-2">
-              <FileCode2 className="w-4 h-4 text-[#B7F000]" />
-              <strong className="text-[#F2F2EE]">Numerical Baseline:</strong>
+              <FileCode2 className="w-4 h-4 text-[var(--accent-lime)]" />
+              <strong className="text-[var(--text-primary)]">Numerical Baseline:</strong>
               <span>src/audio/dsp-core.js (Double Precision JS) vs src/dsp/mastering.cpp (C++ / WASM)</span>
             </div>
-            <div className="text-[10px] text-[#686A63]">
+            <div className="text-[10px] text-[var(--text-tertiary)]">
               Deterministic Input: 100,000 stereo frames @ 48 kHz (440Hz + 1000Hz sin + transients @ frames 0, 24k, 72k).
             </div>
           </div>
@@ -108,7 +108,7 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                 <div
                   className={`p-4 rounded-sm border ${
                     result.passed
-                      ? 'bg-[#1C170E] border-[#B7F000] text-[#F2F2EE]'
+                      ? 'bg-[#1C170E] border-[var(--accent-lime)] text-[var(--text-primary)]'
                       : 'bg-[#1C1012] border-[#E56B6B] text-[#E56B6B]'
                   }`}
                 >
@@ -121,27 +121,27 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                       )}
                       <span>{result.passed ? 'ALL 8 PRODUCTION RELEASE GATES SATISFIED' : 'PARITY CHECK FAILED'}</span>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#090A08] border border-[#222420]">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--bg-primary)] border border-[var(--border-subtle)]">
                       {result.passed ? 'STATUS: READY FOR RELEASE' : 'STATUS: BLOCKED'}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1 text-[#A5A69F]">
-                    <div className="bg-[#090A08]/60 p-2 rounded border border-[#222420]">
-                      <span className="text-[#686A63] block text-[10px]">SAMPLES</span>
-                      <span className="text-[#F2F2EE]">{result.totalSamples / 2} (stereo)</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1 text-[var(--text-secondary)]">
+                    <div className="bg-[var(--bg-primary)]/60 p-2 rounded border border-[var(--border-subtle)]">
+                      <span className="text-[var(--text-tertiary)] block text-[10px]">SAMPLES</span>
+                      <span className="text-[var(--text-primary)]">{result.totalSamples / 2} (stereo)</span>
                     </div>
-                    <div className="bg-[#090A08]/60 p-2 rounded border border-[#222420]">
-                      <span className="text-[#686A63] block text-[10px]">MAX ABS ERROR</span>
-                      <span className="text-[#B7F000]">{result.maxAbsError.toExponential(6)}</span>
+                    <div className="bg-[var(--bg-primary)]/60 p-2 rounded border border-[var(--border-subtle)]">
+                      <span className="text-[var(--text-tertiary)] block text-[10px]">MAX ABS ERROR</span>
+                      <span className="text-[var(--accent-lime)]">{result.maxAbsError.toExponential(6)}</span>
                     </div>
-                    <div className="bg-[#090A08]/60 p-2 rounded border border-[#222420]">
-                      <span className="text-[#686A63] block text-[10px]">MEAN ABS ERROR</span>
-                      <span className="text-[#F2F2EE]">{result.meanAbsError.toExponential(6)}</span>
+                    <div className="bg-[var(--bg-primary)]/60 p-2 rounded border border-[var(--border-subtle)]">
+                      <span className="text-[var(--text-tertiary)] block text-[10px]">MEAN ABS ERROR</span>
+                      <span className="text-[var(--text-primary)]">{result.meanAbsError.toExponential(6)}</span>
                     </div>
-                    <div className="bg-[#090A08]/60 p-2 rounded border border-[#222420]">
-                      <span className="text-[#686A63] block text-[10px]">RMS ERROR</span>
-                      <span className="text-[#F2F2EE]">{result.rmsError.toExponential(6)}</span>
+                    <div className="bg-[var(--bg-primary)]/60 p-2 rounded border border-[var(--border-subtle)]">
+                      <span className="text-[var(--text-tertiary)] block text-[10px]">RMS ERROR</span>
+                      <span className="text-[var(--text-primary)]">{result.rmsError.toExponential(6)}</span>
                     </div>
                   </div>
                 </div>
@@ -164,19 +164,19 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                     className={`p-3 rounded-sm border flex items-center justify-between gap-3 ${
                       result
                         ? gate.passed
-                          ? 'bg-[#090A08] border-[#222420]'
+                          ? 'bg-[var(--bg-primary)] border-[var(--border-subtle)]'
                           : 'bg-[#1C1012] border-[#E56B6B]/40'
-                        : 'bg-[#090A08] border-[#222420]'
+                        : 'bg-[var(--bg-primary)] border-[var(--border-subtle)]'
                     }`}
                   >
                     <div className="space-y-0.5 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-[#F2F2EE] text-xs">{gate.name}</span>
-                        <span className="text-[10px] text-[#A5A69F] bg-[#151714] px-1.5 py-0.2 rounded border border-[#222420]">
+                        <span className="font-semibold text-[var(--text-primary)] text-xs">{gate.name}</span>
+                        <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--bg-elevated)] px-1.5 py-0.2 rounded border border-[var(--border-subtle)]">
                           {gate.thresholdStr}
                         </span>
                       </div>
-                      <p className="text-[10px] text-[#A5A69F]">{gate.notes}</p>
+                      <p className="text-[10px] text-[var(--text-secondary)]">{gate.notes}</p>
                     </div>
 
                     <div className="text-right">
@@ -185,18 +185,18 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
                           <span
                             className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
                               gate.passed
-                                ? 'bg-[#151714] text-[#6FCF97] border-[#6FCF97]/30'
+                                ? 'bg-[var(--bg-elevated)] text-[#6FCF97] border-[#6FCF97]/30'
                                 : 'bg-[#1C1012] text-[#E56B6B] border-[#E56B6B]'
                             }`}
                           >
                             {gate.passed ? 'PASSED' : 'FAILED'}
                           </span>
-                          <span className="block text-[9px] text-[#686A63]">
+                          <span className="block text-[9px] text-[var(--text-tertiary)]">
                             Err: {gate.measuredError.toExponential(2)}
                           </span>
                         </div>
                       ) : (
-                        <span className="px-2 py-0.5 rounded bg-[#151714] text-[#686A63] border border-[#222420] text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-tertiary)] border border-[var(--border-subtle)] text-[10px]">
                           PENDING
                         </span>
                       )}
@@ -208,33 +208,33 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
           )}
 
           {activeTab === 'diagnostics' && (
-            <div className="space-y-3 text-[11px] text-[#A5A69F]">
-              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1">
-                <span className="font-semibold text-[#F2F2EE] block">Level 1: Coefficient Comparison (Double Precision)</span>
-                <p className="text-[#A5A69F] text-[10px]">
+            <div className="space-y-3 text-[11px] text-[var(--text-secondary)]">
+              <div className="bg-[var(--bg-primary)] p-3 rounded-sm border border-[var(--border-subtle)] space-y-1">
+                <span className="font-semibold text-[var(--text-primary)] block">Level 1: Coefficient Comparison (Double Precision)</span>
+                <p className="text-[var(--text-secondary)] text-[10px]">
                   Evaluates exact mathematical RBJ LowShelf, Peaking, and HighShelf intermediate terms: A, omega, sine, cosine, alpha, sqrtA, b0, b1, b2, a0, a1, a2 and normalized values against C++ machine epsilon.
                 </p>
-                <div className="bg-[#0E1013] p-2 rounded text-[10px] text-[#B7F000] font-mono border border-[#222420]">
+                <div className="bg-[var(--bg-secondary)] p-2 rounded text-[10px] text-[var(--accent-lime)] font-mono border border-[var(--border-subtle)]">
                   analytical error = 4.440892e-16 (Threshold: &lt; 1e-12) → PASS
                 </div>
               </div>
 
-              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1">
-                <span className="font-semibold text-[#F2F2EE] block">Level 2: 1024-Sample Dirac Impulse Response</span>
-                <p className="text-[#A5A69F] text-[10px]">
+              <div className="bg-[var(--bg-primary)] p-3 rounded-sm border border-[var(--border-subtle)] space-y-1">
+                <span className="font-semibold text-[var(--text-primary)] block">Level 2: 1024-Sample Dirac Impulse Response</span>
+                <p className="text-[var(--text-secondary)] text-[10px]">
                   Confirms Direct Form II Transposed (DF2T) channel filter state allocation, z1/z2 storage ordering, and zero initial condition symmetry.
                 </p>
-                <div className="bg-[#0E1013] p-2 rounded text-[10px] text-[#B7F000] font-mono border border-[#222420]">
+                <div className="bg-[var(--bg-secondary)] p-2 rounded text-[10px] text-[var(--accent-lime)] font-mono border border-[var(--border-subtle)]">
                   maxAbsError = 2.980232e-08 (Threshold: &lt; 1e-6) → PASS
                 </div>
               </div>
 
-              <div className="bg-[#090A08] p-3 rounded-sm border border-[#222420] space-y-1">
-                <span className="font-semibold text-[#F2F2EE] block">Level 3: Dynamics Ballistics &amp; Limiter Recovery</span>
-                <p className="text-[#A5A69F] text-[10px]">
+              <div className="bg-[var(--bg-primary)] p-3 rounded-sm border border-[var(--border-subtle)] space-y-1">
+                <span className="font-semibold text-[var(--text-primary)] block">Level 3: Dynamics Ballistics &amp; Limiter Recovery</span>
+                <p className="text-[var(--text-secondary)] text-[10px]">
                   Evaluates stereo-linked envelope detector, 20ms attack, 240ms release, and hard -1.0 dBFS brickwall ceiling recovery.
                 </p>
-                <div className="bg-[#0E1013] p-2 rounded text-[10px] text-[#B7F000] font-mono border border-[#222420]">
+                <div className="bg-[var(--bg-secondary)] p-2 rounded text-[10px] text-[var(--accent-lime)] font-mono border border-[var(--border-subtle)]">
                   compressor error = 5.960464e-08, limiter error = 1.490116e-08 → PASS
                 </div>
               </div>
@@ -242,11 +242,11 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
           )}
 
           {activeTab === 'terminal' && (
-            <div className="bg-[#090A08] p-4 rounded-sm border border-[#222420] font-mono text-[11px] space-y-1 text-[#A5A69F]">
-              <div className="text-[#686A63]">$ node tests/production_reference.js</div>
+            <div className="bg-[var(--bg-primary)] p-4 rounded-sm border border-[var(--border-subtle)] font-mono text-[11px] space-y-1 text-[var(--text-secondary)]">
+              <div className="text-[var(--text-tertiary)]">$ node tests/production_reference.js</div>
               <div>[INFO] Generating production reference: 100,000 stereo frames @ 48000 Hz</div>
               <div>[INFO] Production JS baseline loaded: src/audio/dsp-core.js</div>
-              <div className="text-[#686A63]">$ python3 tests/production_diff.py</div>
+              <div className="text-[var(--text-tertiary)]">$ python3 tests/production_diff.py</div>
               <div>samples:      100000</div>
               <div>left.maxAbsError:   5.960464477539e-08</div>
               <div>left.meanAbsError:  1.490116119385e-08</div>
@@ -265,16 +265,16 @@ export const ParityModal: React.FC<ParityModalProps> = ({ isOpen, onClose }) => 
         </div>
 
         {/* Actions Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-[#222420] bg-[#151714]/50">
-          <span className="text-[11px] text-[#686A63] font-mono flex items-center gap-1.5">
-            <Terminal className="w-3.5 h-3.5 text-[#B7F000]" />
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/50">
+          <span className="text-[11px] text-[var(--text-tertiary)] font-mono flex items-center gap-1.5">
+            <Terminal className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
             Canonical Parity Gate: 1.0e-6 Float32
           </span>
           <button
             id="run-parity-benchmark-btn"
             disabled={isRunning}
             onClick={handleRunCheck}
-            className="flex items-center gap-2 px-5 py-2 text-xs font-mono font-semibold bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] rounded-sm shadow-md shadow-[#B7F000]/20 transition cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2 text-xs font-mono font-semibold bg-[var(--accent-lime)] hover:bg-[var(--accent-lime-hover)] text-[var(--bg-primary)] rounded-sm shadow-md shadow-[var(--accent-lime)]/20 transition cursor-pointer"
           >
             <PlayCircle className="w-4 h-4" />
             <span>{isRunning ? 'RUNNING BENCHMARK...' : 'RUN PARITY BENCHMARK (100k)'}</span>

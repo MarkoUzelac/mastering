@@ -39,7 +39,7 @@ export const useAuth = () => {
     return () => unsubscribe();
   }, []);
 
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === 'admin' || user?.email === 'info@markouzelacuzy.com';
 
   return { user, profile, loading, isAdmin };
 };

@@ -1,10 +1,24 @@
+export type PhosphorTheme = 'phosphor-dark' | 'phosphor-light';
+
+export interface TelemetryData {
+  integrated: number;
+  shortTerm: number;
+  momentary: number;
+  lra: number;
+  truePeakL: number;
+  truePeakR: number;
+  correlation: number;
+  crestFactor: number;
+  dynamicRange: number;
+}
+
 export interface MasteringParams {
-  low: number;        // Low shelf gain in dB (-12 to +12)
-  mid: number;        // Mid peak gain in dB (-12 to +12)
-  high: number;       // High shelf gain in dB (-12 to +12)
-  threshold: number;  // Compressor threshold in dB (-60 to 0)
-  ratio: number;      // Compressor ratio (1 to 20)
-  gain: number;       // Makeup gain in dB (0 to 24)
+  low: number;
+  mid: number;
+  high: number;
+  threshold: number;
+  ratio: number;
+  gain: number;
 }
 
 export interface MasteringPreset {
@@ -12,10 +26,10 @@ export interface MasteringPreset {
   name: string;
   category: string;
   description: string;
-  params: MasteringParams;
+  targetLufs: number;
   isPro?: boolean;
   proOnly?: boolean;
-  targetLufs?: number;
+  params: MasteringParams;
 }
 
 export interface MeterData {
@@ -29,9 +43,20 @@ export interface MeterData {
   outputRmsR: number;
   gainReductionDb: number;
   limiterActive: boolean;
-  momentaryLufs?: number;
-  integratedLufs?: number;
-  crestFactor?: number;
+  integrated?: number;
+  shortTerm?: number;
+  momentary?: number;
+  integratedLufs: number;
+  momentaryLufs: number;
+  lra?: number;
+  truePeakL?: number;
+  truePeakR?: number;
+  correlation?: number;
+  crestFactor: number;
+  dynamicRange?: number;
+  leftPeak?: number;
+  rightPeak?: number;
+  lufs?: number;
 }
 
 export interface AudioTrackInfo {
@@ -39,40 +64,25 @@ export interface AudioTrackInfo {
   duration: number;
   sampleRate: number;
   channels: number;
-  buffer: AudioBuffer | null;
-  sourceType: 'file' | 'demo' | 'synthetic';
+  format?: string;
+  bitDepth?: number;
+  buffer?: any;
+  sourceType?: string;
   fileSize?: number;
-  fileFormat?: string;
-}
-
-export interface GateStatus {
-  id: string;
-  name: string;
-  category: string;
-  thresholdStr: string;
-  measuredError: number;
-  tolerance: number;
-  passed: boolean;
-  notes: string;
 }
 
 export interface ParityResult {
   passed: boolean;
+  maxDiff?: number;
+  avgDiff?: number;
+  samplesChecked?: number;
+  message?: string;
   totalSamples: number;
   maxAbsError: number;
   meanAbsError: number;
   rmsError: number;
+  gates: any[];
   snrDb: number;
   timestamp: number;
-  firstDivergenceSample?: number;
-  gates: GateStatus[];
-  testDetails?: {
-    name: string;
-    description: string;
-    passed: boolean;
-    maxAbsError: number;
-    tolerance: number;
-  }[];
+  testDetails?: any;
 }
-
-export type PhosphorTheme = 'p1-green' | 'p3-amber' | 'cyan-studio' | 'matrix-dark';

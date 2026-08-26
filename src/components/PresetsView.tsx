@@ -93,29 +93,29 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
   const getCategoryBadgeStyle = (category: string) => {
     switch (category) {
       case 'Mastering':
-        return 'text-[#B7F000] bg-[#B7F000]/10 border-[#B7F000]/30';
+        return 'text-[var(--accent-lime)] bg-[var(--accent-lime)]/10 border-[var(--accent-lime)]/30';
       case 'Mixing':
         return 'text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/30';
       case 'Saturation':
         return 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/30';
       default:
-        return 'text-[#A5A69F] bg-[#151714] border-[#222420]';
+        return 'text-[var(--text-secondary)] bg-[var(--bg-elevated)] border-[var(--border-subtle)]';
     }
   };
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 py-4">
       {/* Header & Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#222420] pb-5">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[var(--border-subtle)] pb-5">
         <div>
-          <div className="text-[10px] font-mono text-[#B7F000] uppercase tracking-widest flex items-center gap-1.5">
+          <div className="text-[10px] font-mono text-[var(--accent-lime)] uppercase tracking-widest flex items-center gap-1.5">
             <SlidersHorizontal className="w-3 h-3" />
             DSP CURVES &amp; CALIBRATIONS
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#F2F2EE] mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-0.5">
             Mastering, Mixing &amp; Saturation Profiles
           </h1>
-          <p className="text-xs sm:text-sm text-[#A5A69F] mt-1 max-w-2xl">
+          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1 max-w-2xl">
             Precision-tuned DSP curves categorized for streaming loudness compliance, cohesive bus mixing, and warm analog saturation.
           </p>
         </div>
@@ -126,14 +126,14 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
             Search presets by name
           </label>
           <div className="relative flex items-center">
-            <Search className="w-4 h-4 text-[#A5A69F] absolute left-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-[var(--text-secondary)] absolute left-3 pointer-events-none" />
             <input
               id="preset-search-input"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search profiles or tone..."
-              className="w-full pl-9 pr-8 py-2 bg-[#0E1013] border border-[#222420] focus:border-[#B7F000] rounded-sm text-xs text-[#F2F2EE] placeholder-[#686A63] focus:outline-none transition-colors"
+              className="w-full pl-9 pr-8 py-2 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] focus:border-[var(--accent-lime)] rounded-sm text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
@@ -141,18 +141,18 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                 type="button"
                 onClick={() => setSearchQuery('')}
                 aria-label="Clear preset search"
-                className="absolute right-2.5 text-[#A5A69F] hover:text-[#F2F2EE] p-0.5 rounded transition-colors"
+                className="absolute right-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-0.5 rounded transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
-          <div className="flex justify-between items-center px-1 mt-1.5 text-[11px] font-mono text-[#686A63]">
+          <div className="flex justify-between items-center px-1 mt-1.5 text-[11px] font-mono text-[var(--text-tertiary)]">
             <span>
               Showing {filteredPresets.length} of {presets.length} profiles
             </span>
             {searchQuery && (
-              <span className="text-[#B7F000] truncate max-w-[140px]">
+              <span className="text-[var(--accent-lime)] truncate max-w-[140px]">
                 &quot;{searchQuery}&quot;
               </span>
             )}
@@ -161,7 +161,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
       </div>
 
       {/* Category Navigation Filter Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0E1013] border border-[#222420] p-2 rounded-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-2 rounded-sm">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
           {PRESET_CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;
@@ -175,8 +175,8 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-sm text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
                   isSelected
-                    ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40 font-semibold shadow-sm'
-                    : 'bg-[#151714] text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#1B1F24] border border-transparent'
+                    ? 'bg-[#1C170E] text-[var(--accent-lime)] border border-[var(--accent-lime)]/40 font-semibold shadow-sm'
+                    : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[#1B1F24] border border-transparent'
                 }`}
               >
                 {getCategoryIcon(cat.id)}
@@ -184,8 +184,8 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                 <span
                   className={`px-1.5 py-0.2 rounded text-[10px] ${
                     isSelected
-                      ? 'bg-[#B7F000] text-[#090A08] font-bold'
-                      : 'bg-[#090A08] text-[#686A63]'
+                      ? 'bg-[var(--accent-lime)] text-[var(--bg-primary)] font-bold'
+                      : 'bg-[var(--bg-primary)] text-[var(--text-tertiary)]'
                   }`}
                 >
                   {count}
@@ -196,19 +196,19 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
         </div>
 
         {/* Selected Category Descriptor */}
-        <div className="text-[11px] text-[#686A63] font-mono px-2 hidden lg:block">
+        <div className="text-[11px] text-[var(--text-tertiary)] font-mono px-2 hidden lg:block">
           {PRESET_CATEGORIES.find((c) => c.id === selectedCategory)?.description}
         </div>
       </div>
 
       {/* Preset Cards Grid or Empty State */}
       {filteredPresets.length === 0 ? (
-        <div className="py-16 text-center bg-[#0E1013] border border-[#222420] rounded-sm p-8 space-y-3">
-          <div className="w-10 h-10 rounded-full bg-[#151714] border border-[#222420] text-[#A5A69F] mx-auto flex items-center justify-center">
+        <div className="py-16 text-center bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-8 space-y-3">
+          <div className="w-10 h-10 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] mx-auto flex items-center justify-center">
             <Filter className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-semibold text-[#F2F2EE]">No presets found</h3>
-          <p className="text-xs text-[#8E95A2] max-w-sm mx-auto">
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">No presets found</h3>
+          <p className="text-xs text-[var(--text-tertiary)] max-w-sm mx-auto">
             No profile matches your current filters
             {selectedCategory !== 'All' ? ` in the ${selectedCategory} category` : ''}
             {searchQuery ? ` for query "${searchQuery}"` : ''}.
@@ -218,7 +218,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedCategory('All')}
-                className="px-3.5 py-1.5 rounded-sm bg-[#151714] hover:bg-[#222420] text-xs font-mono text-[#B7F000] border border-[#222420] transition-colors"
+                className="px-3.5 py-1.5 rounded-sm bg-[var(--bg-elevated)] hover:bg-[var(--border-subtle)] text-xs font-mono text-[var(--accent-lime)] border border-[var(--border-subtle)] transition-colors"
               >
                 Show All Categories
               </button>
@@ -227,7 +227,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="px-3.5 py-1.5 rounded-sm bg-[#151714] hover:bg-[#222420] text-xs font-mono text-[#F2F2EE] border border-[#222420] transition-colors"
+                className="px-3.5 py-1.5 rounded-sm bg-[var(--bg-elevated)] hover:bg-[var(--border-subtle)] text-xs font-mono text-[var(--text-primary)] border border-[var(--border-subtle)] transition-colors"
               >
                 Clear Search Query
               </button>
@@ -245,16 +245,16 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
               <div
                 key={preset.id}
                 id={`preset-card-${preset.id}`}
-                className={`bg-[#0E1013] border rounded-sm p-5 flex flex-col justify-between transition-all relative ${
+                className={`bg-[var(--bg-secondary)] border rounded-sm p-5 flex flex-col justify-between transition-all relative ${
                   isSelected
-                    ? 'border-[#B7F000] shadow-[0_0_20px_rgba(214,175,98,0.15)] bg-gradient-to-b from-[#151714] to-[#0E1013]'
-                    : 'border-[#222420] hover:border-[#3A4048]'
+                    ? 'border-[var(--accent-lime)] shadow-[0_0_20px_rgba(214,175,98,0.15)] bg-gradient-to-b from-[var(--bg-elevated)] to-[var(--bg-secondary)]'
+                    : 'border-[var(--border-subtle)] hover:border-[#3A4048]'
                 }`}
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
-                      <h3 className="text-base font-semibold text-[#F2F2EE] flex items-center gap-2">
+                      <h3 className="text-base font-semibold text-[var(--text-primary)] flex items-center gap-2">
                         {preset.name}
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
@@ -267,7 +267,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                           {preset.category}
                         </span>
                         {preset.targetLufs && (
-                          <span className="text-[10px] font-mono text-[#A5A69F]">
+                          <span className="text-[10px] font-mono text-[var(--text-secondary)]">
                             {preset.targetLufs} LUFS
                           </span>
                         )}
@@ -276,25 +276,25 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                     {isProPreset && <ProBadge size="sm" locked={isLocked} />}
                   </div>
 
-                  <p className="text-xs text-[#A5A69F] leading-relaxed mb-4 min-h-[36px]">
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-4 min-h-[36px]">
                     {preset.description}
                   </p>
 
                   {/* Target Telemetry Pills */}
-                  <div className="grid grid-cols-3 gap-2 bg-[#090A08] border border-[#222420] rounded-sm p-2.5 text-center font-mono text-xs mb-4">
+                  <div className="grid grid-cols-3 gap-2 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-sm p-2.5 text-center font-mono text-xs mb-4">
                     <div>
-                      <span className="text-[9px] text-[#686A63] block">TARGET</span>
-                      <span className="text-[#F2F2EE] font-semibold">
+                      <span className="text-[9px] text-[var(--text-tertiary)] block">TARGET</span>
+                      <span className="text-[var(--text-primary)] font-semibold">
                         {preset.targetLufs ? `${preset.targetLufs} LUFS` : '-14 LUFS'}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[9px] text-[#686A63] block">CEILING</span>
-                      <span className="text-[#B7F000] font-semibold">-1.0 dBTP</span>
+                      <span className="text-[9px] text-[var(--text-tertiary)] block">CEILING</span>
+                      <span className="text-[var(--accent-lime)] font-semibold">-1.0 dBTP</span>
                     </div>
                     <div>
-                      <span className="text-[9px] text-[#686A63] block">EQ TONE</span>
-                      <span className="text-[#A5A69F]">
+                      <span className="text-[9px] text-[var(--text-tertiary)] block">EQ TONE</span>
+                      <span className="text-[var(--text-secondary)]">
                         {preset.params.high > 1 ? 'Bright' : preset.params.low > 1 ? 'Warm' : 'Neutral'}
                       </span>
                     </div>
@@ -307,10 +307,10 @@ export const PresetsView: React.FC<PresetsViewProps> = ({
                   onClick={() => handleApply(preset)}
                   className={`w-full py-2 px-3 text-xs font-semibold font-mono rounded-sm transition flex items-center justify-center gap-1.5 cursor-pointer ${
                     isSelected
-                      ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40'
+                      ? 'bg-[#1C170E] text-[var(--accent-lime)] border border-[var(--accent-lime)]/40'
                       : isLocked
-                      ? 'bg-[#151714] text-[#B7F000] border border-[#222420] hover:border-[#B7F000]/50'
-                      : 'bg-[#151714] hover:bg-[#B7F000] text-[#F2F2EE] hover:text-[#090A08] border border-[#222420]'
+                      ? 'bg-[var(--bg-elevated)] text-[var(--accent-lime)] border border-[var(--border-subtle)] hover:border-[var(--accent-lime)]/50'
+                      : 'bg-[var(--bg-elevated)] hover:bg-[var(--accent-lime)] text-[var(--text-primary)] hover:text-[var(--bg-primary)] border border-[var(--border-subtle)]'
                   }`}
                 >
                   {isSelected ? (

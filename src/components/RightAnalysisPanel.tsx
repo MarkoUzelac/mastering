@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Check, Sliders, Activity, Info, BarChart2, Shield } from 'lucide-react';
 import { MeterData } from '../types';
+import { audioEngineEvents } from '../utils/audio-engine';
 
 interface RightAnalysisPanelProps {
   meterData: MeterData;
@@ -22,17 +23,25 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
   const [meterMode, setMeterMode] = useState<'TP' | 'Peak' | 'RMS'>('TP');
 
   const correlationCanvasRef = useRef<HTMLCanvasElement | null>(null);
+const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [localMeters, setLocalMeters] = React.useState<any>(null);
+  React.useEffect(() => {
+    const handler = (e: any) => setLocalMeters(e.detail);
+    audioEngineEvents.addEventListener('meterupdate', handler);
+    return () => audioEngineEvents.removeEventListener('meterupdate', handler);
+  }, []);
+  const activeMeters = localMeters || meterData;
 
   // Compute live L & R meter values based on audio activity
   const outL = isPlaying
-    ? Math.max(-60, Math.min(0, 20 * Math.log10(Math.max(0.0001, meterData.outputPeakL))))
+    ? Math.max(-60, Math.min(0, 20 * Math.log10(Math.max(0.0001, activeMeters?.outputPeakL))))
     : -60;
   const outR = isPlaying
-    ? Math.max(-60, Math.min(0, 20 * Math.log10(Math.max(0.0001, meterData.outputPeakR))))
+    ? Math.max(-60, Math.min(0, 20 * Math.log10(Math.max(0.0001, activeMeters?.outputPeakR))))
     : -60;
 
-  const integratedLufs = isPlaying && meterData.integratedLufs ? meterData.integratedLufs : -10.8;
-  const shortTermLufs = isPlaying && meterData.momentaryLufs ? meterData.momentaryLufs : -9.7;
+  const integratedLufs = isPlaying && activeMeters?.integratedLufs ? activeMeters?.integratedLufs : -10.8;
+  const shortTermLufs = isPlaying && activeMeters?.momentaryLufs ? activeMeters?.momentaryLufs : -9.7;
   const loudnessRange = isPlaying ? 1.6 : 1.6;
   const truePeakDb = isPlaying ? (outL > -60 ? outL + 0.1 : -0.9) : -0.9;
 
@@ -115,18 +124,18 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
   return (
     <div className="w-full flex flex-col gap-3 shrink-0">
       {/* 1. OUTPUT METER */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-3.5 shadow-sm">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Output Meter</span>
-          <div className="flex items-center gap-1 bg-[#151714] border border-[#222420] rounded-md px-1.5 py-0.5">
+          <span className="text-xs font-semibold tracking-wide text-[var(--text-primary)]">Output Meter</span>
+          <div className="flex items-center gap-1 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-md px-1.5 py-0.5">
             <select
               value={meterMode}
               onChange={(e) => setMeterMode(e.target.value as any)}
-              className="bg-transparent text-[11px] font-mono text-[#B7F000] focus:outline-none cursor-pointer"
+              className="bg-transparent text-[11px] font-mono text-[var(--accent-lime)] focus:outline-none cursor-pointer"
             >
-              <option value="TP" className="bg-[#0D0E0C] text-[#F2F2EE]">TP</option>
-              <option value="Peak" className="bg-[#0D0E0C] text-[#F2F2EE]">Peak</option>
-              <option value="RMS" className="bg-[#0D0E0C] text-[#F2F2EE]">RMS</option>
+              <option value="TP" className="bg-[var(--bg-secondary)] text-[var(--text-primary)]">TP</option>
+              <option value="Peak" className="bg-[var(--bg-secondary)] text-[var(--text-primary)]">Peak</option>
+              <option value="RMS" className="bg-[var(--bg-secondary)] text-[var(--text-primary)]">RMS</option>
             </select>
           </div>
         </div>
@@ -135,7 +144,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
         <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center bg-[#07090C] border border-[#181C22] rounded-sm p-2.5">
           {/* L Channel */}
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-mono text-center text-[#686A63]">L</span>
+            <span className="text-[10px] font-mono text-center text-[var(--text-tertiary)]">L</span>
             <div className="flex flex-col gap-0.5 h-36 justify-between">
               {DB_TICKS.map((db, idx) => (
                 <div
@@ -144,13 +153,13 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
                 />
               ))}
             </div>
-            <span className="text-[11px] font-mono text-center text-[#E5E7EB] mt-1 tabular-nums">
+            <span className="text-[11px] font-mono text-center text-[var(--text-primary)] mt-1 tabular-nums">
               {outL <= -60 ? '-∞' : `${outL.toFixed(1)}`}
             </span>
           </div>
 
           {/* Central dB Scale Labels */}
-          <div className="flex flex-col justify-between h-36 py-0.5 text-[9px] font-mono text-[#686A63] text-center select-none">
+          <div className="flex flex-col justify-between h-36 py-0.5 text-[9px] font-mono text-[var(--text-tertiary)] text-center select-none">
             <span>0</span>
             <span>-3</span>
             <span>-6</span>
@@ -165,7 +174,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
 
           {/* R Channel */}
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-mono text-center text-[#686A63]">R</span>
+            <span className="text-[10px] font-mono text-center text-[var(--text-tertiary)]">R</span>
             <div className="flex flex-col gap-0.5 h-36 justify-between">
               {DB_TICKS.map((db, idx) => (
                 <div
@@ -174,7 +183,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
                 />
               ))}
             </div>
-            <span className="text-[11px] font-mono text-center text-[#E5E7EB] mt-1 tabular-nums">
+            <span className="text-[11px] font-mono text-center text-[var(--text-primary)] mt-1 tabular-nums">
               {outR <= -60 ? '-∞' : `${outR.toFixed(1)}`}
             </span>
           </div>
@@ -182,42 +191,42 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 2. LOUDNESS TELEMETRY */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2.5">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-3.5 shadow-sm space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Loudness</span>
-          <span className="text-[10px] font-mono text-[#B7F000] px-1.5 py-0.5 bg-[#B7F000]/10 rounded border border-[#B7F000]/20">
+          <span className="text-xs font-semibold tracking-wide text-[var(--text-primary)]">Loudness</span>
+          <span className="text-[10px] font-mono text-[var(--accent-lime)] px-1.5 py-0.5 bg-[var(--accent-lime)]/10 rounded border border-[var(--accent-lime)]/20">
             EBU R128
           </span>
         </div>
 
         {/* Big Bold Integrated Readout */}
         <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-2.5 flex flex-col items-center justify-center">
-          <span className="text-[10px] font-mono text-[#686A63] uppercase tracking-wider mb-0.5">
+          <span className="text-[10px] font-mono text-[var(--text-tertiary)] uppercase tracking-wider mb-0.5">
             Integrated
           </span>
-          <div className="text-2xl font-mono font-bold text-[#F2F2EE] tracking-tight">
+          <div className="text-2xl font-mono font-bold text-[var(--text-primary)] tracking-tight">
             {integratedLufs.toFixed(1)}{' '}
-            <span className="text-xs font-medium text-[#B7F000]">LUFS</span>
+            <span className="text-xs font-medium text-[var(--accent-lime)]">LUFS</span>
           </div>
         </div>
 
         {/* Secondary Metrics Grid */}
         <div className="grid grid-cols-3 gap-1.5 text-center">
           <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-1.5">
-            <div className="text-[9px] font-mono text-[#686A63]">Short Term</div>
-            <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
+            <div className="text-[9px] font-mono text-[var(--text-tertiary)]">Short Term</div>
+            <div className="text-xs font-mono font-semibold text-[var(--text-primary)] mt-0.5">
               {shortTermLufs.toFixed(1)}
             </div>
           </div>
           <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-1.5">
-            <div className="text-[9px] font-mono text-[#686A63]">Range</div>
-            <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
+            <div className="text-[9px] font-mono text-[var(--text-tertiary)]">Range</div>
+            <div className="text-xs font-mono font-semibold text-[var(--text-primary)] mt-0.5">
               {loudnessRange.toFixed(1)} LU
             </div>
           </div>
           <div className="bg-[#07090C] border border-[#181C22] rounded-sm p-1.5">
-            <div className="text-[9px] font-mono text-[#686A63]">True Peak</div>
-            <div className="text-xs font-mono font-semibold text-[#E5E7EB] mt-0.5">
+            <div className="text-[9px] font-mono text-[var(--text-tertiary)]">True Peak</div>
+            <div className="text-xs font-mono font-semibold text-[var(--text-primary)] mt-0.5">
               {truePeakDb.toFixed(1)} dB
             </div>
           </div>
@@ -225,42 +234,42 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
 
         <button
           onClick={onOpenLoudnessDetails}
-          className="w-full py-1 text-xs font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1C2026] border border-[#222420] rounded-sm transition text-center cursor-pointer"
+          className="w-full py-1 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm transition text-center cursor-pointer"
         >
           Loudness Details
         </button>
       </div>
 
       {/* 3. REFERENCE TARGET */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Reference</span>
-          <span className="text-[10px] font-mono text-[#686A63]">TARGET MATCH</span>
+          <span className="text-xs font-semibold tracking-wide text-[var(--text-primary)]">Reference</span>
+          <span className="text-[10px] font-mono text-[var(--text-tertiary)]">TARGET MATCH</span>
         </div>
 
         <div className="flex items-center justify-between bg-[#07090C] border border-[#181C22] rounded-sm p-2">
           <div>
-            <div className="text-xs font-semibold text-[#F2F2EE]">{referencePlatform}</div>
-            <div className="text-[10px] font-mono text-[#B7F000]">
+            <div className="text-xs font-semibold text-[var(--text-primary)]">{referencePlatform}</div>
+            <div className="text-[10px] font-mono text-[var(--accent-lime)]">
               {targetLufs.toFixed(1)} LUFS
             </div>
           </div>
 
           <button
             onClick={onOpenReferenceModal}
-            className="p-1.5 rounded-md bg-[#1C162E] hover:bg-[#271E42] text-[#C7FF18] border border-[#B7F000]/40 transition cursor-pointer"
+            className="p-1.5 rounded-md bg-[var(--bg-elevated)] hover:bg-[#271E42] text-[var(--accent-lime-hover)] border border-[var(--accent-lime)]/40 transition cursor-pointer"
             title="Change Target Reference"
           >
-            <Check className="w-3.5 h-3.5 text-[#B7F000]" />
+            <Check className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
           </button>
         </div>
       </div>
 
       {/* 4. CORRELATION (GONIOMETER) */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Correlation</span>
-          <span className="text-[10px] font-mono text-[#686A63]">PHASE CLOUD</span>
+          <span className="text-xs font-semibold tracking-wide text-[var(--text-primary)]">Correlation</span>
+          <span className="text-[10px] font-mono text-[var(--text-tertiary)]">PHASE CLOUD</span>
         </div>
 
         <div className="w-full h-20 bg-[#07090C] border border-[#181C22] rounded-sm overflow-hidden relative">
@@ -273,7 +282,7 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
         </div>
 
         {/* Phase Scale Labels */}
-        <div className="flex items-center justify-between px-1 text-[10px] font-mono text-[#686A63]">
+        <div className="flex items-center justify-between px-1 text-[10px] font-mono text-[var(--text-tertiary)]">
           <span>-1</span>
           <span>0</span>
           <span>+1</span>
@@ -281,10 +290,10 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
       </div>
 
       {/* 5. BALANCE */}
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3.5 shadow-sm space-y-2">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-3.5 shadow-sm space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide text-[#F2F2EE]">Balance</span>
-          <span className="text-[10px] font-mono text-[#E5E7EB] tabular-nums">0.02</span>
+          <span className="text-xs font-semibold tracking-wide text-[var(--text-primary)]">Balance</span>
+          <span className="text-[10px] font-mono text-[var(--text-primary)] tabular-nums">0.02</span>
         </div>
 
         {/* Horizontal Balance Fader Track */}
@@ -292,12 +301,12 @@ export const RightAnalysisPanel: React.FC<RightAnalysisPanelProps> = ({
           <div className="w-0.5 h-full bg-[#343A46]" />
           {/* Indicator Dot */}
           <div
-            className="absolute w-2.5 h-2.5 rounded-full bg-[#B7F000] shadow-[0_0_6px_rgba(139,92,246,0.8)]"
+            className="absolute w-2.5 h-2.5 rounded-full bg-[var(--accent-lime)] shadow-[0_0_6px_rgba(139,92,246,0.8)]"
             style={{ left: 'calc(50% + 2px)' }}
           />
         </div>
 
-        <div className="flex items-center justify-between text-[10px] font-mono text-[#686A63]">
+        <div className="flex items-center justify-between text-[10px] font-mono text-[var(--text-tertiary)]">
           <span>L</span>
           <span>C</span>
           <span>R</span>

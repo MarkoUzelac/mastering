@@ -70,20 +70,20 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
     >
       <div 
         ref={modalRef}
-        className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+        className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
           <div className="flex items-center gap-2.5">
-            <History className="w-4 h-4 text-[#B7F000]" />
+            <History className="w-4 h-4 text-[var(--accent-lime)]" />
             <div>
-              <h3 className="text-sm font-semibold text-[#F2F2EE]">Session History Snapshots</h3>
-              <p className="text-[11px] text-[#686A63]">Parameter undo states &amp; preset applications</p>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Session History Snapshots</h3>
+              <p className="text-[11px] text-[var(--text-tertiary)]">Parameter undo states &amp; preset applications</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -94,15 +94,15 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
           {historyList.map((entry, index) => (
             <div
               key={entry.id || index}
-              className="p-3 rounded-sm bg-[#07090C] border border-[#181C22] hover:border-[#222420] transition flex items-center justify-between"
+              className="p-3 rounded-sm bg-[#07090C] border border-[#181C22] hover:border-[var(--border-subtle)] transition flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-sm bg-[#151714] border border-[#222420] text-[#B7F000]">
+                <div className="p-2 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--accent-lime)]">
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-[#F2F2EE]">{entry.name}</div>
-                  <div className="text-[10px] font-mono text-[#686A63]">{entry.time} · {entry.target}</div>
+                  <div className="text-xs font-semibold text-[var(--text-primary)]">{entry.name}</div>
+                  <div className="text-[10px] font-mono text-[var(--text-tertiary)]">{entry.time} · {entry.target}</div>
                 </div>
               </div>
 
@@ -111,7 +111,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                   onRestore(entry);
                   onClose();
                 }}
-                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#B7F000] hover:text-\[#F2F2EE\] bg-[#1C162E] hover:bg-[#B7F000] border border-[#B7F000]/40 rounded-sm transition cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[var(--accent-lime)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] hover:bg-[var(--accent-lime)] border border-[var(--accent-lime)]/40 rounded-sm transition cursor-pointer"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Restore</span>
@@ -121,10 +121,10 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
+        <div className="px-5 py-3 border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-[var(--text-primary)] bg-[var(--accent-lime)] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Close
           </button>

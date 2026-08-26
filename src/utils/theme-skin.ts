@@ -1,14 +1,4 @@
-/**
- * Theme & Skin Manager for MasteringLocal.Pro
- * 
- * Supports high-end studio mastering hardware aesthetics:
- * - 'obsidian-gold': High-end Gold & Obsidian Carbon Chassis (Default)
- * - 'titanium-slate': Anodized Titanium & Ice Cyan Studio Instrumentation
- * - 'cyber-matrix': Vintage Phosphor Green CRT Rack Station
- * - 'midnight-studio': Editorial Minimalist Monochromatic Carbon
- */
-
-export type StudioSkinId = 'obsidian-gold' | 'titanium-slate' | 'cyber-matrix' | 'midnight-studio';
+export type StudioSkinId = 'phosphor-dark' | 'phosphor-light';
 
 export interface StudioSkin {
   id: StudioSkinId;
@@ -24,53 +14,31 @@ export interface StudioSkin {
 
 export const STUDIO_SKINS: StudioSkin[] = [
   {
-    id: 'obsidian-gold',
-    name: 'Obsidian Gold',
-    category: 'Flagship Mastering Console',
-    description: 'Deep carbon obsidian chassis, brushed gold indicators, amber tube glow meters, and precision milled bezels.',
-    accentColor: '#D6AF62',
-    bgBase: '#08090B',
-    bgSurface: '#0E1013',
-    borderCol: '#24282D',
-    previewGradient: 'from-[#D6AF62] via-[#8E733D] to-[#0E1013]',
+    id: 'phosphor-dark',
+    name: 'Phosphor Dark',
+    category: 'Flagship Aesthetic',
+    description: 'Deep carbon obsidian chassis, precision neon lime indicators, and sharp typographic layouts.',
+    accentColor: '#B7F000',
+    bgBase: '#090A08',
+    bgSurface: '#151714',
+    borderCol: '#222420',
+    previewGradient: 'from-[#B7F000] via-[#5C7A00] to-[#090A08]',
   },
   {
-    id: 'titanium-slate',
-    name: 'Titanium Slate',
-    category: 'Precision Laboratory Rack',
-    description: 'Anodized brushed silver aluminum casing with ice cyan indicators and modern high-contrast telemetry.',
-    accentColor: '#38BDF8',
-    bgBase: '#0B111A',
-    bgSurface: '#111A24',
-    borderCol: '#1E2D3D',
-    previewGradient: 'from-[#38BDF8] via-[#0284C7] to-[#111A24]',
-  },
-  {
-    id: 'cyber-matrix',
-    name: 'Phosphor Matrix',
-    category: 'Analog CRT Station',
-    description: 'Vintage high-persistence green CRT oscilloscopes, glowing green LED arrays, and analog hardware dials.',
-    accentColor: '#00FF66',
-    bgBase: '#050E07',
-    bgSurface: '#091A0D',
-    borderCol: '#12381C',
-    previewGradient: 'from-[#00FF66] via-[#00AA44] to-[#091A0D]',
-  },
-  {
-    id: 'midnight-studio',
-    name: 'Midnight Monolith',
-    category: 'Editorial Minimalist',
-    description: 'Monochromatic satin carbon chassis, ultra-pure white precision readouts, and surgical studio focus.',
-    accentColor: '#E2E8F0',
-    bgBase: '#070709',
-    bgSurface: '#0F0F12',
-    borderCol: '#202026',
-    previewGradient: 'from-[#E2E8F0] via-[#94A3B8] to-[#0F0F12]',
-  },
+    id: 'phosphor-light',
+    name: 'Phosphor Light',
+    category: 'Daylight Layout',
+    description: 'Crisp bright environment, minimal borders, and high-contrast typography.',
+    accentColor: '#B7F000',
+    bgBase: '#F5F5F3',
+    bgSurface: '#FFFFFF',
+    borderCol: '#EBE0E6',
+    previewGradient: 'from-[#B7F000] via-[#D9F99D] to-[#F5F5F3]',
+  }
 ];
 
 class ThemeSkinService {
-  private activeSkin: StudioSkinId = 'obsidian-gold';
+  private activeSkin: StudioSkinId = 'phosphor-dark';
 
   constructor() {
     if (typeof window !== 'undefined') {

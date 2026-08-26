@@ -87,7 +87,7 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
               disabled={isBypassed}
               className={`p-3.5 rounded-sm border text-left transition relative flex flex-col justify-between cursor-pointer ${
                 active
-                  ? 'bg-[#0f4020]/70 border-[#00ff66] text-\[#F2F2EE\] shadow-md shadow-[#00ff66]/15'
+                  ? 'bg-[#0f4020]/70 border-[#00ff66] text-[var(--text-primary)] shadow-md shadow-[#00ff66]/15'
                   : isLocked
                   ? 'bg-[#030a05] border-[#1a331f] text-[#00aa44] hover:border-[#f59e0b]/50'
                   : 'bg-[#030d06] border-[#0d381c] text-[#00cc55] hover:bg-[#071c0e] hover:border-[#00ff66]/40'

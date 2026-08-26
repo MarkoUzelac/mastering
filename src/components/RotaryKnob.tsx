@@ -38,9 +38,9 @@ const COLOR_MAP: Record<KnobAccentColor, { arc: string; glow: string; text: stri
     dot: '#FDE68A',
   },
   violet: {
-    arc: '#B7F000',
+    arc: 'var(--accent-lime)',
     glow: 'rgba(139, 92, 246, 0.4)',
-    text: '#C7FF18',
+    text: 'var(--accent-lime-hover)',
     dot: '#D4FF5C',
   },
   purple: {
@@ -58,7 +58,7 @@ const COLOR_MAP: Record<KnobAccentColor, { arc: string; glow: string; text: stri
   gray: {
     arc: '#9CA3AF',
     glow: 'rgba(156, 163, 175, 0.3)',
-    text: '#E5E7EB',
+    text: 'var(--text-primary)',
     dot: '#F3F4F6',
   },
 };
@@ -215,7 +215,7 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
       title={`${label}: ${formattedDisplay} (Drag up/down, Double-click to reset)`}
     >
       {/* Upper Label */}
-      <span className="text-[11px] font-medium text-[#A5A69F] tracking-tight mb-1 text-center truncate max-w-[72px]">
+      <span className="text-[11px] font-medium text-[var(--text-secondary)] tracking-tight mb-1 text-center truncate max-w-[72px]">
         {label}
       </span>
 
@@ -227,7 +227,7 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className={`relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#B7F000] transition-transform touch-none active:scale-105 ${
+        className={`relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] transition-transform touch-none active:scale-105 ${
           isDragging ? 'scale-105' : 'hover:scale-[1.03]'
         }`}
         style={{ width: dimensions.diameter, height: dimensions.diameter }}
@@ -275,7 +275,7 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
             cx={dimensions.cx}
             cy={dimensions.cy}
             r={dimensions.radius - 6}
-            fill="#0A0C0F"
+            fill="var(--bg-secondary)"
           />
 
           {/* Value Indicator Dot */}
@@ -292,7 +292,7 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
       </div>
 
       {/* Numeric Readout */}
-      <span className="text-[11px] font-mono font-medium text-[#E5E7EB] mt-1 tracking-tight tabular-nums text-center">
+      <span className="text-[11px] font-mono font-medium text-[var(--text-primary)] mt-1 tracking-tight tabular-nums text-center">
         {formattedDisplay}
       </span>
     </div>

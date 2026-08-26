@@ -1,0 +1,2 @@
+sed -i 's/<ProcessingChain\s*\/>/<ProcessingChain\n                  params={params}\n                  advancedParams={advancedParams}\n                  meterData={meterData}\n                  isBypassed={isBypassed}\n                  onParamChange={handleParamChange}\n                  onAdvancedParamChange={handleAdvancedParamChange}\n                  onOpenAdvancedModal={(mod) => setActiveAdvancedModal(mod)}\n                \/>/' src/App.tsx
+sed -i 's/masterStage === '\''MASTER READY'\''/false/g' src/App.tsx

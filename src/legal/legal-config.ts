@@ -22,16 +22,16 @@ export interface LegalEntityConfig {
 }
 
 export const LEGAL_CONFIG: LegalEntityConfig = {
-  businessName: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_NAME) || 'Marko Uzelac / MasteringLocal HQ',
+  businessName: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_NAME) || '',
   tradingName: 'MasteringLocal.Pro',
-  registeredAddress: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_ADDRESS) || 'Digital Audio Web Suite',
+  registeredAddress: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_ADDRESS) || '',
   country: (typeof process !== 'undefined' && process.env?.LEGAL_BUSINESS_COUNTRY) || 'Croatia',
-  registrationNumber: (typeof process !== 'undefined' && process.env?.LEGAL_REGISTRATION_NUMBER) || 'N/A (Freelancer)',
-  vatId: (typeof process !== 'undefined' && process.env?.LEGAL_VAT_ID) || 'N/A',
+  registrationNumber: (typeof process !== 'undefined' && process.env?.LEGAL_REGISTRATION_NUMBER) || '',
+  vatId: (typeof process !== 'undefined' && process.env?.LEGAL_VAT_ID) || '',
   supportEmail: (typeof process !== 'undefined' && process.env?.LEGAL_SUPPORT_EMAIL) || 'support@masteringlocal.pro',
-  privacyEmail: (typeof process !== 'undefined' && process.env?.LEGAL_PRIVACY_EMAIL) || 'support@masteringlocal.pro',
+  privacyEmail: (typeof process !== 'undefined' && process.env?.LEGAL_PRIVACY_EMAIL) || 'privacy@masteringlocal.pro',
   legalRepresentative: 'Marko Uzelac',
-  governingLaw: (typeof process !== 'undefined' && process.env?.LEGAL_GOVERNING_LAW) || 'Laws of the Republic of Croatia',
+  governingLaw: (typeof process !== 'undefined' && process.env?.LEGAL_GOVERNING_LAW) || 'Republic of Croatia',
   jurisdictionCourts: 'Competent Court of Croatia',
   isConfigurationComplete: true,
 };

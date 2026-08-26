@@ -70,19 +70,19 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
           <div className="flex items-center gap-2.5">
-            <Target className="w-4 h-4 text-[#B7F000]" />
+            <Target className="w-4 h-4 text-[var(--accent-lime)]" />
             <div>
-              <h3 className="text-sm font-semibold text-[#F2F2EE]">Loudness Target Reference</h3>
-              <p className="text-[11px] text-[#686A63]">Platform delivery standards &amp; streaming targets</p>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Loudness Target Reference</h3>
+              <p className="text-[11px] text-[var(--text-tertiary)]">Platform delivery standards &amp; streaming targets</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -102,32 +102,32 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
                 }}
                 className={`p-3 rounded-sm border transition cursor-pointer flex items-center justify-between ${
                   isSelected
-                    ? 'bg-[#1C162E] border-[#B7F000] text-[#F2F2EE]'
-                    : 'bg-[#07090C] border-[#181C22] hover:border-[#222420] text-[#A5A69F]'
+                    ? 'bg-[var(--bg-elevated)] border-[var(--accent-lime)] text-[var(--text-primary)]'
+                    : 'bg-[#07090C] border-[#181C22] hover:border-[var(--border-subtle)] text-[var(--text-secondary)]'
                 }`}
               >
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-[#F2F2EE]">{target.platform}</span>
+                    <span className="text-xs font-semibold text-[var(--text-primary)]">{target.platform}</span>
                     {target.badge && (
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#B7F000] text-\[#F2F2EE\]">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[var(--accent-lime)] text-[var(--text-primary)]">
                         {target.badge}
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-[#686A63] line-clamp-1">{target.description}</p>
+                  <p className="text-[11px] text-[var(--text-tertiary)] line-clamp-1">{target.description}</p>
                 </div>
 
                 <div className="flex items-center gap-3 text-right">
                   <div>
-                    <div className="text-xs font-mono font-bold text-[#B7F000]">
+                    <div className="text-xs font-mono font-bold text-[var(--accent-lime)]">
                       {target.targetLufs.toFixed(1)} LUFS
                     </div>
-                    <div className="text-[10px] font-mono text-[#686A63]">
+                    <div className="text-[10px] font-mono text-[var(--text-tertiary)]">
                       Ceil: {target.truePeakCeiling.toFixed(1)} dBTP
                     </div>
                   </div>
-                  {isSelected && <Check className="w-4 h-4 text-[#B7F000]" />}
+                  {isSelected && <Check className="w-4 h-4 text-[var(--accent-lime)]" />}
                 </div>
               </div>
             );
@@ -135,10 +135,10 @@ export const ReferenceTargetModal: React.FC<ReferenceTargetModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex justify-end">
+        <div className="px-5 py-3 border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-[var(--text-primary)] bg-[var(--accent-lime)] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Done
           </button>

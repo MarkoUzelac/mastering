@@ -2,10 +2,11 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { ZoomIn, ZoomOut, Split } from 'lucide-react';
 import { AudioTrackInfo } from '../types';
 import { soundHaptics } from '../utils/sound-haptics';
+import { audioEngineEvents } from '../utils/audio-engine';
 
 interface WaveformHeroProps {
   currentTrack: AudioTrackInfo | null;
-  currentTime: number;
+  currentTime?: number;
   duration: number;
   isPlaying: boolean;
   isBypassed: boolean;
@@ -16,7 +17,7 @@ interface WaveformHeroProps {
 
 export const WaveformHero: React.FC<WaveformHeroProps> = ({
   currentTrack,
-  currentTime,
+  currentTime = 0,
   duration,
   isPlaying,
   isBypassed,
@@ -27,10 +28,24 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [localTime, setLocalTime] = useState<number>(0);
+  useEffect(() => {
+    const handler = (e: any) => setLocalTime(e.detail.currentTime);
+    audioEngineEvents.addEventListener('timeupdate', handler);
+    return () => audioEngineEvents.removeEventListener('timeupdate', handler);
+  }, []);
+  // Ensure localTime is used instead of currentTime prop
+  const activeTime = localTime;
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const lastScrubTickRef = useRef<number>(0);
+
+  const totalDurationRender = duration > 0 ? duration : 225.782;
+  const visibleDuration = totalDurationRender / zoomLevel;
+  let viewStart = currentTime - visibleDuration / 2;
+  if (viewStart < 0) viewStart = 0;
+  if (viewStart + visibleDuration > totalDurationRender) viewStart = Math.max(0, totalDurationRender - visibleDuration);
 
   const formatPrecisionTime = (secs: number) => {
     const m = Math.floor(secs / 60);
@@ -108,13 +123,12 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     const midY = height / 2;
     const maxAmp = height * 0.42;
 
-    const playheadRatio = duration > 0 ? currentTime / duration : 0;
-    const playheadX = playheadRatio * width;
+    const playheadX = duration > 0 ? ((activeTime - viewStart) / visibleDuration) * width : 0;
 
     // Optional Loop / Section Region Highlight (A/B)
     if (loopRegion.enabled && duration > 0) {
-      const startX = (loopRegion.start / duration) * width;
-      const endX = (loopRegion.end / duration) * width;
+      const startX = ((loopRegion.start - viewStart) / visibleDuration) * width;
+      const endX = ((loopRegion.end - viewStart) / visibleDuration) * width;
       ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
       ctx.fillRect(startX, 0, endX - startX, height);
 
@@ -128,14 +142,15 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
       const numBars = 160;
       const barWidth = width / numBars;
       for (let i = 0; i < numBars; i++) {
-        const x = i * barWidth;
+        const time = (i / numBars) * totalDurationRender;
+        const x = ((time - viewStart) / visibleDuration) * width;
         const norm = i / numBars;
         const env = Math.sin(norm * Math.PI);
         const rand = 0.3 + 0.7 * Math.abs(Math.sin(i * 12.3));
         const barH = env * rand * maxAmp;
 
         const isPlayed = x <= playheadX;
-        ctx.fillStyle = isPlayed ? '#C7FF18' : '#4C1D95';
+        ctx.fillStyle = isPlayed ? 'var(--accent-lime-hover)' : '#4C1D95';
         ctx.fillRect(x + 1, midY - barH, barWidth - 1.5, barH * 2);
       }
     } else {
@@ -143,7 +158,8 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
       const barWidth = Math.max(1, width / numBuckets);
 
       for (let i = 0; i < numBuckets; i++) {
-        const x = (i / numBuckets) * width;
+        const time = (i / numBuckets) * totalDurationRender;
+        const x = ((time - viewStart) / visibleDuration) * width;
         const minVal = mins[i];
         const maxVal = maxs[i];
         const yTop = midY - maxVal * maxAmp;
@@ -162,7 +178,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
 
     // Playhead Line & Glow
     if (duration > 0 || isPlaying) {
-      ctx.strokeStyle = '#C7FF18';
+      ctx.strokeStyle = 'var(--accent-lime-hover)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
@@ -178,7 +194,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
       ctx.closePath();
       ctx.fill();
     }
-  }, [waveformPeaks, currentTime, duration, isBypassed, isPlaying, loopRegion, zoomLevel]);
+  }, [waveformPeaks, activeTime, duration, isBypassed, isPlaying, loopRegion, zoomLevel, viewStart, visibleDuration, totalDurationRender]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -186,8 +202,9 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const ratio = Math.max(0, Math.min(1, x / rect.width));
+    const targetTime = viewStart + ratio * visibleDuration;
     soundHaptics.playSliderTick(1800);
-    onSeek(ratio * duration);
+    onSeek(targetTime);
     setIsDragging(true);
     canvas.setPointerCapture(e.pointerId);
   };
@@ -198,9 +215,10 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const ratio = Math.max(0, Math.min(1, x / rect.width));
+    const targetTime = viewStart + ratio * visibleDuration;
 
     setHoverX(x);
-    setHoverTime(ratio * duration);
+    setHoverTime(targetTime);
 
     if (isDragging) {
       const nowMs = Date.now();
@@ -208,7 +226,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
         lastScrubTickRef.current = nowMs;
         soundHaptics.playSliderTick(1600);
       }
-      onSeek(ratio * duration);
+      onSeek(targetTime);
     }
   };
 
@@ -229,23 +247,21 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const totalDuration = duration > 0 ? duration : 225.782;
-
   return (
-    <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm p-3 sm:p-3.5 space-y-2 shadow-sm">
+    <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-3 sm:p-3.5 space-y-2 shadow-sm">
       {/* Top Header of Card: Timeline, Loop & Zoom */}
-      <div className="flex items-center justify-between text-xs font-mono text-[#A5A69F]">
+      <div className="flex items-center justify-between text-xs font-mono text-[var(--text-secondary)]">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-[#E5E7EB] uppercase tracking-wider flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B7F000]" />
+          <span className="text-[11px] font-semibold text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-lime)]" />
             Timeline
           </span>
-          <span className="text-[10px] text-[#686A63]">|</span>
+          <span className="text-[10px] text-[var(--text-tertiary)]">|</span>
           <span className="text-[#D4FF5C] font-medium tabular-nums">
-            {formatPrecisionTime(currentTime)}
+            {formatPrecisionTime(activeTime)}
           </span>
-          <span className="text-[#686A63]">/</span>
-          <span className="text-[#686A63] tabular-nums">{formatPrecisionTime(totalDuration)}</span>
+          <span className="text-[var(--text-tertiary)]">/</span>
+          <span className="text-[var(--text-tertiary)] tabular-nums">{formatPrecisionTime(totalDurationRender)}</span>
         </div>
 
         {/* Zoom Controls & Loop Toggle */}
@@ -258,8 +274,8 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
               }}
               className={`px-2 py-1 text-[10px] font-mono rounded flex items-center gap-1 transition cursor-pointer active:scale-95 ${
                 loopRegion.enabled
-                  ? 'bg-[#B7F000]/20 text-[#D4FF5C] border border-[#B7F000]/40'
-                  : 'text-[#686A63] hover:text-[#A5A69F] bg-[#151714]'
+                  ? 'bg-[var(--accent-lime)]/20 text-[#D4FF5C] border border-[var(--accent-lime)]/40'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] bg-[var(--bg-elevated)]'
               }`}
               title="Toggle A/B Loop Region"
             >
@@ -268,24 +284,24 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
             </button>
           )}
 
-          <div className="flex items-center gap-0.5 bg-[#151714] border border-[#222420] rounded p-0.5">
+          <div className="flex items-center gap-0.5 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded p-0.5">
             <button
               onClick={() => {
                 soundHaptics.playButtonTap();
                 setZoomLevel((z) => Math.max(1, z - 0.5));
               }}
-              className="p-1 text-[#686A63] hover:text-[#E5E7EB] rounded transition cursor-pointer active:scale-95"
+              className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded transition cursor-pointer active:scale-95"
               title="Zoom Out"
             >
               <ZoomOut className="w-3 h-3" />
             </button>
-            <span className="text-[10px] px-1 text-[#A5A69F] font-mono">{zoomLevel}x</span>
+            <span className="text-[10px] px-1 text-[var(--text-secondary)] font-mono">{zoomLevel}x</span>
             <button
               onClick={() => {
                 soundHaptics.playButtonTap();
-                setZoomLevel((z) => Math.min(4, z + 0.5));
+                setZoomLevel((z) => Math.min(8, z + 0.5));
               }}
-              className="p-1 text-[#686A63] hover:text-[#E5E7EB] rounded transition cursor-pointer active:scale-95"
+              className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded transition cursor-pointer active:scale-95"
               title="Zoom In"
             >
               <ZoomIn className="w-3 h-3" />
@@ -315,7 +331,7 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
         {/* Hover Time Tooltip */}
         {hoverTime !== null && hoverX !== null && (
           <div
-            className="absolute top-2 -translate-x-1/2 px-1.5 py-0.5 bg-[#151714] border border-[#2F353C] rounded text-[10px] font-mono text-[#F2F2EE] pointer-events-none shadow-md z-10 tabular-nums"
+            className="absolute top-2 -translate-x-1/2 px-1.5 py-0.5 bg-[var(--bg-elevated)] border border-[#2F353C] rounded text-[10px] font-mono text-[var(--text-primary)] pointer-events-none shadow-md z-10 tabular-nums"
             style={{ left: `${hoverX}px` }}
           >
             {formatPrecisionTime(hoverTime)}
@@ -323,13 +339,13 @@ export const WaveformHero: React.FC<WaveformHeroProps> = ({
         )}
       </div>
 
-      {/* Time Markers Ruler */}
-      <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#686A63] select-none">
-        <span>0:00</span>
-        <span>{formatRulerTime(totalDuration * 0.25)}</span>
-        <span>{formatRulerTime(totalDuration * 0.5)}</span>
-        <span>{formatRulerTime(totalDuration * 0.75)}</span>
-        <span>{formatRulerTime(totalDuration)}</span>
+      {/* Time Markers Ruler (Dynamic based on zoom) */}
+      <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[var(--text-tertiary)] select-none">
+        <span>{formatRulerTime(viewStart)}</span>
+        <span>{formatRulerTime(viewStart + visibleDuration * 0.25)}</span>
+        <span>{formatRulerTime(viewStart + visibleDuration * 0.5)}</span>
+        <span>{formatRulerTime(viewStart + visibleDuration * 0.75)}</span>
+        <span>{formatRulerTime(viewStart + visibleDuration)}</span>
       </div>
     </div>
   );

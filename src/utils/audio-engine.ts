@@ -1,10 +1,12 @@
 import { MasteringDSP, DEFAULT_PARAMS } from '../audio/dsp-core.js';
 import { MasteringParams, MeterData, ParityResult } from '../types';
 
+export const audioEngineEvents = new EventTarget();
+
 export class AudioMasteringEngine {
   private ctx: AudioContext | null = null;
   private sourceNode: AudioBufferSourceNode | null = null;
-  private processorNode: ScriptProcessorNode | null = null;
+  private processorNode: ScriptProcessorNode | AudioWorkletNode | null = null;
   private analyserIn: AnalyserNode | null = null;
   private analyserOut: AnalyserNode | null = null;
   private gainNode: GainNode | null = null;
@@ -45,6 +47,9 @@ export class AudioMasteringEngine {
     if (this.dsp) {
       this.dsp.update(this.activeParams);
     }
+    if (this.processorNode instanceof AudioWorkletNode) {
+      this.processorNode.port.postMessage({ type: 'SET_PARAMS', params: this.activeParams });
+    }
   }
 
   public getParams(): MasteringParams {
@@ -53,6 +58,9 @@ export class AudioMasteringEngine {
 
   public setBypass(bypass: boolean): void {
     this.isBypassed = bypass;
+    if (this.processorNode instanceof AudioWorkletNode) {
+      this.processorNode.port.postMessage({ type: 'SET_BYPASS', isBypassed: bypass });
+    }
   }
 
   public getBypass(): boolean {
@@ -101,7 +109,7 @@ export class AudioMasteringEngine {
     return duration > 0 ? (elapsed % duration) : 0;
   }
 
-  public play(offset?: number): void {
+  public async play(offset?: number): Promise<void> {
     const ctx = this.getAudioContext();
     if (!this.audioBuffer) return;
 
@@ -113,9 +121,7 @@ export class AudioMasteringEngine {
       this.pauseOffset = Math.max(0, Math.min(offset, this.audioBuffer.duration));
     }
 
-    // Initialize DSP for this context's sample rate
     const channels = Math.min(2, this.audioBuffer.numberOfChannels);
-    this.dsp = new MasteringDSP(ctx.sampleRate, channels, this.activeParams);
 
     // Setup Audio Graph
     this.sourceNode = ctx.createBufferSource();
@@ -132,34 +138,91 @@ export class AudioMasteringEngine {
     this.analyserOut.fftSize = 1024;
     this.analyserOut.smoothingTimeConstant = 0.8;
 
-    // Script Processor for real-time mastering DSP execution
-    const bufferSize = 512;
-    this.processorNode = ctx.createScriptProcessor(bufferSize, channels, 2);
+    try {
+      await ctx.audioWorklet.addModule('/dsp-worklet.js');
+      this.processorNode = new AudioWorkletNode(ctx, 'mastering-worklet', {
+        numberOfInputs: 1,
+        numberOfOutputs: 1,
+        outputChannelCount: [channels],
+      });
 
-    this.processorNode.onaudioprocess = (e) => {
-      const inputBuffer = e.inputBuffer;
-      const outputBuffer = e.outputBuffer;
-      const frameCount = inputBuffer.length;
+      this.processorNode.port.postMessage({ type: 'SET_PARAMS', params: this.activeParams });
+      this.processorNode.port.postMessage({ type: 'SET_BYPASS', isBypassed: this.isBypassed });
 
-      const inputL = inputBuffer.getChannelData(0);
-      const inputR = channels > 1 ? inputBuffer.getChannelData(1) : inputL;
-      const outputL = outputBuffer.getChannelData(0);
-      const outputR = outputBuffer.getChannelData(1);
-
-      if (this.isBypassed || !this.dsp) {
-        // Direct pass-through
-        for (let i = 0; i < frameCount; i++) {
-          outputL[i] = inputL[i];
-          outputR[i] = inputR[i];
+      this.processorNode.port.onmessage = (event) => {
+        if (event.data.type === 'METERS' && this.onMeterUpdateCallback) {
+          const m = event.data.meters;
+          
+          const rmsInL = Math.sqrt(m.sumInL / m.frameCount);
+          const rmsInR = Math.sqrt(m.sumInR / m.frameCount);
+          const rmsOutL = Math.sqrt(m.sumOutL / m.frameCount);
+          const rmsOutR = Math.sqrt(m.sumOutR / m.frameCount);
+          
+          const inLufs = 10 * Math.log10(Math.max(1e-10, (rmsInL * rmsInL + rmsInR * rmsInR) / 2));
+          const outLufs = 10 * Math.log10(Math.max(1e-10, (rmsOutL * rmsOutL + rmsOutR * rmsOutR) / 2));
+          
+          this.accumulatedLoudnessSum += outLufs;
+          this.accumulatedLoudnessCount++;
+          
+          const gainReductionDb = m.peakOutL > 0 && m.peakInL > 0 ? 
+            20 * Math.log10(m.peakOutL / Math.max(1e-10, m.peakInL)) : 0;
+            
+          this.lastGR = this.lastGR * 0.8 + gainReductionDb * 0.2;
+          
+          const meterData: MeterData = {
+            inputPeakL: m.peakInL,
+            inputPeakR: m.peakInR,
+            inputRmsL: rmsInL,
+            inputRmsR: rmsInR,
+            outputPeakL: m.peakOutL,
+            outputPeakR: m.peakOutR,
+            outputRmsL: rmsOutL,
+            outputRmsR: rmsOutR,
+            gainReductionDb: this.lastGR,
+            limiterActive: m.peakOutL > 0.99 || m.peakOutR > 0.99,
+            momentaryLufs: Math.max(-70, outLufs),
+            integratedLufs: Math.max(-70, this.accumulatedLoudnessSum / this.accumulatedLoudnessCount),
+            crestFactor: 0
+          };
+          this.onMeterUpdateCallback(meterData);
+    audioEngineEvents.dispatchEvent(new CustomEvent("meterupdate", { detail: meterData }));
         }
-      } else {
-        // Process through MasteringDSP engine from src/audio/dsp-core.js
-        this.dsp.process([inputL, inputR], [outputL, outputR]);
-      }
+      };
+    } catch (err) {
+      console.warn('AudioWorklet failed to load, falling back to ScriptProcessorNode', err);
+      // Initialize DSP for this context's sample rate
+      this.dsp = new MasteringDSP(ctx.sampleRate, channels, this.activeParams);
 
-      // Compute level meters & live telemetry
-      this.calculateMeters(inputL, inputR, outputL, outputR);
-    };
+      // Script Processor for real-time mastering DSP execution
+      // Increased buffer size to 8192 to prevent buffer underruns and distortion ("playback errror distorzije")
+      const bufferSize = 8192;
+      this.processorNode = ctx.createScriptProcessor(bufferSize, channels, 2);
+
+      this.processorNode.onaudioprocess = (e) => {
+        const inputBuffer = e.inputBuffer;
+        const outputBuffer = e.outputBuffer;
+        const frameCount = inputBuffer.length;
+
+        const inputL = inputBuffer.getChannelData(0);
+        const inputR = channels > 1 ? inputBuffer.getChannelData(1) : inputL;
+        const outputL = outputBuffer.getChannelData(0);
+        const outputR = outputBuffer.getChannelData(1);
+
+        if (this.isBypassed || !this.dsp) {
+          // Direct pass-through
+          for (let i = 0; i < frameCount; i++) {
+            outputL[i] = inputL[i];
+            outputR[i] = inputR[i];
+          }
+        } else {
+          // Process through MasteringDSP engine from src/audio/dsp-core.js
+          this.dsp.process([inputL, inputR], [outputL, outputR]);
+        }
+
+        // Compute level meters & live telemetry
+        this.calculateMeters(inputL, inputR, outputL, outputR);
+      };
+    }
 
     this.gainNode = ctx.createGain();
     this.gainNode.gain.value = 1.0;
@@ -334,6 +397,7 @@ export class AudioMasteringEngine {
     };
 
     this.onMeterUpdateCallback(meterData);
+    audioEngineEvents.dispatchEvent(new CustomEvent("meterupdate", { detail: meterData }));
   }
 
   private startTrackingLoop(): void {
@@ -342,6 +406,7 @@ export class AudioMasteringEngine {
         const currentTime = this.getCurrentTime();
         if (this.onTimeUpdateCallback) {
           this.onTimeUpdateCallback(currentTime, this.audioBuffer.duration);
+          audioEngineEvents.dispatchEvent(new CustomEvent("timeupdate", { detail: { currentTime, duration: this.audioBuffer.duration } }));
         }
         this.animationFrameId = requestAnimationFrame(update);
       }

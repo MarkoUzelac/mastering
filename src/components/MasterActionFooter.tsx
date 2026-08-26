@@ -91,26 +91,26 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Mastering':
-        return <Disc3 className="w-3 h-3 text-[#B7F000]" />;
+        return <Disc3 className="w-3 h-3 text-[var(--accent-lime)]" />;
       case 'Mixing':
         return <Layers className="w-3 h-3 text-[#38BDF8]" />;
       case 'Saturation':
         return <Flame className="w-3 h-3 text-[#F59E0B]" />;
       default:
-        return <Sliders className="w-3 h-3 text-[#A5A69F]" />;
+        return <Sliders className="w-3 h-3 text-[var(--text-secondary)]" />;
     }
   };
 
   const getCategoryBadgeClass = (category: string) => {
     switch (category) {
       case 'Mastering':
-        return 'text-[#B7F000] bg-[#B7F000]/10 border-[#B7F000]/20';
+        return 'text-[var(--accent-lime)] bg-[var(--accent-lime)]/10 border-[var(--accent-lime)]/20';
       case 'Mixing':
         return 'text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20';
       case 'Saturation':
         return 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20';
       default:
-        return 'text-[#A5A69F] bg-[#151714] border-[#222420]';
+        return 'text-[var(--text-secondary)] bg-[var(--bg-elevated)] border-[var(--border-subtle)]';
     }
   };
 
@@ -119,10 +119,10 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
     : presets.filter((p) => p.category === selectedFooterCategory);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3 px-5 bg-[#0E1013] border border-[#222420] rounded-sm shadow-lg relative">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3 px-5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm shadow-lg relative">
       {/* Left: Mastering Profile Selector with Categorization */}
       <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-        <span className="text-[10px] font-mono font-medium tracking-widest text-[#A5A69F] uppercase whitespace-nowrap hidden md:inline">
+        <span className="text-[10px] font-mono font-medium tracking-widest text-[var(--text-secondary)] uppercase whitespace-nowrap hidden md:inline">
           DSP PROFILE
         </span>
 
@@ -131,7 +131,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
             id="footer-preset-selector-btn"
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] hover:border-[#3A4048] rounded-sm text-xs text-[#F2F2EE] font-medium transition cursor-pointer"
+            className="btn-secondary px-3 py-1.5 text-xs justify-between w-full sm:w-auto"
           >
             {activePreset && getCategoryIcon(activePreset.category)}
             <span className="max-w-[150px] sm:max-w-[200px] truncate">
@@ -147,19 +147,19 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
               </span>
             )}
             {(activePreset?.proOnly || activePreset?.isPro) && <ProBadge size="xs" />}
-            <ChevronDown className={`w-3.5 h-3.5 text-[#A5A69F] transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-secondary)] transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Categorized Preset Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute bottom-full mb-2 left-0 w-80 sm:w-96 bg-[#151714] border border-[#222420] rounded-sm shadow-2xl z-40 overflow-hidden">
+            <div className="absolute bottom-full mb-2 left-0 w-80 sm:w-96 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm shadow-2xl z-40 overflow-hidden">
               {/* Category Filter Tabs Header */}
-              <div className="bg-[#0A0C0E] border-b border-[#222420] p-2 space-y-1.5">
+              <div className="bg-[#0A0C0E] border-b border-[var(--border-subtle)] p-2 space-y-1.5">
                 <div className="flex items-center justify-between px-1">
-                  <span className="text-[10px] font-mono text-[#B7F000] uppercase tracking-wider flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-[var(--accent-lime)] uppercase tracking-wider flex items-center gap-1">
                     <Filter className="w-2.5 h-2.5" /> Filter by Target Role
                   </span>
-                  <span className="text-[10px] font-mono text-[#686A63]">
+                  <span className="text-[10px] font-mono text-[var(--text-tertiary)]">
                     {filteredPresets.length} curves
                   </span>
                 </div>
@@ -178,8 +178,8 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
                         }}
                         className={`px-2 py-1 text-[10px] font-mono rounded transition-colors cursor-pointer text-center truncate ${
                           isTabActive
-                            ? 'bg-[#B7F000] text-[#090A08] font-bold shadow-sm'
-                            : 'bg-[#151714] text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#222420]'
+                            ? 'bg-[var(--accent-lime)] text-[var(--bg-primary)] font-bold shadow-sm'
+                            : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border-subtle)]'
                         }`}
                       >
                         {cat.id === 'All' ? 'All' : cat.label}
@@ -201,8 +201,8 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
                       onClick={() => handlePresetSelect(preset)}
                       className={`w-full text-left px-3 py-2 text-xs rounded-sm flex items-center justify-between transition cursor-pointer border ${
                         isSelected
-                          ? 'bg-[#1C170E] text-[#B7F000] font-semibold border-[#B7F000]/40'
-                          : 'text-[#F2F2EE] hover:bg-[#1B1F24] border-transparent hover:border-[#222420]'
+                          ? 'bg-[#1C170E] text-[var(--accent-lime)] font-semibold border-[var(--accent-lime)]/40'
+                          : 'text-[var(--text-primary)] hover:bg-[#1B1F24] border-transparent hover:border-[var(--border-subtle)]'
                       }`}
                     >
                       <div className="truncate pr-2">
@@ -217,18 +217,18 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
                             {preset.category}
                           </span>
                         </div>
-                        <div className="text-[10px] text-[#A5A69F] font-normal truncate mt-0.5 pl-4.5">
+                        <div className="text-[10px] text-[var(--text-secondary)] font-normal truncate mt-0.5 pl-4.5">
                           {preset.description}
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         {preset.targetLufs && (
-                          <span className="text-[10px] font-mono text-[#A5A69F]">
+                          <span className="text-[10px] font-mono text-[var(--text-secondary)]">
                             {preset.targetLufs} LUFS
                           </span>
                         )}
                         {isProPreset && <ProBadge size="xs" locked={!FeatureGates.isProUser()} />}
-                        {isSelected && <Check className="w-3.5 h-3.5 text-[#B7F000]" />}
+                        {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent-lime)]" />}
                       </div>
                     </button>
                   );
@@ -247,15 +247,15 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
           disabled={isProcessing}
           className={`w-full sm:w-auto px-8 py-2.5 rounded-sm text-xs sm:text-sm font-semibold tracking-wide font-mono transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 ${
             isProcessing
-              ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40 animate-pulse'
+              ? 'bg-[#1C170E] text-[var(--accent-lime)] border border-[var(--accent-lime)]/40 animate-pulse'
               : masteredRecently
-              ? 'bg-[#6FCF97] text-[#090A08]'
-              : 'bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] hover:shadow-[0_0_20px_rgba(214,175,98,0.3)]'
+              ? 'bg-[#6FCF97] text-[var(--bg-primary)]'
+              : 'bg-[var(--accent-lime)] hover:bg-[var(--accent-lime-hover)] text-[var(--bg-primary)]'
           }`}
         >
           {isProcessing ? (
             <>
-              <Zap className="w-4 h-4 animate-spin text-[#B7F000]" />
+              <Zap className="w-4 h-4 animate-spin text-[var(--accent-lime)]" />
               <span>PROCESSING DSP...</span>
             </>
           ) : masteredRecently ? (
@@ -276,7 +276,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
       <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
         {/* A/B Quick Toggle Buttons */}
         {onToggleBypass && (
-          <div className="flex items-center p-0.5 bg-[#151714] border border-[#222420] rounded-sm">
+          <div className="flex items-center p-0.5 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm">
             <button
               id="ab-bypass-btn-a"
               onClick={() => {
@@ -284,8 +284,8 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
               }}
               className={`px-2.5 py-1 text-xs font-mono rounded transition cursor-pointer ${
                 isBypassed
-                  ? 'bg-[#222420] text-[#F2F2EE] font-bold'
-                  : 'text-[#A5A69F] hover:text-[#F2F2EE]'
+                  ? 'bg-[var(--border-subtle)] text-[var(--text-primary)] font-bold'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
               title="Listen to Dry Original (A)"
             >
@@ -298,8 +298,8 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
               }}
               className={`px-2.5 py-1 text-xs font-mono rounded transition cursor-pointer ${
                 !isBypassed
-                  ? 'bg-[#B7F000] text-[#090A08] font-bold'
-                  : 'text-[#A5A69F] hover:text-[#F2F2EE]'
+                  ? 'bg-[var(--accent-lime)] text-[var(--bg-primary)] font-bold'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
               title="Listen to Mastered Audio (B)"
             >
@@ -313,7 +313,7 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
           <button
             id="footer-parity-shortcut-btn"
             onClick={onOpenParityModal}
-            className="p-2 text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] rounded-sm transition cursor-pointer"
+            className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] hover:bg-[#1B1F24] border border-[var(--border-subtle)] rounded-sm transition cursor-pointer"
             title="Open DSP Parity Verification & Diagnostic Suite"
           >
             <Settings2 className="w-4 h-4" />

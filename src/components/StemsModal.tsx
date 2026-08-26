@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Layers, Volume2, VolumeX, Sliders, Play, Pause } from 'lucide-react';
-import { RotaryKnob } from './RotaryKnob';
+import { PhosphorSlider } from './PhosphorSlider';
 
 interface StemTrack {
   id: string;
@@ -30,24 +30,24 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#0D0E0C] border border-[#222420] rounded-sm w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222420] bg-[#0A0C0F]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
           <div className="flex items-center gap-2.5">
-            <Layers className="w-4 h-4 text-[#B7F000]" />
+            <Layers className="w-4 h-4 text-[var(--accent-lime)]" />
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-[#F2F2EE]">Stem Mastering Engine</h3>
-                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#B7F000] text-\[#F2F2EE\]">
+                <h3 className="text-sm font-semibold text-[var(--text-primary)]">Stem Mastering Engine</h3>
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[var(--accent-lime)] text-[var(--text-primary)]">
                   PRO FEATURE
                 </span>
               </div>
-              <p className="text-[11px] text-[#686A63]">Multi-track stem summing with independent bus control</p>
+              <p className="text-[11px] text-[var(--text-tertiary)]">Multi-track stem summing with independent bus control</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-sm text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] transition cursor-pointer"
+            className="p-1.5 rounded-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -61,12 +61,12 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
               className="bg-[#07090C] border border-[#181C22] rounded-sm p-3 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-sm bg-[#151714] border border-[#222420] flex items-center justify-center font-mono font-bold text-xs text-[#B7F000]">
+                <div className="w-8 h-8 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center font-mono font-bold text-xs text-[var(--accent-lime)]">
                   {stem.name[0]}
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-[#F2F2EE]">{stem.name}</div>
-                  <div className="text-[10px] font-mono text-[#686A63] uppercase">{stem.category}</div>
+                  <div className="text-xs font-semibold text-[var(--text-primary)]">{stem.name}</div>
+                  <div className="text-[10px] font-mono text-[var(--text-tertiary)] uppercase">{stem.category}</div>
                 </div>
               </div>
 
@@ -75,7 +75,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
                 <button
                   onClick={() => updateStem(stem.id, { muted: !stem.muted })}
                   className={`px-2 py-1 rounded text-xs font-mono font-bold transition cursor-pointer ${
-                    stem.muted ? 'bg-[#EF4444] text-\[#F2F2EE\]' : 'bg-[#151714] text-[#A5A69F] hover:text-[#F2F2EE]'
+                    stem.muted ? 'bg-[#EF4444] text-[var(--text-primary)]' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   M
@@ -83,7 +83,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
                 <button
                   onClick={() => updateStem(stem.id, { solo: !stem.solo })}
                   className={`px-2 py-1 rounded text-xs font-mono font-bold transition cursor-pointer ${
-                    stem.solo ? 'bg-[#F59E0B] text-black' : 'bg-[#151714] text-[#A5A69F] hover:text-[#F2F2EE]'
+                    stem.solo ? 'bg-[#F59E0B] text-black' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   S
@@ -92,7 +92,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
 
               {/* Fader Knobs */}
               <div className="flex items-center gap-4">
-                <RotaryKnob
+                <PhosphorSlider
                   label="Gain"
                   value={stem.gain}
                   min={-12}
@@ -102,7 +102,7 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
                   size="sm"
                   onChange={(v) => updateStem(stem.id, { gain: v })}
                 />
-                <RotaryKnob
+                <PhosphorSlider
                   label="Pan"
                   value={stem.pan}
                   min={-100}
@@ -118,11 +118,11 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#222420] bg-[#0A0C0F] flex items-center justify-between">
-          <span className="text-[11px] text-[#686A63] font-mono">Summed into master DSP pipeline in 64-bit IEEE 754</span>
+        <div className="px-5 py-3 border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] flex items-center justify-between">
+          <span className="text-[11px] text-[var(--text-tertiary)] font-mono">Summed into master DSP pipeline in 64-bit IEEE 754</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-\[#F2F2EE\] bg-[#B7F000] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
+            className="px-4 py-1.5 text-xs font-semibold text-[var(--text-primary)] bg-[var(--accent-lime)] hover:bg-[#7C3AED] rounded-sm transition shadow-md cursor-pointer"
           >
             Apply Stems
           </button>

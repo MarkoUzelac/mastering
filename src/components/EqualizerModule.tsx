@@ -44,29 +44,29 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
   };
 
   return (
-    <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
+    <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
       {/* Rack corner bolt aesthetic */}
-      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
-      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
+      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[var(--border-subtle)] border border-[var(--bg-elevated)]" />
+      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[var(--border-subtle)] border border-[var(--bg-elevated)]" />
 
       {/* Module Header */}
-      <div className="flex items-center justify-between border-b border-[#222420] pb-2.5 mb-3">
+      <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2.5 mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold tracking-wider text-[#F2F2EE] uppercase font-mono">
+          <span className="text-xs font-semibold tracking-wider text-[var(--text-primary)] uppercase font-mono">
             EQUALIZER
           </span>
-          <span className="text-[9px] font-mono text-[#B7F000] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[#B7F000]/20">
+          <span className="text-[9px] font-mono text-[var(--accent-lime)] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[var(--accent-lime)]/20">
             DF2T 64-BIT
           </span>
           {isBypassed && (
-            <span className="text-[9px] font-mono text-[#686A63] bg-[#151714] px-1.5 py-0.5 rounded">
+            <span className="text-[9px] font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] px-1.5 py-0.5 rounded">
               OFF
             </span>
           )}
         </div>
         <button
           onClick={handleResetAll}
-          className="flex items-center gap-1 text-[11px] text-[#A5A69F] hover:text-[#B7F000] transition cursor-pointer"
+          className="flex items-center gap-1 text-[11px] text-[var(--text-secondary)] hover:text-[var(--accent-lime)] transition cursor-pointer"
           title="Reset EQ to neutral 0.0 dB"
         >
           <RotateCcw className="w-3 h-3" />
@@ -83,11 +83,11 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
           title="Double-click to reset (0.0 dB)"
         >
           <div className="text-center cursor-pointer">
-            <div className="text-[10px] font-mono font-medium text-[#A5A69F] group-hover/band:text-[#B7F000] transition-colors uppercase">
+            <div className="text-[10px] font-mono font-medium text-[var(--text-secondary)] group-hover/band:text-[var(--accent-lime)] transition-colors uppercase">
               LOW
             </div>
-            <div className="text-[10px] font-mono text-[#686A63]">{lowFreq} Hz</div>
-            <div className="text-xs font-mono font-semibold text-[#F2F2EE] num-tabular mt-0.5 bg-[#151714] px-1.5 py-0.5 rounded border border-[#222420]">
+            <div className="text-[10px] font-mono text-[var(--text-tertiary)]">{lowFreq} Hz</div>
+            <div className="text-xs font-mono font-semibold text-[var(--text-primary)] num-tabular mt-0.5 bg-[var(--bg-elevated)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">
               {params.low >= 0 ? `+${params.low.toFixed(1)}` : params.low.toFixed(1)} dB
             </div>
           </div>
@@ -106,7 +106,7 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
               className="fader-vertical cursor-pointer"
             />
           </div>
-          <span className="text-[9px] font-mono text-[#686A63] group-hover/band:text-[#A5A69F] transition-colors">
+          <span className="text-[9px] font-mono text-[var(--text-tertiary)] group-hover/band:text-[var(--text-secondary)] transition-colors">
             2x click: 0dB
           </span>
         </div>
@@ -118,11 +118,11 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
           title="Double-click to reset (0.0 dB)"
         >
           <div className="text-center cursor-pointer">
-            <div className="text-[10px] font-mono font-medium text-[#A5A69F] group-hover/band:text-[#B7F000] transition-colors uppercase">
+            <div className="text-[10px] font-mono font-medium text-[var(--text-secondary)] group-hover/band:text-[var(--accent-lime)] transition-colors uppercase">
               MID
             </div>
-            <div className="text-[10px] font-mono text-[#686A63]">{(midFreq / 1000).toFixed(2)} kHz</div>
-            <div className="text-xs font-mono font-semibold text-[#F2F2EE] num-tabular mt-0.5 bg-[#151714] px-1.5 py-0.5 rounded border border-[#222420]">
+            <div className="text-[10px] font-mono text-[var(--text-tertiary)]">{(midFreq / 1000).toFixed(2)} kHz</div>
+            <div className="text-xs font-mono font-semibold text-[var(--text-primary)] num-tabular mt-0.5 bg-[var(--bg-elevated)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">
               {params.mid >= 0 ? `+${params.mid.toFixed(1)}` : params.mid.toFixed(1)} dB
             </div>
           </div>
@@ -141,7 +141,7 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
               className="fader-vertical cursor-pointer"
             />
           </div>
-          <span className="text-[9px] font-mono text-[#686A63] group-hover/band:text-[#A5A69F] transition-colors">
+          <span className="text-[9px] font-mono text-[var(--text-tertiary)] group-hover/band:text-[var(--text-secondary)] transition-colors">
             2x click: 0dB
           </span>
         </div>
@@ -153,11 +153,11 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
           title="Double-click to reset (0.0 dB)"
         >
           <div className="text-center cursor-pointer">
-            <div className="text-[10px] font-mono font-medium text-[#A5A69F] group-hover/band:text-[#B7F000] transition-colors uppercase">
+            <div className="text-[10px] font-mono font-medium text-[var(--text-secondary)] group-hover/band:text-[var(--accent-lime)] transition-colors uppercase">
               HIGH
             </div>
-            <div className="text-[10px] font-mono text-[#686A63]">{(highFreq / 1000).toFixed(2)} kHz</div>
-            <div className="text-xs font-mono font-semibold text-[#F2F2EE] num-tabular mt-0.5 bg-[#151714] px-1.5 py-0.5 rounded border border-[#222420]">
+            <div className="text-[10px] font-mono text-[var(--text-tertiary)]">{(highFreq / 1000).toFixed(2)} kHz</div>
+            <div className="text-xs font-mono font-semibold text-[var(--text-primary)] num-tabular mt-0.5 bg-[var(--bg-elevated)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">
               {params.high >= 0 ? `+${params.high.toFixed(1)}` : params.high.toFixed(1)} dB
             </div>
           </div>
@@ -176,20 +176,20 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
               className="fader-vertical cursor-pointer"
             />
           </div>
-          <span className="text-[9px] font-mono text-[#686A63] group-hover/band:text-[#A5A69F] transition-colors">
+          <span className="text-[9px] font-mono text-[var(--text-tertiary)] group-hover/band:text-[var(--text-secondary)] transition-colors">
             2x click: 0dB
           </span>
         </div>
       </div>
 
       {/* Advanced Toggle */}
-      <div className="mt-3 pt-2 border-t border-[#222420] flex justify-end">
+      <div className="mt-3 pt-2 border-t border-[var(--border-subtle)] flex justify-end">
         <button
           onClick={() => {
             soundHaptics.playSwitchSound(!advancedOpen);
             setAdvancedOpen(!advancedOpen);
           }}
-          className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] hover:bg-[#1B1F24] border border-[#222420] rounded transition cursor-pointer"
+          className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] hover:bg-[#1B1F24] border border-[var(--border-subtle)] rounded transition cursor-pointer"
         >
           <span>Specs</span>
           {advancedOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -198,18 +198,18 @@ export const EqualizerModule: React.FC<EqualizerModuleProps> = ({
 
       {/* Advanced Parametric Drawer */}
       {advancedOpen && (
-        <div className="mt-2.5 pt-2 border-t border-[#222420] space-y-1.5 text-[11px] font-mono animate-fadeIn">
+        <div className="mt-2.5 pt-2 border-t border-[var(--border-subtle)] space-y-1.5 text-[11px] font-mono animate-fadeIn">
           <div className="flex items-center justify-between">
-            <span className="text-[#686A63]">Low Shelf Freq</span>
-            <span className="text-[#F2F2EE]">{lowFreq} Hz</span>
+            <span className="text-[var(--text-tertiary)]">Low Shelf Freq</span>
+            <span className="text-[var(--text-primary)]">{lowFreq} Hz</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[#686A63]">Mid Bell Q</span>
-            <span className="text-[#F2F2EE]">{midQ.toFixed(2)}</span>
+            <span className="text-[var(--text-tertiary)]">Mid Bell Q</span>
+            <span className="text-[var(--text-primary)]">{midQ.toFixed(2)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[#686A63]">High Shelf Slope</span>
-            <span className="text-[#F2F2EE]">12 dB/oct</span>
+            <span className="text-[var(--text-tertiary)]">High Shelf Slope</span>
+            <span className="text-[var(--text-primary)]">12 dB/oct</span>
           </div>
         </div>
       )}

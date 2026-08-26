@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IconPlay as Play,
   IconPause as Pause,
@@ -15,6 +15,7 @@ import {
 } from './Icons';
 import { AudioTrackInfo } from '../types';
 import { soundHaptics } from '../utils/sound-haptics';
+import { audioEngineEvents } from '../utils/audio-engine';
 
 interface TransportBarProps {
   isPlaying: boolean;
@@ -49,6 +50,13 @@ export const TransportBar: React.FC<TransportBarProps> = ({
   onToggleMono,
 }) => {
   const [volume, setVolume] = useState<number>(1.0);
+  const [localTime, setLocalTime] = useState<number>(0);
+  useEffect(() => {
+    const handler = (e: any) => setLocalTime(e.detail.currentTime);
+    audioEngineEvents.addEventListener('timeupdate', handler);
+    return () => audioEngineEvents.removeEventListener('timeupdate', handler);
+  }, []);
+  const activeTime = localTime;
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [gainMatch, setGainMatch] = useState<boolean>(false);
 
@@ -62,12 +70,12 @@ export const TransportBar: React.FC<TransportBarProps> = ({
 
   const handleSkipBack = () => {
     soundHaptics.playButtonTap();
-    onSeek(Math.max(0, currentTime - 5));
+    onSeek(Math.max(0, activeTime - 5));
   };
 
   const handleSkipForward = () => {
     soundHaptics.playButtonTap();
-    onSeek(Math.min(duration || 225.782, currentTime + 5));
+    onSeek(Math.min(duration || 225.782, activeTime + 5));
   };
 
   const handleStopClick = () => {
@@ -116,14 +124,14 @@ export const TransportBar: React.FC<TransportBarProps> = ({
   return (
     <div className="space-y-2 mt-2">
       {/* Main Transport Controls Card */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-[#0A0C0F] border border-[#222420] rounded-sm shadow-lg">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm shadow-lg">
         {/* Left: Transport Buttons & Timecode */}
         <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2 sm:gap-3">
           <div className="flex items-center gap-1">
             {/* Rewind */}
             <button
               onClick={handleSkipBack}
-              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-sm transition cursor-pointer active:scale-95"
+              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] rounded-sm transition cursor-pointer active:scale-95"
               title="Rewind 5 seconds"
             >
               <SkipBack className="w-4 h-4" />
@@ -133,7 +141,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             {!isPlaying ? (
               <button
                 onClick={handlePlayClick}
-                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] flex items-center justify-center transition cursor-pointer active:scale-95"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded bg-[var(--accent-lime)] hover:bg-[var(--accent-lime-hover)] text-[var(--bg-primary)] flex items-center justify-center transition cursor-pointer active:scale-95"
                 title="Play Master Preview (Space)"
               >
                 <Play className="w-4 h-4 fill-current ml-0.5" />
@@ -141,7 +149,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             ) : (
               <button
                 onClick={handlePauseClick}
-                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded bg-[#B7F000] hover:bg-[#C7FF18] text-[#090A08] flex items-center justify-center transition cursor-pointer active:scale-95"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded bg-[var(--accent-lime)] hover:bg-[var(--accent-lime-hover)] text-[var(--bg-primary)] flex items-center justify-center transition cursor-pointer active:scale-95"
                 title="Pause Master Preview (Space)"
               >
                 <Pause className="w-4 h-4 fill-current" />
@@ -151,7 +159,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             {/* Stop */}
             <button
               onClick={handleStopClick}
-              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-sm transition cursor-pointer active:scale-95"
+              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] rounded-sm transition cursor-pointer active:scale-95"
               title="Stop Playback"
             >
               <Square className="w-3.5 h-3.5 fill-current" />
@@ -160,7 +168,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             {/* Forward */}
             <button
               onClick={handleSkipForward}
-              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[#A5A69F] hover:text-[#F2F2EE] hover:bg-[#151714] rounded-sm transition cursor-pointer active:scale-95"
+              className="p-2 min-w-[38px] min-h-[38px] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] rounded-sm transition cursor-pointer active:scale-95"
               title="Forward 5 seconds"
             >
               <SkipForward className="w-4 h-4" />
@@ -175,8 +183,8 @@ export const TransportBar: React.FC<TransportBarProps> = ({
                 }}
                 className={`p-2 min-w-[38px] min-h-[38px] flex items-center justify-center rounded-sm transition cursor-pointer active:scale-95 ${
                   isLooping
-                    ? 'text-[#D4FF5C] bg-[#B7F000]/20 border border-[#B7F000]/40'
-                    : 'text-[#686A63] hover:text-[#A5A69F] hover:bg-[#151714]'
+                    ? 'text-[#D4FF5C] bg-[var(--accent-lime)]/20 border border-[var(--accent-lime)]/40'
+                    : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]'
                 }`}
                 title="Toggle Repeat Loop"
               >
@@ -186,23 +194,23 @@ export const TransportBar: React.FC<TransportBarProps> = ({
           </div>
 
           {/* Tabular Timecode */}
-          <div className="text-xs font-mono font-medium tracking-tight text-[#F2F2EE] tabular-nums pl-2 border-l border-[#222420]">
-            <span>{formatTimecode(currentTime)}</span>
-            <span className="text-[#686A63] mx-1">/</span>
-            <span className="text-[#A5A69F]">{formatTimecode(duration || 225.782)}</span>
+          <div className="text-xs font-mono font-medium tracking-tight text-[var(--text-primary)] tabular-nums pl-2 border-l border-[var(--border-subtle)]">
+            <span>{formatTimecode(activeTime)}</span>
+            <span className="text-[var(--text-tertiary)] mx-1">/</span>
+            <span className="text-[var(--text-secondary)]">{formatTimecode(duration || 225.782)}</span>
           </div>
         </div>
 
         {/* Right: Master/Original Switch, Mono Check, Volume */}
         <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-3">
           {/* Mastered vs Original Bypass Toggle */}
-          <div className="flex items-center p-0.5 bg-[#151714] border border-[#222420] rounded-sm text-xs font-medium">
+          <div className="flex items-center p-0.5 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm text-xs font-medium">
             <button
               onClick={() => handleBypassSwitch(true)}
               className={`px-3 py-1.5 rounded-md transition cursor-pointer active:scale-95 flex items-center gap-1.5 ${
                 isBypassed
-                  ? 'bg-[#222420] text-[#F2F2EE] shadow-sm font-semibold'
-                  : 'text-[#A5A69F] hover:text-[#F2F2EE]'
+                  ? 'bg-[var(--border-subtle)] text-[var(--text-primary)] shadow-sm font-semibold'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               <span>Original (A)</span>
@@ -211,8 +219,8 @@ export const TransportBar: React.FC<TransportBarProps> = ({
               onClick={() => handleBypassSwitch(false)}
               className={`px-3 py-1.5 rounded-md transition cursor-pointer flex items-center gap-1.5 active:scale-95 ${
                 !isBypassed
-                  ? 'bg-[#B7F000] text-\[#F2F2EE\] shadow-[0_0_10px_rgba(139,92,246,0.35)] font-semibold'
-                  : 'text-[#A5A69F] hover:text-[#F2F2EE]'
+                  ? 'bg-[var(--accent-lime)] text-black shadow-sm font-bold'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               <span>Mastered (B)</span>
@@ -230,7 +238,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
               className={`flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-sm transition cursor-pointer border active:scale-95 ${
                 isMono
                   ? 'bg-[#F59E0B]/20 border-[#F59E0B]/50 text-[#FBBF24]'
-                  : 'bg-[#151714] border-[#222420] text-[#686A63] hover:text-[#A5A69F]'
+                  : 'bg-[var(--bg-elevated)] border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
               }`}
               title="Sum to Mono (Phase check)"
             >
@@ -247,12 +255,12 @@ export const TransportBar: React.FC<TransportBarProps> = ({
           >
             <button
               onClick={toggleMute}
-              className="p-1 text-[#A5A69F] hover:text-[#F2F2EE] transition cursor-pointer active:scale-95"
+              className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer active:scale-95"
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-4 h-4 text-[#EF4444]" />
               ) : (
-                <Volume2 className="w-4 h-4 text-[#B7F000]" />
+                <Volume2 className="w-4 h-4 text-[var(--accent-lime)]" />
               )}
             </button>
             <div className="w-14 sm:w-20">
@@ -263,7 +271,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
                 step="0.01"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                className="w-full h-1.5 cursor-pointer accent-[#B7F000]"
+                className="w-full h-1.5 cursor-pointer accent-[var(--accent-lime)]"
               />
             </div>
           </div>
@@ -271,7 +279,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
       </div>
 
       {/* Privacy & Trust Status Bar (Very Bottom) */}
-      <div className="flex flex-col sm:flex-row items-center justify-between px-2 py-1 text-[11px] font-mono text-[#686A63] border-t border-[#222420]/60">
+      <div className="flex flex-col sm:flex-row items-center justify-between px-2 py-1 text-[11px] font-mono text-[var(--text-tertiary)] border-t border-[var(--border-subtle)]/60">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 text-[#10B981]">
             <Check className="w-3.5 h-3.5" /> Client-Side Processing
@@ -284,8 +292,8 @@ export const TransportBar: React.FC<TransportBarProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[#A5A69F] mt-1 sm:mt-0">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#B7F000]" />
+        <div className="flex items-center gap-1.5 text-[var(--text-secondary)] mt-1 sm:mt-0">
+          <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
           <span>Your audio never leaves your browser. 100% private.</span>
         </div>
       </div>

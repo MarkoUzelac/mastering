@@ -134,7 +134,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       const height = canvas.height;
 
       // Dark CRT / Studio Slate Background
-      ctx.fillStyle = '#090A08';
+      ctx.fillStyle = 'var(--bg-primary)';
       ctx.fillRect(0, 0, width, height);
 
       // 1. Vertical Frequency Grid Lines
@@ -228,7 +228,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
           else ctx.lineTo(x, y);
         }
 
-        ctx.strokeStyle = isBypassed ? '#686A63' : '#C7FF18';
+        ctx.strokeStyle = isBypassed ? 'var(--text-tertiary)' : 'var(--accent-lime-hover)';
         ctx.lineWidth = 2.5;
         ctx.shadowColor = isBypassed ? 'transparent' : 'rgba(167, 139, 250, 0.6)';
         ctx.shadowBlur = 8;
@@ -264,13 +264,13 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
             ctx.fill();
 
             // Inner core
-            ctx.fillStyle = '#090A08';
+            ctx.fillStyle = 'var(--bg-primary)';
             ctx.beginPath();
             ctx.arc(nodeX, nodeY, 2.5, 0, Math.PI * 2);
             ctx.fill();
 
             // Node Text Label
-            ctx.fillStyle = '#E5E7EB';
+            ctx.fillStyle = 'var(--text-primary)';
             ctx.font = '9px "JetBrains Mono", monospace';
             ctx.textAlign = 'center';
             ctx.fillText(
@@ -367,7 +367,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               ctx.lineTo(x, y);
             }
           }
-          ctx.strokeStyle = isBypassed ? '#94A3B8' : '#B7F000';
+          ctx.strokeStyle = isBypassed ? '#94A3B8' : 'var(--accent-lime)';
           ctx.lineWidth = 1.8;
           ctx.shadowColor = isBypassed ? 'transparent' : 'rgba(214, 175, 98, 0.4)';
           ctx.shadowBlur = 6;
@@ -400,7 +400,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         }
       } else {
         // Idle baseline trace
-        ctx.strokeStyle = '#222420';
+        ctx.strokeStyle = 'var(--border-subtle)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(0, height - 12);
@@ -408,7 +408,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         ctx.stroke();
 
         if (showFftOverlay && !isPlaying) {
-          ctx.fillStyle = '#686A63';
+          ctx.fillStyle = 'var(--text-tertiary)';
           ctx.font = '11px "JetBrains Mono", monospace';
           ctx.textAlign = 'center';
           ctx.fillText('REAL-TIME FFT ENGINE IDLE — PRESS PLAY TO ANALYZE', width / 2, height / 2 + 6);
@@ -452,7 +452,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       const midX = width / 2;
       const midY = height / 2;
 
-      ctx.fillStyle = '#090A08';
+      ctx.fillStyle = 'var(--bg-primary)';
       ctx.fillRect(0, 0, width, height);
 
       // Polar Crosshairs
@@ -473,7 +473,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       const data = audioEngine.getAnalyserData();
       if (isPlaying && data) {
         const { outputTime } = data;
-        ctx.strokeStyle = isBypassed ? '#94A3B8' : '#B7F000';
+        ctx.strokeStyle = isBypassed ? '#94A3B8' : 'var(--accent-lime)';
         ctx.lineWidth = 1.2;
         ctx.beginPath();
 
@@ -586,13 +586,13 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
   return (
     <div className="max-w-[1400px] mx-auto space-y-5 py-3 sm:py-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#222420] pb-3.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-subtle)] pb-3.5">
         <div>
-          <div className="text-[10px] font-mono text-[#B7F000] uppercase tracking-widest flex items-center gap-1.5">
+          <div className="text-[10px] font-mono text-[var(--accent-lime)] uppercase tracking-widest flex items-center gap-1.5">
             <Radio className="w-3.5 h-3.5" />
             PRECISION AUDIO TELEMETRY
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#F2F2EE] tracking-tight mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-tight mt-0.5">
             Real-Time Spectrum &amp; EQ Response Analyzer
           </h1>
         </div>
@@ -605,7 +605,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 soundHaptics.playButtonTap();
                 onOpenParity();
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#B7F000] hover:bg-[#151714] border border-[#B7F000]/30 rounded-sm transition cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[var(--accent-lime)] hover:bg-[var(--bg-elevated)] border border-[var(--accent-lime)]/30 rounded-sm transition cursor-pointer active:scale-95"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Bit-Identical Parity</span>
@@ -615,15 +615,15 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       </div>
 
       {/* Main Full-Width Spectrum Analyzer Card */}
-      <div className="bg-[#0A0C0F] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-3.5 shadow-xl">
+      <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-4 sm:p-5 space-y-3.5 shadow-xl">
         {/* Top Control Bar with Feature Toggles */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#181C22] pb-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold font-mono text-[#F2F2EE] uppercase tracking-wider flex items-center gap-1.5">
-              <BarChart2 className="w-4 h-4 text-[#B7F000]" />
+            <span className="text-xs font-semibold font-mono text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-1.5">
+              <BarChart2 className="w-4 h-4 text-[var(--accent-lime)]" />
               20 Hz — 20 kHz Logarithmic Spectrum
             </span>
-            <span className="hidden sm:inline-block text-[11px] font-mono text-[#686A63]">
+            <span className="hidden sm:inline-block text-[11px] font-mono text-[var(--text-tertiary)]">
               · 2048-Pt FFT Blackman-Harris
             </span>
           </div>
@@ -639,7 +639,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showFftOverlay
                   ? 'bg-[#10B981]/20 border-[#10B981]/60 text-[#A7F3D0] shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                  : 'bg-[#151714] border-[#222420] text-[#686A63] hover:text-[#A5A69F]'
+                  : 'bg-[var(--bg-elevated)] border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
               }`}
               title="Toggle Real-Time FFT Spectrum Analyzer Overlay (Low Resource Mode)"
             >
@@ -647,7 +647,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               <span className="font-semibold">FFT Overlay</span>
               <span
                 className={`text-[9px] px-1.5 py-0.2 rounded font-bold ${
-                  showFftOverlay ? 'bg-[#10B981] text-\[#F2F2EE\]' : 'bg-[#222420] text-[#686A63]'
+                  showFftOverlay ? 'bg-[#10B981] text-[var(--text-primary)]' : 'bg-[var(--border-subtle)] text-[var(--text-tertiary)]'
                 }`}
               >
                 {showFftOverlay ? 'ON' : 'OFF'}
@@ -662,16 +662,16 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showEqOverlay
-                  ? 'bg-[#B7F000]/20 border-[#B7F000]/60 text-[#D4FF5C] shadow-[0_0_12px_rgba(139,92,246,0.3)]'
-                  : 'bg-[#151714] border-[#222420] text-[#686A63] hover:text-[#A5A69F]'
+                  ? 'bg-[var(--accent-lime)]/20 border-[var(--accent-lime)]/60 text-[#D4FF5C] shadow-[0_0_12px_rgba(139,92,246,0.3)]'
+                  : 'bg-[var(--bg-elevated)] border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
               }`}
               title="Toggle EQ Frequency Transfer Curve Overlay"
             >
-              <Layers className="w-3.5 h-3.5 text-[#B7F000]" />
+              <Layers className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
               <span className="font-semibold">EQ Overlay</span>
               <span
                 className={`text-[9px] px-1.5 py-0.2 rounded font-bold ${
-                  showEqOverlay ? 'bg-[#B7F000] text-\[#F2F2EE\]' : 'bg-[#222420] text-[#686A63]'
+                  showEqOverlay ? 'bg-[var(--accent-lime)] text-[var(--text-primary)]' : 'bg-[var(--border-subtle)] text-[var(--text-tertiary)]'
                 }`}
               >
                 {showEqOverlay ? 'ON' : 'OFF'}
@@ -686,8 +686,8 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               }}
               className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showPreDsp
-                  ? 'bg-[#151714] border-[#4A505A] text-[#A5A69F]'
-                  : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
+                  ? 'bg-[var(--bg-elevated)] border-[#4A505A] text-[var(--text-secondary)]'
+                  : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[#4A505A]'
               }`}
               title="Toggle Pre-DSP Input Spectrum Curve"
             >
@@ -703,12 +703,12 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               }}
               className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showPostDsp
-                  ? 'bg-[#1C170E] border-[#B7F000]/50 text-[#C7FF18]'
-                  : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
+                  ? 'bg-[#1C170E] border-[var(--accent-lime)]/50 text-[var(--accent-lime-hover)]'
+                  : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[#4A505A]'
               }`}
               title="Toggle Post-DSP Mastered Spectrum Curve"
             >
-              <span className="w-2 h-0.5 bg-[#B7F000] rounded-full" />
+              <span className="w-2 h-0.5 bg-[var(--accent-lime)] rounded-full" />
               <span>Post-DSP</span>
             </button>
 
@@ -721,7 +721,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showPeakHold
                   ? 'bg-[#1F190E] border-[#F59E0B]/40 text-[#FBBF24]'
-                  : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
+                  : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[#4A505A]'
               }`}
               title="Toggle Maximum Peak Hold Trace"
             >
@@ -737,8 +737,8 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               }}
               className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono rounded-sm transition cursor-pointer active:scale-95 border ${
                 showTiltGuide
-                  ? 'bg-[#B7F000]/15 border-[#B7F000]/40 text-[#D4FF5C]'
-                  : 'bg-[#0D0E0C] border-[#222420] text-[#4A505A]'
+                  ? 'bg-[var(--accent-lime)]/15 border-[var(--accent-lime)]/40 text-[#D4FF5C]'
+                  : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[#4A505A]'
               }`}
               title="Toggle Pink Noise -4.5dB/oct Reference Slope"
             >
@@ -749,7 +749,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         </div>
 
         {/* Spectrum Canvas Container */}
-        <div className="w-full aspect-[1200/380] sm:aspect-[1200/340] rounded-sm overflow-hidden border border-[#181C22] bg-[#090A08] relative select-none touch-none">
+        <div className="w-full aspect-[1200/380] sm:aspect-[1200/340] rounded-sm overflow-hidden border border-[#181C22] bg-[var(--bg-primary)] relative select-none touch-none">
           <canvas
             ref={spectrumCanvasRef}
             width={1200}
@@ -762,8 +762,8 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
           />
 
           {/* Left dBFS Scale Legend */}
-          <div className="absolute left-2.5 inset-y-2.5 flex flex-col justify-between text-[9px] font-mono text-[#686A63] pointer-events-none select-none">
-            <span className="text-[#A5A69F]">0 dBFS</span>
+          <div className="absolute left-2.5 inset-y-2.5 flex flex-col justify-between text-[9px] font-mono text-[var(--text-tertiary)] pointer-events-none select-none">
+            <span className="text-[var(--text-secondary)]">0 dBFS</span>
             <span>-12 dB</span>
             <span>-24 dB</span>
             <span>-36 dB</span>
@@ -773,10 +773,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
 
           {/* Right EQ Scale Legend (When EQ Overlay Active) */}
           {showEqOverlay && (
-            <div className="absolute right-2.5 inset-y-2.5 flex flex-col justify-between items-end text-[9px] font-mono text-[#C7FF18] pointer-events-none select-none">
+            <div className="absolute right-2.5 inset-y-2.5 flex flex-col justify-between items-end text-[9px] font-mono text-[var(--accent-lime-hover)] pointer-events-none select-none">
               <span>+15 dB EQ</span>
               <span>+7.5 dB</span>
-              <span className="text-[#E5E7EB] font-bold">0 dB EQ</span>
+              <span className="text-[var(--text-primary)] font-bold">0 dB EQ</span>
               <span>-7.5 dB</span>
               <span>-15 dB EQ</span>
             </div>
@@ -791,9 +791,9 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                 top: `${Math.max(10, hoverInfo.y - 65)}px`,
               }}
             >
-              <div className="flex items-center justify-between gap-3 text-[#F2F2EE] font-bold border-b border-[#222420] pb-0.5">
+              <div className="flex items-center justify-between gap-3 text-[var(--text-primary)] font-bold border-b border-[var(--border-subtle)] pb-0.5">
                 <span>{hoverInfo.freq.toLocaleString()} Hz</span>
-                <span className="text-[#B7F000]">{hoverInfo.note}</span>
+                <span className="text-[var(--accent-lime)]">{hoverInfo.note}</span>
               </div>
               {showEqOverlay && (
                 <div className="flex items-center justify-between gap-3 text-[#D4FF5C]">
@@ -803,7 +803,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                   </span>
                 </div>
               )}
-              <div className="flex items-center justify-between gap-3 text-[#A5A69F]">
+              <div className="flex items-center justify-between gap-3 text-[var(--text-secondary)]">
                 <span>Level:</span>
                 <span className="tabular-nums">{hoverInfo.preDb.toFixed(1)} dBFS</span>
               </div>
@@ -812,7 +812,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         </div>
 
         {/* Frequency Ticks Ruler */}
-        <div className="flex justify-between px-2 text-[10px] font-mono text-[#686A63] select-none">
+        <div className="flex justify-between px-2 text-[10px] font-mono text-[var(--text-tertiary)] select-none">
           <span>20 Hz</span>
           <span>50 Hz</span>
           <span>100 Hz</span>
@@ -827,14 +827,14 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
 
         {/* Live EQ Visual Feedback & Interactive Controls (Shown when EQ Overlay is ON) */}
         {showEqOverlay && onParamChange && (
-          <div className="pt-3 border-t border-[#181C22] bg-[#0D0E0C] rounded-sm p-3 sm:p-4">
+          <div className="pt-3 border-t border-[#181C22] bg-[var(--bg-secondary)] rounded-sm p-3 sm:p-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-semibold text-[#F2F2EE] uppercase flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-[#B7F000]" />
+                <span className="text-xs font-mono font-semibold text-[var(--text-primary)] uppercase flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-[var(--accent-lime)]" />
                   Live EQ Response Adjuster
                 </span>
-                <span className="text-[10px] font-mono text-[#A5A69F]">
+                <span className="text-[10px] font-mono text-[var(--text-secondary)]">
                   (Drag filter nodes above or use sliders below)
                 </span>
               </div>
@@ -848,7 +848,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                     onParamChange('mid', -0.5);
                     onParamChange('high', 1.5);
                   }}
-                  className="px-2 py-1 text-[10px] font-mono text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] border border-[#222420] rounded transition cursor-pointer active:scale-95"
+                  className="px-2 py-1 text-[10px] font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded transition cursor-pointer active:scale-95"
                 >
                   Warm Punch
                 </button>
@@ -859,13 +859,13 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
                     onParamChange('mid', 1.5);
                     onParamChange('high', 2.5);
                   }}
-                  className="px-2 py-1 text-[10px] font-mono text-[#A5A69F] hover:text-[#F2F2EE] bg-[#151714] border border-[#222420] rounded transition cursor-pointer active:scale-95"
+                  className="px-2 py-1 text-[10px] font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded transition cursor-pointer active:scale-95"
                 >
                   Air &amp; Clarity
                 </button>
                 <button
                   onClick={handleResetEq}
-                  className="flex items-center gap-1 px-2 py-1 text-[10px] font-mono text-[#A5A69F] hover:text-[#B7F000] bg-[#151714] border border-[#222420] rounded transition cursor-pointer active:scale-95"
+                  className="flex items-center gap-1 px-2 py-1 text-[10px] font-mono text-[var(--text-secondary)] hover:text-[var(--accent-lime)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded transition cursor-pointer active:scale-95"
                   title="Reset all bands to 0.0 dB"
                 >
                   <RotateCcw className="w-3 h-3" />
@@ -877,10 +877,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
             {/* 3-Band Horizontal Live EQ Sliders */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* LOW BAND */}
-              <div className="bg-[#151714] border border-[#222420] rounded-sm p-2.5 space-y-1.5">
+              <div className="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-[#10B981] font-semibold">LOW SHELF · 120 Hz</span>
-                  <span className="text-[#F2F2EE] font-bold tabular-nums">
+                  <span className="text-[var(--text-primary)] font-bold tabular-nums">
                     {params.low >= 0 ? `+${params.low.toFixed(1)}` : params.low.toFixed(1)} dB
                   </span>
                 </div>
@@ -900,10 +900,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               </div>
 
               {/* MID BAND */}
-              <div className="bg-[#151714] border border-[#222420] rounded-sm p-2.5 space-y-1.5">
+              <div className="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-[#3B82F6] font-semibold">MID BELL · 1.2 kHz</span>
-                  <span className="text-[#F2F2EE] font-bold tabular-nums">
+                  <span className="text-[var(--text-primary)] font-bold tabular-nums">
                     {params.mid >= 0 ? `+${params.mid.toFixed(1)}` : params.mid.toFixed(1)} dB
                   </span>
                 </div>
@@ -923,10 +923,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               </div>
 
               {/* HIGH BAND */}
-              <div className="bg-[#151714] border border-[#222420] rounded-sm p-2.5 space-y-1.5">
+              <div className="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-[#EC4899] font-semibold">HIGH SHELF · 8.5 kHz</span>
-                  <span className="text-[#F2F2EE] font-bold tabular-nums">
+                  <span className="text-[var(--text-primary)] font-bold tabular-nums">
                     {params.high >= 0 ? `+${params.high.toFixed(1)}` : params.high.toFixed(1)} dB
                   </span>
                 </div>
@@ -952,53 +952,53 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       {/* Lower Row: Vectorscope, Loudness Stats & Phase Correlation */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {/* Vectorscope / Goniometer */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-3 flex flex-col items-center shadow-lg">
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-4 sm:p-5 space-y-3 flex flex-col items-center shadow-lg">
           <div className="w-full flex items-center justify-between text-xs font-mono">
-            <span className="text-[#F2F2EE] uppercase font-semibold">STEREO VECTORSCOPE</span>
-            <span className="text-[#B7F000]">+0.94 Corr</span>
+            <span className="text-[var(--text-primary)] uppercase font-semibold">STEREO VECTORSCOPE</span>
+            <span className="text-[var(--accent-lime)]">+0.94 Corr</span>
           </div>
 
-          <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-sm overflow-hidden border border-[#222420] bg-[#090A08]">
+          <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-sm overflow-hidden border border-[var(--border-subtle)] bg-[var(--bg-primary)]">
             <canvas ref={phaseCanvasRef} width={192} height={192} className="w-full h-full block" />
           </div>
 
-          <div className="w-full flex justify-between text-[10px] font-mono text-[#686A63]">
+          <div className="w-full flex justify-between text-[10px] font-mono text-[var(--text-tertiary)]">
             <span>Phase: +1.0 (In Phase)</span>
             <span>Width: 94%</span>
           </div>
         </div>
 
         {/* EBU R128 Compliance */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-4 shadow-lg">
-          <div className="text-xs font-semibold font-mono text-[#F2F2EE] uppercase">
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-4 sm:p-5 space-y-4 shadow-lg">
+          <div className="text-xs font-semibold font-mono text-[var(--text-primary)] uppercase">
             EBU R128 LOUDNESS TELEMETRY
           </div>
 
           <div className="space-y-3 font-mono">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A5A69F]">Integrated Loudness</span>
-              <span className="text-[#F2F2EE] font-bold tabular-nums">
+              <span className="text-[var(--text-secondary)]">Integrated Loudness</span>
+              <span className="text-[var(--text-primary)] font-bold tabular-nums">
                 {meterData.integratedLufs ? meterData.integratedLufs.toFixed(1) : '-9.4'} LUFS
               </span>
             </div>
 
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A5A69F]">Short-Term Max</span>
-              <span className="text-[#F2F2EE] font-bold tabular-nums">-8.2 LUFS</span>
+              <span className="text-[var(--text-secondary)]">Short-Term Max</span>
+              <span className="text-[var(--text-primary)] font-bold tabular-nums">-8.2 LUFS</span>
             </div>
 
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A5A69F]">Momentary Max</span>
-              <span className="text-[#F2F2EE] font-bold tabular-nums">-7.5 LUFS</span>
+              <span className="text-[var(--text-secondary)]">Momentary Max</span>
+              <span className="text-[var(--text-primary)] font-bold tabular-nums">-7.5 LUFS</span>
             </div>
 
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#A5A69F]">Loudness Range (LRA)</span>
-              <span className="text-[#F2F2EE] font-bold tabular-nums">5.4 LU</span>
+              <span className="text-[var(--text-secondary)]">Loudness Range (LRA)</span>
+              <span className="text-[var(--text-primary)] font-bold tabular-nums">5.4 LU</span>
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-[#222420]">
-              <span className="text-[#A5A69F]">True Peak Compliance</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-[var(--border-subtle)]">
+              <span className="text-[var(--text-secondary)]">True Peak Compliance</span>
               <span className="text-[#6FCF97] font-semibold flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" /> Pass (-1.0 dBTP)
               </span>
@@ -1007,34 +1007,34 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         </div>
 
         {/* Dynamic Crest & DSP Architecture */}
-        <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 sm:p-5 space-y-4 shadow-lg">
-          <div className="text-xs font-semibold font-mono text-[#F2F2EE] uppercase">
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-4 sm:p-5 space-y-4 shadow-lg">
+          <div className="text-xs font-semibold font-mono text-[var(--text-primary)] uppercase">
             ENGINE PURITY &amp; ARCHITECTURE
           </div>
 
           <div className="space-y-3 text-xs font-mono">
             <div className="flex items-center justify-between">
-              <span className="text-[#A5A69F]">DSP Engine</span>
-              <span className="text-[#B7F000] font-semibold">C++ / WASM Native</span>
+              <span className="text-[var(--text-secondary)]">DSP Engine</span>
+              <span className="text-[var(--accent-lime)] font-semibold">C++ / WASM Native</span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-[#A5A69F]">Internal Precision</span>
-              <span className="text-[#F2F2EE]">64-bit Double Precision</span>
+              <span className="text-[var(--text-secondary)]">Internal Precision</span>
+              <span className="text-[var(--text-primary)]">64-bit Double Precision</span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-[#A5A69F]">Oversampling</span>
-              <span className="text-[#F2F2EE]">4x Linear-Phase Polyphase</span>
+              <span className="text-[var(--text-secondary)]">Oversampling</span>
+              <span className="text-[var(--text-primary)]">4x Linear-Phase Polyphase</span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-[#A5A69F]">Harmonic Distortion</span>
+              <span className="text-[var(--text-secondary)]">Harmonic Distortion</span>
               <span className="text-[#6FCF97]">&lt; 0.0001% THD+N</span>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-[#222420]">
-              <span className="text-[#A5A69F]">Parity Deviation</span>
+            <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)]">
+              <span className="text-[var(--text-secondary)]">Parity Deviation</span>
               <span className="text-[#6FCF97]">1.2e-7 (Zero Error)</span>
             </div>
           </div>

@@ -29,12 +29,12 @@ export const ProBadge: React.FC<ProBadgeProps> = ({
       onClick={onClick}
       className={`inline-flex items-center font-mono rounded select-none transition-all ${
         showLocked
-          ? 'bg-[#1C170E] text-[#B7F000] border border-[#B7F000]/40 hover:border-[#C7FF18] cursor-pointer'
-          : 'bg-[#1C170E] text-[#C7FF18] border border-[#B7F000]/40'
+          ? 'bg-[#1C170E] text-[var(--accent-lime)] border border-[var(--accent-lime)]/40 hover:border-[var(--accent-lime-hover)] cursor-pointer'
+          : 'bg-[#1C170E] text-[var(--accent-lime-hover)] border border-[var(--accent-lime)]/40'
       } ${sizeClasses[size]} ${className}`}
       title={showLocked ? 'MasteringPro Pro Feature — Click to unlock' : 'Active Pro Feature'}
     >
-      {showLocked && <Lock className="w-2.5 h-2.5 text-[#B7F000]" />}
+      {showLocked && <Lock className="w-2.5 h-2.5 text-[var(--accent-lime)]" />}
       <span>PRO</span>
     </span>
   );

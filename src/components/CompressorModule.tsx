@@ -63,7 +63,7 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
     history.push(currentGR);
 
     // Draw background
-    ctx.fillStyle = '#090A08';
+    ctx.fillStyle = 'var(--bg-primary)';
     ctx.fillRect(0, 0, width, height);
 
     // Grid lines for 0dB, -6dB, -12dB, -18dB
@@ -99,35 +99,35 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = '#B7F000';
+    ctx.strokeStyle = 'var(--accent-lime)';
     ctx.lineWidth = 1.5;
     ctx.stroke();
   }, [effectiveGR, isBypassed]);
 
   return (
-    <div className="bg-[#0E1013] border border-[#222420] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
+    <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm p-4 flex flex-col justify-between h-full relative group shadow-lg">
       {/* Rack corner bolt aesthetic */}
-      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
-      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#222420] border border-[#151714]" />
+      <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[var(--border-subtle)] border border-[var(--bg-elevated)]" />
+      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[var(--border-subtle)] border border-[var(--bg-elevated)]" />
 
       {/* Module Header */}
-      <div className="flex items-center justify-between border-b border-[#222420] pb-2.5 mb-3">
+      <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2.5 mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold tracking-wider text-[#F2F2EE] uppercase font-mono">
+          <span className="text-xs font-semibold tracking-wider text-[var(--text-primary)] uppercase font-mono">
             COMPRESSOR
           </span>
-          <span className="text-[9px] font-mono text-[#B7F000] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[#B7F000]/20">
+          <span className="text-[9px] font-mono text-[var(--accent-lime)] bg-[#1C170E] px-1.5 py-0.5 rounded border border-[var(--accent-lime)]/20">
             STEREO FEEDBACK
           </span>
           {isBypassed && (
-            <span className="text-[9px] font-mono text-[#686A63] bg-[#151714] px-1.5 py-0.5 rounded">
+            <span className="text-[9px] font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] px-1.5 py-0.5 rounded">
               OFF
             </span>
           )}
         </div>
         <button
           onClick={handleResetAll}
-          className="flex items-center gap-1 text-[11px] text-[#A5A69F] hover:text-[#B7F000] transition cursor-pointer"
+          className="flex items-center gap-1 text-[11px] text-[var(--text-secondary)] hover:text-[var(--accent-lime)] transition cursor-pointer"
           title="Reset Compressor parameters"
         >
           <RotateCcw className="w-3 h-3" />
@@ -145,10 +145,10 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
             title="Double-click to reset (-24.0 dB)"
           >
             <div className="flex items-center justify-between text-[11px] font-mono mb-1">
-              <span className="text-[#A5A69F] group-hover/slider:text-[#B7F000] transition-colors">
+              <span className="text-[var(--text-secondary)] group-hover/slider:text-[var(--accent-lime)] transition-colors">
                 Threshold
               </span>
-              <span className="font-semibold text-[#F2F2EE] num-tabular bg-[#151714] px-1.5 py-0.2 rounded border border-[#222420]">
+              <span className="font-semibold text-[var(--text-primary)] num-tabular bg-[var(--bg-elevated)] px-1.5 py-0.2 rounded border border-[var(--border-subtle)]">
                 {params.threshold.toFixed(1)} dB
               </span>
             </div>
@@ -163,7 +163,7 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
               onChange={(e) => handleSliderChange('threshold', parseFloat(e.target.value))}
               className="w-full h-1 cursor-pointer"
             />
-            <div className="flex justify-between text-[9px] font-mono text-[#686A63] mt-0.5">
+            <div className="flex justify-between text-[9px] font-mono text-[var(--text-tertiary)] mt-0.5">
               <span>-48 dB</span>
               <span className="text-[8px]">2x click: -24dB</span>
               <span>0 dB</span>
@@ -177,10 +177,10 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
             title="Double-click to reset (2.0:1)"
           >
             <div className="flex items-center justify-between text-[11px] font-mono mb-1">
-              <span className="text-[#A5A69F] group-hover/slider:text-[#B7F000] transition-colors">
+              <span className="text-[var(--text-secondary)] group-hover/slider:text-[var(--accent-lime)] transition-colors">
                 Ratio
               </span>
-              <span className="font-semibold text-[#F2F2EE] num-tabular bg-[#151714] px-1.5 py-0.2 rounded border border-[#222420]">
+              <span className="font-semibold text-[var(--text-primary)] num-tabular bg-[var(--bg-elevated)] px-1.5 py-0.2 rounded border border-[var(--border-subtle)]">
                 {params.ratio.toFixed(1)} : 1
               </span>
             </div>
@@ -195,7 +195,7 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
               onChange={(e) => handleSliderChange('ratio', parseFloat(e.target.value))}
               className="w-full h-1 cursor-pointer"
             />
-            <div className="flex justify-between text-[9px] font-mono text-[#686A63] mt-0.5">
+            <div className="flex justify-between text-[9px] font-mono text-[var(--text-tertiary)] mt-0.5">
               <span>1.0:1</span>
               <span className="text-[8px]">2x click: 2.0:1</span>
               <span>10:1</span>
@@ -209,10 +209,10 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
             title="Double-click to reset (0.0 dB)"
           >
             <div className="flex items-center justify-between text-[11px] font-mono mb-1">
-              <span className="text-[#A5A69F] group-hover/slider:text-[#B7F000] transition-colors">
+              <span className="text-[var(--text-secondary)] group-hover/slider:text-[var(--accent-lime)] transition-colors">
                 Makeup Gain
               </span>
-              <span className="font-semibold text-[#B7F000] num-tabular bg-[#151714] px-1.5 py-0.2 rounded border border-[#222420]">
+              <span className="font-semibold text-[var(--accent-lime)] num-tabular bg-[var(--bg-elevated)] px-1.5 py-0.2 rounded border border-[var(--border-subtle)]">
                 +{params.gain.toFixed(1)} dB
               </span>
             </div>
@@ -227,7 +227,7 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
               onChange={(e) => handleSliderChange('gain', parseFloat(e.target.value))}
               className="w-full h-1 cursor-pointer"
             />
-            <div className="flex justify-between text-[9px] font-mono text-[#686A63] mt-0.5">
+            <div className="flex justify-between text-[9px] font-mono text-[var(--text-tertiary)] mt-0.5">
               <span>0 dB</span>
               <span className="text-[8px]">2x click: 0dB</span>
               <span>+12 dB</span>
@@ -238,21 +238,21 @@ export const CompressorModule: React.FC<CompressorModuleProps> = ({
         {/* Right: Dynamic Gain Reduction Graph */}
         <div className="flex flex-col h-full justify-between space-y-2">
           <div className="flex items-center justify-between text-[10px] font-mono">
-            <span className="text-[#A5A69F] uppercase tracking-wider">GAIN REDUCTION</span>
-            <span className="text-[#B7F000] font-semibold num-tabular">
+            <span className="text-[var(--text-secondary)] uppercase tracking-wider">GAIN REDUCTION</span>
+            <span className="text-[var(--accent-lime)] font-semibold num-tabular">
               {effectiveGR > 0.1 ? `-${effectiveGR.toFixed(1)} dB` : '0.0 dB'}
             </span>
           </div>
 
           {/* Real-time GR Canvas */}
-          <div className="w-full h-24 rounded-sm bg-[#090A08] border border-[#222420] overflow-hidden relative shadow-inner">
+          <div className="w-full h-24 rounded-sm bg-[var(--bg-primary)] border border-[var(--border-subtle)] overflow-hidden relative shadow-inner">
             <canvas ref={canvasRef} width={200} height={96} className="w-full h-full block" />
-            <div className="absolute left-1.5 top-1 text-[8px] font-mono text-[#686A63]">0 dB</div>
-            <div className="absolute left-1.5 bottom-1 text-[8px] font-mono text-[#686A63]">-18 dB</div>
-            <div className="absolute right-1.5 top-1 text-[8px] font-mono text-[#B7F000]/70">REALTIME TRACE</div>
+            <div className="absolute left-1.5 top-1 text-[8px] font-mono text-[var(--text-tertiary)]">0 dB</div>
+            <div className="absolute left-1.5 bottom-1 text-[8px] font-mono text-[var(--text-tertiary)]">-18 dB</div>
+            <div className="absolute right-1.5 top-1 text-[8px] font-mono text-[var(--accent-lime)]/70">REALTIME TRACE</div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] font-mono text-[#686A63]">
+          <div className="flex items-center justify-between text-[10px] font-mono text-[var(--text-tertiary)]">
             <span>Attack: 20 ms</span>
             <span>Release: 240 ms</span>
           </div>

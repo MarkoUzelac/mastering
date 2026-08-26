@@ -41,14 +41,14 @@ export const LandingView: React.FC<LandingViewProps> = ({
           <div className="flex flex-col sm:flex-row gap-4 shrink-0">
             <button
               onClick={onStartMastering}
-              className="px-8 py-4 bg-[var(--accent-lime)] hover:bg-[var(--accent-lime-hover)] text-[var(--bg-primary)] font-mono font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer rounded-sm"
+              className="btn-primary px-8 py-4"
             >
               <span>LAUNCH STUDIO</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={onOpenPricingModal}
-              className="px-6 py-4 bg-transparent hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border-subtle)] font-mono font-medium text-xs sm:text-sm transition-colors cursor-pointer rounded-sm"
+              className="btn-secondary px-6 py-4"
             >
               EXPLORE PRO
             </button>
