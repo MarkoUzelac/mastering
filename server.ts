@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Request, type Response } from 'express';
 import cors from 'cors';
 import path from 'path';
 import Stripe from 'stripe';
@@ -23,8 +23,13 @@ function getStripe(): Stripe | null {
 // Global Middlewares
 app.use(cors());
 
-// Webhook raw body middleware for Stripe signature verification
-app.use(['/api/webhooks/stripe', '/api/stripe/webhook'], express.raw({ type: 'application/json' }));
+// Route-level raw body is required for Stripe signature verification.
+app.post(
+  '/api/webhooks/stripe',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookHandler
+);
+
 app.use(express.json());
 
 // In-memory persistent session storage (Single-tenant / demo workspace)
@@ -117,7 +122,6 @@ let usage: UsageRecord = {
 let invoices: InvoiceRecord[] = [];
 let exportHistory: ExportLogRecord[] = [];
 const dataRequests: DataRequestRecord[] = [];
-const processedWebhookEvents = new Set<string>();
 
 function getPlanFeatures(plan: 'free' | 'pro_monthly' | 'pro_yearly'): string[] {
   if (plan === 'free') {
@@ -537,89 +541,6 @@ app.post('/api/account/delete', (req, res) => {
   });
 });
 
-// POST /api/stripe/webhook & /api/webhooks/stripe & /api/webhooks/payment - Webhook Handler with Signature Verification
-app.post(['/api/stripe/webhook', '/api/webhooks/stripe', '/api/webhooks/payment'], (req, res) => {
-  const stripe = getStripe();
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  const sig = req.headers['stripe-signature'] as string;
-
-  let event: Stripe.Event | { id: string; type: string; data?: { object?: Record<string, unknown> } };
-
-  if (stripe && webhookSecret && sig) {
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-    } catch (err: unknown) {
-      console.error('[Stripe Webhook] Signature verification failed:', err);
-      return res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : String(err)}`);
-    }
-  } else {
-    event = req.body;
-  }
-
-  const eventId = event?.id || (req.headers['stripe-event-id'] as string);
-  const eventType = event?.type;
-
-  if (!eventId) {
-    return res.status(400).json({ error: 'Missing webhook event ID' });
-  }
-
-  // Idempotency verification
-  if (processedWebhookEvents.has(eventId)) {
-    return res.json({ received: true, duplicate: true });
-  }
-  processedWebhookEvents.add(eventId);
-
-  console.log(`[WEBHOOK] Processed event: ${eventType} (ID: ${eventId})`);
-
-  switch (eventType) {
-    case 'checkout.session.completed': {
-      const session = (event as { data?: { object?: Record<string, unknown> } })?.data?.object;
-      const meta = session?.metadata as Record<string, unknown> | undefined;
-      const isYearly = meta?.plan === 'yearly' || meta?.planId === 'pro_yearly';
-      const plan = isYearly ? 'pro_yearly' : 'pro_monthly';
-      subscription.status = 'PRO';
-      subscription.plan = plan;
-      subscription.features = getPlanFeatures(plan);
-      usage.exportsLimit = -1;
-      break;
-    }
-    case 'customer.subscription.created':
-    case 'customer.subscription.updated': {
-      const obj = (event as { data?: { object?: Record<string, unknown> } })?.data?.object;
-      const planObj = obj?.plan as Record<string, unknown> | undefined;
-      const planIdStr = typeof planObj?.id === 'string' ? planObj.id : '';
-      const isYearly = planIdStr.includes('year') || (obj?.metadata as Record<string, unknown>)?.plan === 'yearly';
-      const planId = isYearly ? 'pro_yearly' : 'pro_monthly';
-      subscription.status = 'PRO';
-      subscription.plan = planId;
-      subscription.features = getPlanFeatures(planId);
-      usage.exportsLimit = -1;
-      break;
-    }
-    case 'invoice.payment_succeeded':
-    case 'invoice.paid': {
-      subscription.status = 'PRO';
-      usage.exportsLimit = -1;
-      break;
-    }
-    case 'customer.subscription.deleted': {
-      subscription.status = 'CANCELED';
-      subscription.plan = 'free';
-      subscription.features = getPlanFeatures('free');
-      usage.exportsLimit = 5;
-      break;
-    }
-    case 'invoice.payment_failed': {
-      subscription.status = 'PAST_DUE';
-      break;
-    }
-    default:
-      break;
-  }
-
-  res.json({ received: true });
-});
-
 // ---------------- VITE & STATIC SERVING ----------------
 
 async function startServer() {
@@ -640,6 +561,63 @@ async function startServer() {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[MasteringLocal.Pro] Server listening on http://0.0.0.0:${PORT}`);
   });
+}
+
+async function stripeWebhookHandler(
+  req: Request,
+  res: Response
+) {
+  const signature = req.headers['stripe-signature'];
+
+  if (!signature || Array.isArray(signature)) {
+    return res.status(400).send('Missing Stripe signature');
+  }
+
+  const stripe = getStripe();
+
+  if (!stripe) {
+    console.error('[Stripe Webhook] Stripe client unavailable');
+    return res.status(500).send('Stripe service unavailable');
+  }
+
+  let event: Stripe.Event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
+  } catch (error) {
+    console.error('[Stripe Webhook] Invalid signature:', error);
+    return res.status(400).send('Invalid signature');
+  }
+
+  try {
+    await handleStripeEvent({
+      event,
+      stripe,
+    });
+
+    return res.status(200).json({
+      received: true,
+    });
+  } catch (error) {
+    console.error('[Stripe Webhook] Processing failed:', error);
+    return res.status(500).send('Internal Server Error');
+  }
+}
+
+async function handleStripeEvent({
+  event,
+  stripe,
+}: {
+  event: Stripe.Event;
+  stripe: Stripe;
+}) {
+  console.log(
+    `[Stripe Webhook] Received event: ${event.type} (${event.id})`
+  );
 }
 
 startServer();
