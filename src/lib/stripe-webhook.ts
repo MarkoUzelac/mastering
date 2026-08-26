@@ -1,35 +1,17 @@
-import type Stripe from 'stripe';
-import type { Auth } from 'firebase-admin/auth';
+import Stripe from 'stripe';
 import type { Firestore } from 'firebase-admin/firestore';
-import { FieldValue } from 'firebase-admin/firestore';
 
 export type StripeWebhookDependencies = {
   db: Firestore;
-  auth: Auth;
+  auth: any;
   stripe: Stripe;
 };
 
-export async function handleStripeEvent({
-  event,
+export async function processStripeEvent({
   db,
   auth,
   stripe,
-}: StripeWebhookDependencies & { event: Stripe.Event }): Promise<
-  'processed' | 'duplicate' | 'stale' | 'unhandled'
-> {
-  switch (event.type) {
-    case 'checkout.session.completed':
-      return handleCheckoutCompleted({ event, db, auth, stripe });
-    default:
-      return handleUnknownEvent(event, db);
-  }
-}
-
-async function handleCheckoutCompleted({
   event,
-  db,
-  auth,
-  stripe,
 }: StripeWebhookDependencies & { event: Stripe.Event }): Promise<
   'processed' | 'duplicate' | 'stale'
 > {
@@ -51,135 +33,59 @@ async function handleCheckoutCompleted({
     );
   }
 
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const subscriptionResponse = await stripe.subscriptions.retrieve(subscriptionId);
+  const subscription = subscriptionResponse.data;
   const metadataUid = subscription.metadata?.firebaseUid ?? null;
 
-  if (!metadataUid) {
-    throw new Error(
-      `Subscription ${subscription.id} is missing metadata.firebaseUid`
-    );
+  const uid = metadataUid;
+  if (!uid) {
+    throw new Error(`Subscription ${subscription.id} missing firebaseUid metadata`);
   }
 
-  const customerRef = db.doc(`stripeCustomers/${customerId}`);
-  const subscriptionRef = db.doc(
-    `users/${metadataUid}/billing/subscription`
-  );
+  const userRef = db.doc(`users/${uid}/billing/subscription`);
   const eventRef = db.doc(`stripeEvents/${event.id}`);
 
-  await auth.getUser(metadataUid);
-
   return db.runTransaction(async (tx) => {
-    const eventSnap = await tx.get(eventRef);
+    const [eventSnap, userSnap] = await Promise.all([
+      tx.get(eventRef),
+      tx.get(userRef),
+    ]);
 
     if (eventSnap.exists) {
       return 'duplicate';
     }
 
-    const customerSnap = await tx.get(customerRef);
-    const currentSnap = await tx.get(subscriptionRef);
+    const existing = userSnap.exists ? userSnap.data() : undefined;
+    const lastStripeEventCreated = existing?.lastStripeEventCreated ?? 0;
 
-    const storedUid = customerSnap.exists
-      ? customerSnap.data()?.firebaseUid ?? null
-      : null;
-
-    if (storedUid && storedUid !== metadataUid) {
-      throw new Error(
-        `UID mismatch for Stripe customer ${customerId}: stripe=${metadataUid}, firestore=${storedUid}`
-      );
-    }
-
-    const lastStripeEventCreated = currentSnap.exists
-      ? currentSnap.data()?.lastStripeEventCreated ?? null
-      : null;
-
-    if (
-      lastStripeEventCreated !== null &&
-      typeof lastStripeEventCreated === 'number' &&
-      event.created < lastStripeEventCreated
-    ) {
-      tx.create(eventRef, {
-        status: 'stale',
+    if (event.created < lastStripeEventCreated) {
+      tx.set(eventRef, {
+        eventId: event.id,
         type: event.type,
         created: event.created,
-        stripeCustomerId: customerId,
-        stripeSubscriptionId: subscription.id,
-        firebaseUid: metadataUid,
-        processedAt: FieldValue.serverTimestamp(),
+        status: 'stale',
       });
       return 'stale';
     }
 
-    const entitlementStatus =
-      subscription.status === 'active'
-        ? 'PRO'
-        : subscription.status === 'trialing'
-          ? 'TRIAL'
-          : 'FREE';
+    tx.set(userRef, {
+      entitlementStatus: 'PRO',
+      billingStatus: subscription.status,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      currentPeriodStart: subscription.current_period_start,
+      currentPeriodEnd: subscription.current_period_end,
+      lastStripeEventId: event.id,
+      lastStripeEventCreated: event.created,
+      updatedAt: new Date(),
+    }, { merge: true });
 
-    tx.set(
-      customerRef,
-      {
-        firebaseUid: metadataUid,
-        stripeCustomerId: customerId,
-        updatedAt: FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
-
-    tx.set(
-      subscriptionRef,
-      {
-        uid: metadataUid,
-        stripeCustomerId: customerId,
-        stripeSubscriptionId: subscription.id,
-        billingStatus: subscription.status,
-        entitlementStatus,
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        currentPeriodStart: subscription.current_period_start,
-        currentPeriodEnd: subscription.current_period_end,
-        gracePeriodStartedAt: null,
-        gracePeriodEndsAt: null,
-        lastStripeEventId: event.id,
-        lastStripeEventCreated: event.created,
-        updatedAt: FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
-
-    tx.create(eventRef, {
-      status: 'processed',
+    tx.set(eventRef, {
+      eventId: event.id,
       type: event.type,
       created: event.created,
-      stripeCustomerId: customerId,
-      stripeSubscriptionId: subscription.id,
-      firebaseUid: metadataUid,
-      processedAt: FieldValue.serverTimestamp(),
+      status: 'processed',
     });
 
     return 'processed';
-  });
-}
-
-async function handleUnknownEvent(
-  event: Stripe.Event,
-  db: Firestore
-): Promise<'unhandled' | 'duplicate'> {
-  const eventRef = db.doc(`stripeEvents/${event.id}`);
-
-  return db.runTransaction(async (tx) => {
-    const existing = await tx.get(eventRef);
-
-    if (existing.exists) {
-      return 'duplicate';
-    }
-
-    tx.create(eventRef, {
-      status: 'unhandled',
-      type: event.type,
-      created: event.created,
-      processedAt: FieldValue.serverTimestamp(),
-    });
-
-    return 'unhandled';
   });
 }
