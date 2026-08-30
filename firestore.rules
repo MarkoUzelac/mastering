@@ -4,18 +4,40 @@ service cloud.firestore {
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isAdmin() {
       return isAuthenticated() && request.auth.token.email == "info@markouzelacuzy.com";
     }
 
     match /users/{userId} {
       allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
-      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      // Client may edit profile presentation fields, never role or subscription authority.
+      allow update: if isAuthenticated() && request.auth.uid == userId
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.subscriptionTier == resource.data.subscriptionTier;
+      allow delete: if isAdmin();
     }
 
     match /sessions/{sessionId} {
       allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Billing/account state is server-authoritative via Firebase Admin SDK.
+    match /accounts/{userId} {
+      allow read, write: if false;
+    }
+
+    match /stripe_webhook_events/{eventId} {
+      allow read, write: if false;
+    }
+
+    match /data_requests/{requestId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
