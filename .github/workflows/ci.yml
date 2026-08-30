@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Type check
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: Verify no tracked environment secrets
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)(\.env|\.env\.[^/]+)$'; then
+            echo 'Tracked environment file detected.'
+            exit 1
+          fi
+
+      - name: Verify release configuration contract
+        shell: bash
+        run: |
+          node -e "const p=require('./package.json'); if(p.engines?.node !== '>=22') process.exit(1); if(!p.scripts?.build || !p.scripts?.lint || !p.scripts?.test) process.exit(1); console.log('Release contract OK')"
