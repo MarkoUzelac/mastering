@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Layers, Volume2, VolumeX, Sliders, Play, Pause } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, Layers } from 'lucide-react';
 import { PhosphorSlider } from './PhosphorSlider';
+import { stemMixer } from '../utils/stem-mixer';
 
 interface StemTrack {
   id: string;
@@ -24,8 +25,32 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
     { id: '4', name: 'Lead & Backing Vocals', category: 'vocals', gain: 0, pan: 0, muted: false, solo: false },
   ]);
 
+  useEffect(() => {
+    stemMixer.install();
+    stemMixer.setStates(stems);
+    stemMixer.attach();
+
+    return () => {
+      stemMixer.detach(true);
+    };
+    // The mixer is synchronized explicitly below; this effect only owns the
+    // graph lifetime for the modal instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const updateStem = (id: string, updates: Partial<StemTrack>) => {
-    setStems((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+    setStems((prev) => {
+      const next = prev.map((s) => (s.id === id ? { ...s, ...updates } : s));
+      const updated = next.find((s) => s.id === id);
+      if (!updated) return next;
+
+      if (updates.pan !== undefined) stemMixer.setPan(id, updated.pan);
+      if (updates.gain !== undefined) stemMixer.setVolume(id, updated.gain);
+      if (updates.muted !== undefined) stemMixer.setMuted(id, updated.muted);
+      if (updates.solo !== undefined) stemMixer.setSolo(id, updated.solo);
+
+      return next;
+    });
   };
 
   return (
