@@ -17,10 +17,11 @@ export const AdminPanelView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
       return;
     }
 
+    const firestore = db;
     const fetchUsers = async () => {
       setFetching(true);
       try {
-        const querySnapshot = await getDocs(collection(db, 'users'));
+        const querySnapshot = await getDocs(collection(firestore, 'users'));
         const usersList: any[] = [];
         querySnapshot.forEach((snapshot) => {
           usersList.push({ id: snapshot.id, ...snapshot.data() });
