@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../lib/firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { ArrowLeft, Users, Shield, Database, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export const AdminPanelView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const { user, loading, isAdmin } = useAuth();
+  const { loading, isAdmin } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
-    if (!isAdmin) return;
-    if (!db) {
-      console.warn('[AdminPanel] Firestore is not initialized.');
+    if (!isAdmin || !db) {
+      if (isAdmin && !db) {
+        console.warn('[AdminPanel] Firestore is not initialized.');
+      }
       return;
     }
+
     const fetchUsers = async () => {
       setFetching(true);
       try {
         const querySnapshot = await getDocs(collection(db, 'users'));
         const usersList: any[] = [];
-        querySnapshot.forEach((doc) => {
-          usersList.push({ id: doc.id, ...doc.data() });
+        querySnapshot.forEach((snapshot) => {
+          usersList.push({ id: snapshot.id, ...snapshot.data() });
         });
         setUsers(usersList);
       } catch (error) {
@@ -30,6 +32,7 @@ export const AdminPanelView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
         setFetching(false);
       }
     };
+
     fetchUsers();
   }, [isAdmin]);
 
