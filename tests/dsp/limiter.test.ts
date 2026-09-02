@@ -22,6 +22,7 @@ test('limiter output never exceeds the configured ceiling', () => {
   const outputL = new Float32Array(128);
   const outputR = new Float32Array(128);
   dsp.process([inputL, inputR], [outputL, outputR]);
+  // Hard ceiling invariant: no rendered sample may cross the configured ceiling.
   for (const sample of outputL) assert.ok(Math.abs(sample) <= ceiling + 1e-6, `L exceeded ceiling: ${sample}`);
   for (const sample of outputR) assert.ok(Math.abs(sample) <= ceiling + 1e-6, `R exceeded ceiling: ${sample}`);
 });
