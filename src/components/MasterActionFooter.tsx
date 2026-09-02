@@ -12,8 +12,6 @@ import {
   IconFilter as Filter,
 } from './Icons';
 import { MasteringPreset } from '../types';
-import { ProBadge } from './ProBadge';
-import { FeatureGates } from '../billing/feature-gates';
 import { PRESET_CATEGORIES, PresetCategory } from '../utils/presets';
 
 interface MasterActionFooterProps {
@@ -41,76 +39,48 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
   isBypassed,
   onToggleBypass,
   onOpenParityModal,
-  onOpenUpgradeModal,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedFooterCategory, setSelectedFooterCategory] = useState<PresetCategory>('All');
   const [masteredRecently, setMasteredRecently] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const activePreset = presets.find((p) => p.id === activePresetId) || presets[0];
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setDropdownOpen(false);
     };
-
-    if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (dropdownOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen]);
 
   const handleMasterClick = () => {
-    if (onMasterTrack) {
-      onMasterTrack();
-    } else if (onExportClick) {
-      onExportClick();
-    }
+    if (onMasterTrack) onMasterTrack();
+    else onExportClick?.();
     setMasteredRecently(true);
-    setTimeout(() => setMasteredRecently(false), 3000);
+    window.setTimeout(() => setMasteredRecently(false), 1800);
   };
 
   const handlePresetSelect = (preset: MasteringPreset) => {
-    const isProPreset = preset.proOnly || preset.isPro;
-    if (isProPreset && !FeatureGates.isProUser()) {
-      if (onOpenUpgradeModal) {
-        onOpenUpgradeModal(preset.name);
-      }
-      return;
-    }
     onSelectPreset(preset);
     setDropdownOpen(false);
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Mastering':
-        return <Disc3 className="w-3 h-3 text-[var(--accent-lime)]" />;
-      case 'Mixing':
-        return <Layers className="w-3 h-3 text-[#38BDF8]" />;
-      case 'Saturation':
-        return <Flame className="w-3 h-3 text-[#F59E0B]" />;
-      default:
-        return <Sliders className="w-3 h-3 text-[var(--text-secondary)]" />;
+      case 'Mastering': return <Disc3 className="h-3 w-3 text-[var(--accent-lime)]" />;
+      case 'Mixing': return <Layers className="h-3 w-3 text-[#38BDF8]" />;
+      case 'Saturation': return <Flame className="h-3 w-3 text-[#F59E0B]" />;
+      default: return <Sliders className="h-3 w-3 text-[var(--text-secondary)]" />;
     }
   };
 
   const getCategoryBadgeClass = (category: string) => {
     switch (category) {
-      case 'Mastering':
-        return 'text-[var(--accent-lime)] bg-[var(--accent-lime)]/10 border-[var(--accent-lime)]/20';
-      case 'Mixing':
-        return 'text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20';
-      case 'Saturation':
-        return 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20';
-      default:
-        return 'text-[var(--text-secondary)] bg-[var(--bg-elevated)] border-[var(--border-subtle)]';
+      case 'Mastering': return 'text-[var(--accent-lime)] bg-[var(--accent-lime-soft)] border-[var(--accent-lime)]/20';
+      case 'Mixing': return 'text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20';
+      case 'Saturation': return 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20';
+      default: return 'text-[var(--text-secondary)] bg-[var(--bg-elevated)] border-[var(--border-subtle)]';
     }
   };
 
@@ -119,116 +89,66 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
     : presets.filter((p) => p.category === selectedFooterCategory);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-3 px-5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm shadow-lg relative">
-      {/* Left: Mastering Profile Selector with Categorization */}
-      <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-        <span className="text-[10px] font-mono font-medium tracking-widest text-[var(--text-secondary)] uppercase whitespace-nowrap hidden md:inline">
-          DSP PROFILE
-        </span>
-
-        <div className="relative" ref={dropdownRef}>
+    <footer className="premium-surface safe-width relative flex min-w-0 flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 w-full items-center gap-2 sm:w-auto">
+        <span className="hidden shrink-0 text-[9px] font-mono font-semibold uppercase tracking-[0.16em] text-[var(--text-tertiary)] lg:inline">DSP profile</span>
+        <div className="relative min-w-0 flex-1 sm:flex-none" ref={dropdownRef}>
           <button
             id="footer-preset-selector-btn"
             type="button"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="btn-secondary px-3 py-1.5 text-xs justify-between w-full sm:w-auto"
+            onClick={() => setDropdownOpen((value) => !value)}
+            className="btn-secondary w-full min-w-0 justify-between px-3 text-xs sm:w-auto sm:max-w-[330px]"
+            aria-expanded={dropdownOpen}
+            aria-haspopup="listbox"
           >
             {activePreset && getCategoryIcon(activePreset.category)}
-            <span className="max-w-[150px] sm:max-w-[200px] truncate">
-              {activePreset ? activePreset.name : 'Neutral / Transparent'}
-            </span>
-            {activePreset && (
-              <span
-                className={`text-[9px] font-mono px-1.5 py-0.5 rounded border uppercase tracking-wider hidden sm:inline ${getCategoryBadgeClass(
-                  activePreset.category
-                )}`}
-              >
-                {activePreset.category}
-              </span>
-            )}
-            {(activePreset?.proOnly || activePreset?.isPro) && <ProBadge size="xs" />}
-            <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-secondary)] transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            <span className="min-w-0 flex-1 truncate text-left sm:max-w-[210px]">{activePreset?.name || 'Neutral / Transparent'}</span>
+            {activePreset && <span className={`hidden shrink-0 rounded-full border px-1.5 py-0.5 text-[8px] font-mono uppercase sm:inline ${getCategoryBadgeClass(activePreset.category)}`}>{activePreset.category}</span>}
+            <ChevronDown className={`h-3.5 w-3.5 shrink-0 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Categorized Preset Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute bottom-full mb-2 left-0 w-80 sm:w-96 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm shadow-2xl z-40 overflow-hidden">
-              {/* Category Filter Tabs Header */}
-              <div className="bg-[#0A0C0E] border-b border-[var(--border-subtle)] p-2 space-y-1.5">
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[10px] font-mono text-[var(--accent-lime)] uppercase tracking-wider flex items-center gap-1">
-                    <Filter className="w-2.5 h-2.5" /> Filter by Target Role
-                  </span>
-                  <span className="text-[10px] font-mono text-[var(--text-tertiary)]">
-                    {filteredPresets.length} curves
-                  </span>
+            <div className="absolute bottom-full left-0 z-40 mb-2 w-[min(92vw,420px)] overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] shadow-2xl">
+              <div className="border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-2.5">
+                <div className="mb-2 flex items-center justify-between gap-2 px-1">
+                  <span className="flex min-w-0 items-center gap-1.5 truncate text-[10px] font-mono uppercase tracking-wider text-[var(--accent-lime)]"><Filter className="h-2.5 w-2.5 shrink-0" /> Profiles</span>
+                  <span className="shrink-0 text-[9px] font-mono text-[var(--text-tertiary)]">{filteredPresets.length}</span>
                 </div>
-
-                {/* Filter Tab Pills */}
                 <div className="grid grid-cols-4 gap-1">
-                  {PRESET_CATEGORIES.map((cat) => {
-                    const isTabActive = selectedFooterCategory === cat.id;
-                    return (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedFooterCategory(cat.id);
-                        }}
-                        className={`px-2 py-1 text-[10px] font-mono rounded transition-colors cursor-pointer text-center truncate ${
-                          isTabActive
-                            ? 'bg-[var(--accent-lime)] text-[var(--bg-primary)] font-bold shadow-sm'
-                            : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border-subtle)]'
-                        }`}
-                      >
-                        {cat.id === 'All' ? 'All' : cat.label}
-                      </button>
-                    );
-                  })}
+                  {PRESET_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={(event) => { event.stopPropagation(); setSelectedFooterCategory(cat.id); }}
+                      className={`min-h-[36px] rounded-md px-2 text-[9px] font-mono font-semibold transition-colors ${selectedFooterCategory === cat.id ? 'bg-[var(--accent-lime)] text-[var(--bg-primary)]' : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+                    >
+                      {cat.id === 'All' ? 'All' : cat.label}
+                    </button>
+                  ))}
                 </div>
               </div>
-
-              {/* Presets List */}
-              <div className="p-1.5 max-h-72 overflow-y-auto space-y-1">
+              <div className="max-h-[min(55vh,360px)] overflow-y-auto p-1.5">
                 {filteredPresets.map((preset) => {
-                  const isProPreset = preset.proOnly || preset.isPro;
-                  const isSelected = activePresetId === preset.id;
+                  const selected = activePresetId === preset.id;
                   return (
                     <button
                       key={preset.id}
                       type="button"
+                      role="option"
+                      aria-selected={selected}
                       onClick={() => handlePresetSelect(preset)}
-                      className={`w-full text-left px-3 py-2 text-xs rounded-sm flex items-center justify-between transition cursor-pointer border ${
-                        isSelected
-                          ? 'bg-[#1C170E] text-[var(--accent-lime)] font-semibold border-[var(--accent-lime)]/40'
-                          : 'text-[var(--text-primary)] hover:bg-[#1B1F24] border-transparent hover:border-[var(--border-subtle)]'
-                      }`}
+                      className={`mb-1 flex min-h-[44px] w-full min-w-0 items-center justify-between gap-2 rounded-md border px-3 py-2 text-left transition-colors last:mb-0 ${selected ? 'border-[var(--accent-lime)]/40 bg-[var(--accent-lime-soft)]' : 'border-transparent hover:border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)]'}`}
                     >
-                      <div className="truncate pr-2">
-                        <div className="flex items-center gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 items-center gap-1.5">
                           {getCategoryIcon(preset.category)}
-                          <span className="truncate">{preset.name}</span>
-                          <span
-                            className={`text-[9px] font-mono px-1 py-0.2 rounded border uppercase tracking-wider ${getCategoryBadgeClass(
-                              preset.category
-                            )}`}
-                          >
-                            {preset.category}
-                          </span>
+                          <span className="min-w-0 truncate text-xs font-medium text-[var(--text-primary)]">{preset.name}</span>
                         </div>
-                        <div className="text-[10px] text-[var(--text-secondary)] font-normal truncate mt-0.5 pl-4.5">
-                          {preset.description}
-                        </div>
+                        <span className="mt-0.5 block truncate pl-4.5 text-[9px] text-[var(--text-secondary)]">{preset.description}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        {preset.targetLufs && (
-                          <span className="text-[10px] font-mono text-[var(--text-secondary)]">
-                            {preset.targetLufs} LUFS
-                          </span>
-                        )}
-                        {isProPreset && <ProBadge size="xs" locked={!FeatureGates.isProUser()} />}
-                        {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent-lime)]" />}
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {preset.targetLufs !== undefined && <span className="hidden text-[9px] font-mono text-[var(--text-tertiary)] sm:inline">{preset.targetLufs} LUFS</span>}
+                        {selected && <Check className="h-3.5 w-3.5 text-[var(--accent-lime)]" />}
                       </div>
                     </button>
                   );
@@ -239,87 +159,34 @@ export const MasterActionFooter: React.FC<MasterActionFooterProps> = ({
         </div>
       </div>
 
-      {/* Center: Hero MASTER THIS TRACK Button */}
-      <div className="w-full sm:w-auto flex justify-center">
-        <button
-          id="hero-master-render-btn"
-          onClick={handleMasterClick}
-          disabled={isProcessing}
-          className={`w-full sm:w-auto px-8 py-2.5 rounded-sm text-xs sm:text-sm font-semibold tracking-wide font-mono transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 ${
-            isProcessing
-              ? 'bg-[#1C170E] text-[var(--accent-lime)] border border-[var(--accent-lime)]/40 animate-pulse'
-              : masteredRecently
-              ? 'bg-[#6FCF97] text-[var(--bg-primary)]'
-              : 'bg-[var(--accent-lime)] hover:bg-[var(--accent-lime-hover)] text-[var(--bg-primary)]'
-          }`}
-        >
-          {isProcessing ? (
-            <>
-              <Zap className="w-4 h-4 animate-spin text-[var(--accent-lime)]" />
-              <span>PROCESSING DSP...</span>
-            </>
-          ) : masteredRecently ? (
-            <>
-              <Check className="w-4 h-4" />
-              <span>EXPORT READY ✓</span>
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4 fill-current" />
-              <span>RENDER &amp; EXPORT MASTER</span>
-            </>
-          )}
-        </button>
-      </div>
+      <button
+        id="hero-master-render-btn"
+        type="button"
+        onClick={handleMasterClick}
+        disabled={isProcessing}
+        className={`w-full min-w-0 shrink-0 rounded-md px-6 py-3 text-xs font-semibold tracking-wide font-mono transition-all sm:w-auto ${isProcessing ? 'animate-pulse bg-[var(--accent-lime-soft)] text-[var(--accent-lime)] ring-1 ring-[var(--accent-lime)]/40' : masteredRecently ? 'bg-[#6FCF97] text-[var(--bg-primary)]' : 'bg-[var(--accent-lime)] text-[var(--bg-primary)] shadow-lg shadow-[var(--accent-lime)]/10 hover:-translate-y-px hover:bg-[var(--accent-lime-hover)]'}`}
+      >
+        {isProcessing ? <><Zap className="mx-auto h-4 w-4 animate-spin" /> PROCESSING…</> : masteredRecently ? <><Check className="inline h-4 w-4" /> READY</> : <><Sparkles className="inline h-4 w-4 fill-current" /> RENDER &amp; EXPORT</>}
+      </button>
 
-      {/* Right: Quick A/B Switch and Settings */}
-      <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-        {/* A/B Quick Toggle Buttons */}
+      <div className="flex w-full min-w-0 items-center justify-end gap-1.5 sm:w-auto">
         {onToggleBypass && (
-          <div className="flex items-center p-0.5 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-sm">
-            <button
-              id="ab-bypass-btn-a"
-              onClick={() => {
-                if (!isBypassed) onToggleBypass();
-              }}
-              className={`px-2.5 py-1 text-xs font-mono rounded transition cursor-pointer ${
-                isBypassed
-                  ? 'bg-[var(--border-subtle)] text-[var(--text-primary)] font-bold'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-              title="Listen to Dry Original (A)"
-            >
-              A
-            </button>
-            <button
-              id="ab-bypass-btn-b"
-              onClick={() => {
-                if (isBypassed) onToggleBypass();
-              }}
-              className={`px-2.5 py-1 text-xs font-mono rounded transition cursor-pointer ${
-                !isBypassed
-                  ? 'bg-[var(--accent-lime)] text-[var(--bg-primary)] font-bold'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-              title="Listen to Mastered Audio (B)"
-            >
-              B
-            </button>
+          <div className="flex shrink-0 items-center rounded-md border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-0.5" aria-label="A/B bypass">
+            <button type="button" aria-pressed={isBypassed} onClick={() => { if (!isBypassed) onToggleBypass(); }} className={`min-h-[40px] min-w-[40px] rounded px-2 text-xs font-mono ${isBypassed ? 'bg-[var(--border-subtle)] font-bold text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>A</button>
+            <button type="button" aria-pressed={!isBypassed} onClick={() => { if (isBypassed) onToggleBypass(); }} className={`min-h-[40px] min-w-[40px] rounded px-2 text-xs font-mono ${!isBypassed ? 'bg-[var(--accent-lime)] font-bold text-[var(--bg-primary)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>B</button>
           </div>
         )}
-
-        {/* Diagnostics & Parity Shortcut */}
         {onOpenParityModal && (
-          <button
-            id="footer-parity-shortcut-btn"
-            onClick={onOpenParityModal}
-            className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-elevated)] hover:bg-[#1B1F24] border border-[var(--border-subtle)] rounded-sm transition cursor-pointer"
-            title="Open DSP Parity Verification & Diagnostic Suite"
-          >
-            <Settings2 className="w-4 h-4" />
+          <button id="footer-parity-shortcut-btn" type="button" onClick={onOpenParityModal} className="btn-icon shrink-0" title="DSP dijagnostika" aria-label="DSP dijagnostika">
+            <Settings2 className="h-4 w-4" />
+          </button>
+        )}
+        {onResetParams && (
+          <button type="button" onClick={onResetParams} className="hidden min-h-[40px] rounded-md px-3 text-[10px] font-mono text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] sm:block">
+            RESET
           </button>
         )}
       </div>
-    </div>
+    </footer>
   );
 };
