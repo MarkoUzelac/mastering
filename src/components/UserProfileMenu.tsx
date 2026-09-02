@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { logOut } from '../lib/firebase';
-import { LogOut, LayoutDashboard, Crown, CreditCard } from 'lucide-react';
+import { CreditCard, LayoutDashboard } from 'lucide-react';
 
 interface UserProfileMenuProps {
   onOpenAdmin: () => void;
@@ -19,7 +18,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ onOpenAdmin, o
   if (!user || !profile) return null;
 
   const displayName = profile.displayName || 'Mastering Engineer';
-  const email = profile.email || 'Anonymous session';
+  const email = profile.email || 'Anonymous secure session';
 
   return (
     <div className="relative">
@@ -42,11 +41,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ onOpenAdmin, o
             <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
               <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{displayName}</p>
               <p className="text-xs text-[var(--text-secondary)] truncate">{email}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-secondary)] bg-[var(--border-subtle)] px-2 py-0.5 rounded">
-                  Free / Pro via Stripe
-                </span>
-              </div>
+              <span className="inline-flex mt-2 text-[10px] uppercase font-bold tracking-wider text-[var(--text-secondary)] bg-[var(--border-subtle)] px-2 py-0.5 rounded">
+                Secure session
+              </span>
             </div>
 
             <div className="py-1">
@@ -69,17 +66,6 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ onOpenAdmin, o
                   Admin Control Panel
                 </button>
               )}
-
-              <div className="h-px bg-[var(--border-subtle)] my-1" />
-
-              <button
-                type="button"
-                onClick={() => { setIsOpen(false); void logOut(); }}
-                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                Reset Session
-              </button>
             </div>
           </div>
         </>
