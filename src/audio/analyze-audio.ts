@@ -3,7 +3,7 @@ import { analyzeEbuLufs, type EbuLufsResult } from './EbuLufsMeter';
 
 export function analyzeAudioBuffer(buffer: AudioBuffer): EbuLufsResult {
   const left = buffer.getChannelData(0);
-  const right = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : left;
+  const right = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : new Float32Array(0);
   return analyzeEbuLufs(left, right, buffer.sampleRate);
 }
 
