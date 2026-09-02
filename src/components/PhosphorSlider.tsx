@@ -84,8 +84,14 @@ export const PhosphorSlider: React.FC<PhosphorSliderProps> = ({
       
       <div 
         ref={containerRef}
-        className={`relative flex items-center group ${disabled ? '' : 'cursor-ew-resize'}`}
-        style={{ height: '24px' }}
+        role="slider"
+        aria-label={label}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : 0}
+        className={`relative flex h-11 min-h-11 w-full items-center group ${disabled ? '' : 'cursor-ew-resize'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]`}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onDoubleClick={handleDoubleClick}
@@ -99,7 +105,7 @@ export const PhosphorSlider: React.FC<PhosphorSliderProps> = ({
           }} 
         />
         
-        {/* Track */}
+        {/* Track: remains visually thin while the slider hit area is 44px high. */}
         <div className="absolute left-0 right-0 h-[2px] bg-transparent rounded-full overflow-hidden pointer-events-none">
           {/* Fill */}
           <div 
@@ -114,7 +120,7 @@ export const PhosphorSlider: React.FC<PhosphorSliderProps> = ({
         
         {/* Thumb */}
         <div 
-          className="absolute w-3 h-3 rounded-sm bg-[var(--bg-primary)] shadow-[0_0_8px_rgba(0,0,0,0.5)] transform -translate-x-1/2 transition-transform duration-75 group-hover:scale-125"
+          className="absolute w-3 h-3 rounded-sm bg-[var(--bg-primary)] shadow-[0_0_8px_rgba(0,0,0,0.5)] transform -translate-x-1/2 transition-transform duration-75 group-hover:scale-125 pointer-events-none"
           style={{ 
             left: `${fraction * 100}%`,
             border: `1.5px solid ${disabled ? 'var(--text-tertiary)' : accentColor}`
