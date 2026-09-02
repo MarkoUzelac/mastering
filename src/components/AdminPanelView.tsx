@@ -11,6 +11,10 @@ export const AdminPanelView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
 
   useEffect(() => {
     if (!isAdmin) return;
+    if (!db) {
+      console.warn('[AdminPanel] Firestore is not initialized.');
+      return;
+    }
     const fetchUsers = async () => {
       setFetching(true);
       try {
