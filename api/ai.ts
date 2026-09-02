@@ -7,12 +7,12 @@ const masteringSchema = {
   type: 'object',
   properties: {
     answer: { type: 'string' },
-    measuredData: { type: 'array', items: { type: 'string' } },
     interpretation: { type: 'array', items: { type: 'string' } },
     generalAdvice: { type: 'array', items: { type: 'string' } },
     confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
   },
-  required: ['answer', 'measuredData', 'interpretation', 'generalAdvice', 'confidence'],
+  required: ['answer', 'interpretation', 'generalAdvice', 'confidence'],
+  additionalProperties: false,
 };
 
 const releaseSchema = {
@@ -29,12 +29,14 @@ const releaseSchema = {
     coverArtPrompt: { type: 'string' },
   },
   required: ['genre', 'subgenre', 'mood', 'description', 'shortBio', 'socialCaption', 'copyrightLine', 'metadataNotes', 'coverArtPrompt'],
+  additionalProperties: false,
 };
 
 const MASTERING_SYSTEM = `You are the mastering engineer assistant inside MasteringLocal Studio AI.
-Never invent measurements. Treat fields labelled measured as authoritative observations from the browser audio engine.
-Clearly separate measured data, your interpretation of those measurements, and general production advice.
-Do not claim to have listened to audio unless audio bytes were explicitly supplied to this request. In this endpoint, only structured measurements are provided.`;
+Never invent measurements. Structured measured audio values are authoritative browser observations.
+Do not repeat a measurement unless it is present in the supplied snapshot.
+Clearly separate interpretation from general production advice.
+Do not claim to have listened to audio unless audio bytes were explicitly supplied. This endpoint receives structured measurements only.`;
 
 const RELEASE_SYSTEM = `You are the release metadata assistant inside MasteringLocal Studio AI.
 Create original, professional release copy for independent artists. Do not imitate living artists or protected brands.
@@ -71,14 +73,25 @@ async function runGemini(input: string, schema: Record<string, unknown>) {
   const response = await fetch(GEMINI_ENDPOINT, {
     method: 'POST',
     headers: { 'x-goog-api-key': apiKey, 'content-type': 'application/json' },
-    body: JSON.stringify({ model: DEFAULT_MODEL, input, store: false, response_format: { type: 'text', mime_type: 'application/json', schema } }),
+    body: JSON.stringify({
+      model: DEFAULT_MODEL,
+      input,
+      store: false,
+      response_format: { type: 'text', mime_type: 'application/json', schema },
+    }),
   });
 
-  const payload = await response.json() as { steps?: Array<{ type?: string; content?: Array<{ type?: string; text?: string }> }>; error?: { message?: string } };
+  const payload = await response.json() as {
+    steps?: Array<{ type?: string; content?: Array<{ type?: string; text?: string }> }>;
+    output?: Array<{ type?: string; text?: string }>;
+    output_text?: string;
+    error?: { message?: string };
+  };
   if (!response.ok) throw new Error(payload.error?.message || `Gemini request failed (${response.status})`);
 
-  const outputStep = [...(payload.steps || [])].reverse().find((step) => step.type === 'model_output');
-  const text = outputStep?.content?.find((item) => item.type === 'text')?.text;
+  const text = payload.output_text
+    || [...(payload.steps || [])].reverse().find((step) => step.type === 'model_output')?.content?.find((item) => item.type === 'text')?.text
+    || [...(payload.output || [])].reverse().find((item) => item.type === 'text')?.text;
   if (!text) throw new Error('Gemini returned no structured output.');
   try { return JSON.parse(text); } catch { throw new Error('Gemini returned invalid structured JSON.'); }
 }
@@ -87,6 +100,25 @@ function setJson(res: ServerResponse, status: number, payload: unknown) {
   res.statusCode = status;
   res.setHeader('content-type', 'application/json; charset=utf-8');
   res.end(JSON.stringify(payload));
+}
+
+function measuredDataFromSnapshot(audio: Record<string, unknown> | null): string[] {
+  if (!audio) return ['No measured audio snapshot is available.'];
+  const lines: string[] = [];
+  const value = (key: string) => audio[key];
+  lines.push(`Duration: ${typeof value('durationSeconds') === 'number' ? `${Number(value('durationSeconds')).toFixed(2)} s` : 'n/a'}`);
+  lines.push(`Sample rate: ${typeof value('sampleRate') === 'number' ? `${value('sampleRate')} Hz` : 'n/a'}`);
+  lines.push(`Channels: ${typeof value('channels') === 'number' ? String(value('channels')) : 'n/a'}`);
+  lines.push(`Integrated LUFS: ${typeof value('integratedLufs') === 'number' ? Number(value('integratedLufs')).toFixed(2) : 'n/a'}`);
+  lines.push(`Momentary LUFS: ${typeof value('momentaryLufs') === 'number' ? Number(value('momentaryLufs')).toFixed(2) : 'n/a'}`);
+  lines.push(`True peak: ${typeof value('truePeakDbtp') === 'number' ? `${Number(value('truePeakDbtp')).toFixed(2)} dBTP` : 'n/a'}`);
+  lines.push(`RMS: ${typeof value('rmsDb') === 'number' ? `${Number(value('rmsDb')).toFixed(2)} dBFS` : 'n/a'}`);
+  lines.push(`Crest factor: ${typeof value('crestFactorDb') === 'number' ? `${Number(value('crestFactorDb')).toFixed(2)} dB` : 'n/a'}`);
+  lines.push(`Clipping: ${typeof value('clippingDetected') === 'boolean' ? (value('clippingDetected') ? 'detected' : 'not detected') : 'n/a'}`);
+  lines.push(`DC offset: ${typeof value('dcOffsetDetected') === 'boolean' ? (value('dcOffsetDetected') ? 'detected' : 'not detected') : 'n/a'}`);
+  lines.push(`Stereo width: ${typeof value('stereoWidth') === 'number' ? `${Number(value('stereoWidth')).toFixed(2)} dB` : 'n/a'}`);
+  lines.push(`Dynamic range: ${typeof value('dynamicRangeDb') === 'number' ? `${Number(value('dynamicRangeDb')).toFixed(2)} dB` : 'n/a'}`);
+  return lines;
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -102,9 +134,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (route.endsWith('/mastering')) {
       const question = typeof body.question === 'string' ? body.question.trim().slice(0, 8000) : '';
       if (!question) return setJson(res, 400, { error: 'Question is required.' });
-      const audio = body.audio && typeof body.audio === 'object' ? body.audio : null;
-      const prompt = `${MASTERING_SYSTEM}\n\nUSER QUESTION:\n${question}\n\nMEASURED AUDIO SNAPSHOT (may be null):\n${JSON.stringify(audio)}\n\nREFERENCE TARGET:\n${JSON.stringify({ targetLufs: body.targetLufs ?? null, referencePlatform: body.referencePlatform ?? null })}`;
-      return setJson(res, 200, await runGemini(prompt, masteringSchema));
+      const audio = body.audio && typeof body.audio === 'object' ? body.audio as Record<string, unknown> : null;
+      const prompt = `${MASTERING_SYSTEM}\n\nUSER QUESTION:\n${question}\n\nMEASURED AUDIO SNAPSHOT:\n${JSON.stringify(audio)}\n\nREFERENCE TARGET:\n${JSON.stringify({ targetLufs: body.targetLufs ?? null, referencePlatform: body.referencePlatform ?? null })}`;
+      const generated = await runGemini(prompt, masteringSchema) as {
+        answer: string;
+        interpretation: string[];
+        generalAdvice: string[];
+        confidence: 'high' | 'medium' | 'low';
+      };
+      return setJson(res, 200, {
+        answer: generated.answer,
+        measuredData: measuredDataFromSnapshot(audio),
+        interpretation: Array.isArray(generated.interpretation) ? generated.interpretation : [],
+        generalAdvice: Array.isArray(generated.generalAdvice) ? generated.generalAdvice : [],
+        confidence: audio ? generated.confidence : 'low',
+      });
     }
 
     if (route.endsWith('/release')) {

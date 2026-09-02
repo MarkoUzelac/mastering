@@ -8,8 +8,10 @@ import {
 import { UserEntitlement, UserUsage } from '../billing/entitlement-service';
 import { soundHaptics } from '../utils/sound-haptics';
 import { UserProfileMenu } from './UserProfileMenu';
-import { audioEngineEvents } from '../utils/audio-engine';
+import { audioEngine } from '../utils/audio-engine';
 import { StudioAiReleaseModal } from './StudioAiReleaseModal';
+import { toStructuredAudioSnapshot } from '../audio/analyze-audio';
+import type { StructuredAudioSnapshot } from '../ai/contracts';
 
 export type ActiveTab = 'mastering' | 'analysis' | 'presets' | 'dashboard' | 'landing' | 'learn';
 
@@ -49,46 +51,31 @@ export const Header: React.FC<HeaderProps> = ({
   canRedo,
   hasAudio,
   isPlaying,
-  entitlement,
   usage,
 }) => {
   const [aiModal, setAiModal] = useState<'assistant' | 'release' | null>(null);
-  const [liveMeters, setLiveMeters] = useState<any>(null);
+  const [audioSnapshot, setAudioSnapshot] = useState<StructuredAudioSnapshot | null>(null);
 
   useEffect(() => {
-    const handler = (event: Event) => {
-      const detail = (event as CustomEvent).detail;
-      if (detail) setLiveMeters(detail);
-    };
-    audioEngineEvents.addEventListener('meterupdate', handler);
-    return () => audioEngineEvents.removeEventListener('meterupdate', handler);
-  }, []);
-
-  const audioSnapshot = hasAudio
-    ? {
-        durationSeconds: 0,
-        sampleRate: 48000,
-        channels: 2,
-        integratedLufs: typeof liveMeters?.integratedLufs === 'number' ? liveMeters.integratedLufs : null,
-        momentaryLufs: typeof liveMeters?.momentaryLufs === 'number' ? liveMeters.momentaryLufs : null,
-        truePeakDbtp:
-          typeof liveMeters?.outputPeakL === 'number'
-            ? 20 * Math.log10(Math.max(1e-6, Math.max(liveMeters.outputPeakL, liveMeters.outputPeakR || 0)))
-            : null,
-        rmsDb:
-          typeof liveMeters?.outputRmsL === 'number'
-            ? 20 * Math.log10(Math.max(1e-6, Math.max(liveMeters.outputRmsL, liveMeters.outputRmsR || 0)))
-            : null,
-        crestFactorDb: typeof liveMeters?.crestFactor === 'number' ? liveMeters.crestFactor : null,
-        clippingDetected:
-          typeof liveMeters?.outputPeakL === 'number'
-            ? Math.max(liveMeters.outputPeakL, liveMeters.outputPeakR || 0) >= 0.999
-            : null,
-        dcOffsetDetected: null,
-        stereoWidth: null,
-        dynamicRangeDb: null,
-      }
-    : null;
+    let cancelled = false;
+    if (!hasAudio) {
+      setAudioSnapshot(null);
+      return;
+    }
+    const buffer = audioEngine.getLoadedBuffer();
+    if (!buffer) {
+      setAudioSnapshot(null);
+      return;
+    }
+    try {
+      const measured = toStructuredAudioSnapshot(buffer);
+      if (!cancelled) setAudioSnapshot(measured);
+    } catch (error) {
+      console.error('[Telemetry] Failed to analyze loaded buffer', error);
+      if (!cancelled) setAudioSnapshot(null);
+    }
+    return () => { cancelled = true; };
+  }, [hasAudio]);
 
   const navigate = (tab: ActiveTab) => {
     soundHaptics.playButtonTap();
