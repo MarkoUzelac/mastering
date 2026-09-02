@@ -17,6 +17,20 @@ export interface UserAccount { id: string; email: string; name: string; avatarUr
 export type EntitlementListener = (entitlement: UserEntitlement, usage: UserUsage) => void;
 export interface ExportLogParams { format: string; trackName: string; duration: number; sampleRate: number; }
 
+const FREE_FEATURES = [
+  'basic_mastering',
+  'waveform',
+  'spectrum',
+  '16bit_export',
+  '24bit_export',
+  '32bit_float_export',
+  'advanced_presets',
+  'loudness_analysis',
+  'true_peak_analysis',
+  'version_history',
+  'commercial_use',
+];
+
 class EntitlementService {
   private entitlement: UserEntitlement = {
     plan: 'free',
@@ -25,19 +39,7 @@ class EntitlementService {
     subscriptionId: null,
     currentPeriodEnd: null,
     cancelAtPeriodEnd: false,
-    features: [
-      'basic_mastering',
-      'waveform',
-      'spectrum',
-      '16bit_export',
-      '24bit_export',
-      '32bit_float_export',
-      'advanced_presets',
-      'loudness_analysis',
-      'true_peak_analysis',
-      'version_history',
-      'commercial_use',
-    ],
+    features: FREE_FEATURES,
     lastVerifiedAt: Date.now(),
   };
   private usage: UserUsage = {
@@ -75,17 +77,7 @@ class EntitlementService {
             status: 'FREE',
             features: Array.from(new Set([
               ...(Array.isArray(data.entitlement.features) ? data.entitlement.features : []),
-              'basic_mastering',
-              'waveform',
-              'spectrum',
-              '16bit_export',
-              '24bit_export',
-              '32bit_float_export',
-              'advanced_presets',
-              'loudness_analysis',
-              'true_peak_analysis',
-              'version_history',
-              'commercial_use',
+              ...FREE_FEATURES,
             ])),
             lastVerifiedAt: Date.now(),
           };
@@ -103,7 +95,7 @@ class EntitlementService {
       ...entitlement,
       plan: 'free',
       status: 'FREE',
-      features: [...entitlement.features],
+      features: Array.from(new Set([...(entitlement.features || []), ...FREE_FEATURES])),
       lastVerifiedAt: Date.now(),
     };
     if (usage) this.usage = { ...usage, exportsLimit: -1 };
@@ -116,25 +108,21 @@ class EntitlementService {
       ? paramsOrFormat
       : { format: paramsOrFormat, trackName: trackName || 'Master Track.wav', duration: duration || 0, sampleRate: sampleRate || 48000 };
 
-    try {
-      const res = await fetch('/api/exports/log', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(await getApiAuthHeaders()) },
-        body: JSON.stringify(payload),
-      });
-      const result = await res.json().catch(() => ({}));
-      if (!res.ok) return { allowed: false, remaining: 0 };
-      if (result.usage) {
-        this.usage = { ...result.usage, exportsLimit: -1 };
-        this.notify();
-      } else {
-        this.usage = { ...this.usage, exportsUsed: this.usage.exportsUsed + 1, exportsLimit: -1 };
-        this.notify();
-      }
-      return { allowed: result.allowed !== false, remaining: Infinity };
-    } catch {
-      return { allowed: true, remaining: Infinity };
-    }
+    this.usage = {
+      ...this.usage,
+      exportsUsed: this.usage.exportsUsed + 1,
+      exportsLimit: -1,
+    };
+    this.notify();
+
+    analytics.track('export_completed', {
+      format: payload.format,
+      trackName: payload.trackName,
+      duration: payload.duration,
+      sampleRate: payload.sampleRate,
+    });
+
+    return { allowed: true, remaining: Infinity };
   }
 }
 
