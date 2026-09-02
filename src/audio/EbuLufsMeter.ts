@@ -74,24 +74,25 @@ function percentile(values: number[], p: number): number | null {
 }
 
 /**
- * Build a 4x polyphase low-pass interpolator. An odd tap count keeps phase 0
- * centered exactly on an input sample, so the interpolated peak can never
- * lose the original sample peak merely because of filter phase.
+ * Build a 4x polyphase low-pass interpolator. The normalized-sinc form below
+ * uses 2*fc*sinc(2*fc*n), so the phase-0 kernel reproduces input samples
+ * exactly while fractional phases reconstruct inter-sample values.
  */
 function designSincPhase(phase: number, taps = 17): Float64Array {
   const coeffs = new Float64Array(taps);
   const center = Math.floor(taps / 2);
   const cutoff = 0.5;
+  const normalizedCutoff = 2 * cutoff;
   let sum = 0;
 
   for (let i = 0; i < taps; i += 1) {
     const n = i - center - phase / 4;
-    const x = Math.PI * cutoff * n;
+    const x = Math.PI * normalizedCutoff * n;
     const sinc = Math.abs(x) < 1e-12 ? 1 : Math.sin(x) / x;
     const w = 0.42
       - 0.5 * Math.cos((2 * Math.PI * i) / (taps - 1))
       + 0.08 * Math.cos((4 * Math.PI * i) / (taps - 1));
-    coeffs[i] = cutoff * sinc * w;
+    coeffs[i] = normalizedCutoff * sinc * w;
     sum += coeffs[i];
   }
 
