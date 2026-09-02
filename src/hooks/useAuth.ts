@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { auth, db } from '../lib/firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { type User } from 'firebase/auth';
+import { initializeAnonymousAuth, subscribeToAuth } from '../lib/firebase';
 
 export interface UserProfile {
   email: string;
@@ -18,28 +17,38 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    let mounted = true;
+    const unsubscribe = subscribeToAuth((currentUser) => {
+      if (!mounted) return;
       setUser(currentUser);
       if (currentUser) {
-        try {
-          const docRef = doc(db, 'users', currentUser.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setProfile(docSnap.data() as UserProfile);
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
+        setProfile({
+          email: currentUser.email || '',
+          displayName: currentUser.displayName || 'Mastering Engineer',
+          photoURL: currentUser.photoURL || '',
+          role: 'user',
+          subscriptionTier: 'free',
+          createdAt: '',
+        });
       } else {
         setProfile(null);
       }
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    initializeAnonymousAuth().catch((error) => {
+      if (!mounted) return;
+      console.error('[Auth] Unable to initialize anonymous session', error);
+      setLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
-  const isAdmin = profile?.role === 'admin' || user?.email === 'info@markouzelacuzy.com';
+  const isAdmin = Boolean(user?.getIdToken && profile?.role === 'admin');
 
   return { user, profile, loading, isAdmin };
 };
