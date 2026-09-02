@@ -19,6 +19,18 @@ export interface MasteringParams {
   threshold: number;
   ratio: number;
   gain: number;
+  attack?: number;
+  release?: number;
+  knee?: number;
+  drive?: number;
+  warmth?: number;
+  mix?: number;
+  width?: number;
+  balance?: number;
+  phaseInvert?: boolean;
+  ceiling?: number;
+  limiterRelease?: number;
+  truePeak?: boolean;
 }
 
 export interface MasteringPreset {
