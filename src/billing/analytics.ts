@@ -20,6 +20,7 @@ export type FunnelEventName =
   | 'checkout_started'
   | 'checkout_completed'
   | 'subscription_activated'
+  | 'subscription_synchronized'
   | 'subscription_canceled'
   | 'payment_failed';
 
@@ -33,10 +34,7 @@ class AnalyticsService {
   private eventsLog: AnalyticsEvent[] = [];
 
   public track(event: FunnelEventName, properties?: Record<string, unknown>) {
-    // Strictly gate against consent
-    if (!cookieConsent.isAllowed('analytics')) {
-      return;
-    }
+    if (!cookieConsent.isAllowed('analytics')) return;
 
     const record: AnalyticsEvent = {
       event,
@@ -45,10 +43,7 @@ class AnalyticsService {
     };
     this.eventsLog.push(record);
 
-    // Keep memory footprint lean
-    if (this.eventsLog.length > 200) {
-      this.eventsLog.shift();
-    }
+    if (this.eventsLog.length > 200) this.eventsLog.shift();
 
     if (process.env.NODE_ENV !== 'production') {
       console.log(`[ANALYTICS] ${event}`, properties || '');
@@ -56,9 +51,7 @@ class AnalyticsService {
   }
 
   public getRecentEvents(): AnalyticsEvent[] {
-    if (!cookieConsent.isAllowed('analytics')) {
-      return [];
-    }
+    if (!cookieConsent.isAllowed('analytics')) return [];
     return [...this.eventsLog];
   }
 }
