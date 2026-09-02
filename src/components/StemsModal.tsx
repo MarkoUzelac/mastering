@@ -25,6 +25,15 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
     { id: '4', name: 'Lead & Backing Vocals', category: 'vocals', gain: 0, pan: 0, muted: false, solo: false },
   ]);
 
+  // Keep pan interaction state owned by React. DSP updates are side effects and
+  // must never be the source of truth for a controlled UI control.
+  const [panValues, setPanValues] = useState<Record<string, number>>(() => ({
+    '1': 0,
+    '2': 0,
+    '3': 0,
+    '4': 0,
+  }));
+
   useEffect(() => {
     stemMixer.install();
     stemMixer.setStates(stems);
@@ -51,6 +60,22 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
 
       return next;
     });
+  };
+
+  const handlePanChange = (id: string, value: number) => {
+    const clamped = Math.max(-100, Math.min(100, Math.round(value)));
+    setPanValues((prev) => ({ ...prev, [id]: clamped }));
+    updateStem(id, { pan: clamped });
+  };
+
+  const handlePanReset = (id: string) => {
+    setPanValues((prev) => ({ ...prev, [id]: 0 }));
+    updateStem(id, { pan: 0 });
+  };
+
+  const formatPanLabel = (value: number) => {
+    if (value === 0) return 'C';
+    return `${value < 0 ? 'L' : 'R'}${Math.abs(value)}`;
   };
 
   return (
@@ -84,37 +109,70 @@ export const StemsModal: React.FC<StemsModalProps> = ({ onClose }) => {
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4 xl:gap-5">
-            {stems.map((stem) => (
-              <div key={stem.id} className="group flex min-w-0 flex-col rounded-2xl border border-[var(--border-subtle)] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] p-4 shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-colors hover:border-[var(--accent-lime)]/20 sm:p-5">
-                <div className="mb-5 flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] font-mono text-xs font-bold text-[var(--accent-lime)] shadow-inner">{stem.name[0]}</div>
-                  <div className="min-w-0">
-                    <div className="truncate text-xs font-semibold text-[var(--text-primary)] sm:text-[13px]">{stem.name}</div>
-                    <div className="mt-0.5 text-[9px] font-mono uppercase tracking-[0.14em] text-[var(--text-tertiary)]">{stem.category}</div>
+            {stems.map((stem) => {
+              const panValue = panValues[stem.id] ?? stem.pan ?? 0;
+              return (
+                <div key={stem.id} className="group flex min-w-0 flex-col rounded-2xl border border-[var(--border-subtle)] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] p-4 shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-colors hover:border-[var(--accent-lime)]/20 sm:p-5">
+                  <div className="mb-5 flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] font-mono text-xs font-bold text-[var(--accent-lime)] shadow-inner">{stem.name[0]}</div>
+                    <div className="min-w-0">
+                      <div className="truncate text-xs font-semibold text-[var(--text-primary)] sm:text-[13px]">{stem.name}</div>
+                      <div className="mt-0.5 text-[9px] font-mono uppercase tracking-[0.14em] text-[var(--text-tertiary)]">{stem.category}</div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--bg-primary)]/40 px-3 py-2">
-                    <PhosphorSlider label="Gain" value={stem.gain} min={-12} max={12} step={0.1} unit=" dB" color="violet" size="sm" onChange={(v) => updateStem(stem.id, { gain: v })} />
-                  </div>
-                  <div className="rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--bg-primary)]/40 px-3 py-2">
-                    <PhosphorSlider label="Pan" value={stem.pan} min={-100} max={100} step={1} displayValue={stem.pan === 0 ? 'C' : `${stem.pan > 0 ? 'R' : 'L'} ${Math.abs(stem.pan)}`} color="violet" size="sm" onChange={(v) => updateStem(stem.id, { pan: v })} />
-                  </div>
-                </div>
+                  <div className="space-y-4">
+                    <div className="rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--bg-primary)]/40 px-3 py-2">
+                      <PhosphorSlider label="Gain" value={stem.gain} min={-12} max={12} step={0.1} unit=" dB" color="violet" size="sm" onChange={(v) => updateStem(stem.id, { gain: v })} />
+                    </div>
 
-                <div className="mt-5 border-t border-[var(--border-subtle)] pt-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-[9px] font-mono uppercase tracking-[0.16em] text-[var(--text-tertiary)]">Channel</span>
-                    <span className="text-[9px] font-mono text-[var(--text-tertiary)]">M / S</span>
+                    <div className="rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--bg-primary)]/40 px-3 py-2">
+                      <div className="mb-1 flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-[var(--text-secondary)]">Pan</span>
+                        <button
+                          type="button"
+                          onDoubleClick={() => handlePanReset(stem.id)}
+                          onClick={() => handlePanReset(stem.id)}
+                          className="min-h-[24px] rounded-md px-1.5 text-[11px] font-mono font-semibold tabular-nums text-[var(--accent-violet,#8B5CF6)] transition-colors hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)]"
+                          title="Click or double-click to reset pan to center"
+                          aria-label={`Reset pan for ${stem.name} to center`}
+                        >
+                          PAN: {formatPanLabel(panValue)}
+                        </button>
+                      </div>
+                      <input
+                        type="range"
+                        min={-100}
+                        max={100}
+                        step={1}
+                        value={panValue}
+                        onChange={(event) => handlePanChange(stem.id, Number(event.target.value))}
+                        onDoubleClick={() => handlePanReset(stem.id)}
+                        aria-label={`Pan for ${stem.name}`}
+                        aria-valuetext={formatPanLabel(panValue)}
+                        className="h-11 w-full cursor-pointer appearance-none bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] touch-none [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[var(--bg-elevated)] [&::-webkit-slider-thumb]:mt-[-7px] [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[var(--bg-primary)] [&::-webkit-slider-thumb]:bg-[var(--text-primary)] [&::-webkit-slider-thumb]:shadow-lg"
+                      />
+                      <div className="mt-1 flex justify-between px-0.5 text-[9px] font-mono uppercase tracking-wider text-[var(--text-tertiary)]">
+                        <span>L100</span>
+                        <span>C</span>
+                        <span>R100</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button type="button" aria-label={`Mute ${stem.name}`} aria-pressed={stem.muted} onClick={() => updateStem(stem.id, { muted: !stem.muted })} className={`flex h-11 min-h-11 flex-1 items-center justify-center rounded-xl border text-xs font-mono font-bold transition active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] ${stem.muted ? 'border-[#EF4444]/50 bg-[#EF4444]/15 text-[#EF4444] shadow-[0_0_18px_rgba(239,68,68,0.12)]' : 'border-transparent bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)]'}`}>MUTE</button>
-                    <button type="button" aria-label={`Solo ${stem.name}`} aria-pressed={stem.solo} onClick={() => updateStem(stem.id, { solo: !stem.solo })} className={`flex h-11 min-h-11 flex-1 items-center justify-center rounded-xl border text-xs font-mono font-bold transition active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] ${stem.solo ? 'border-[#F59E0B]/50 bg-[#F59E0B]/15 text-[#F59E0B] shadow-[0_0_18px_rgba(245,158,11,0.12)]' : 'border-transparent bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)]'}`}>SOLO</button>
+
+                  <div className="mt-5 border-t border-[var(--border-subtle)] pt-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-[9px] font-mono uppercase tracking-[0.16em] text-[var(--text-tertiary)]">Channel</span>
+                      <span className="text-[9px] font-mono text-[var(--text-tertiary)]">M / S</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button type="button" aria-label={`Mute ${stem.name}`} aria-pressed={stem.muted} onClick={() => updateStem(stem.id, { muted: !stem.muted })} className={`flex h-11 min-h-11 flex-1 items-center justify-center rounded-xl border text-xs font-mono font-bold transition active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] ${stem.muted ? 'border-[#EF4444]/50 bg-[#EF4444]/15 text-[#EF4444] shadow-[0_0_18px_rgba(239,68,68,0.12)]' : 'border-transparent bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)]'}`}>MUTE</button>
+                      <button type="button" aria-label={`Solo ${stem.name}`} aria-pressed={stem.solo} onClick={() => updateStem(stem.id, { solo: !stem.solo })} className={`flex h-11 min-h-11 flex-1 items-center justify-center rounded-xl border text-xs font-mono font-bold transition active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-lime)] ${stem.solo ? 'border-[#F59E0B]/50 bg-[#F59E0B]/15 text-[#F59E0B] shadow-[0_0_18px_rgba(245,158,11,0.12)]' : 'border-transparent bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)]'}`}>SOLO</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
