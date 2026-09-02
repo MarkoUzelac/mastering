@@ -4,11 +4,13 @@ import type {
   ReleaseAssistantRequest,
   ReleaseAssistantResponse,
 } from './contracts';
+import { getApiAuthHeaders } from '../lib/firebase';
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
   const response = await fetch(path, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    credentials: 'same-origin',
+    headers: { 'content-type': 'application/json', ...(await getApiAuthHeaders()) },
     body: JSON.stringify(body),
   });
 
