@@ -61,10 +61,21 @@ test('BS.1770 true peak catches an inter-sample overshoot above the 0 dBFS sampl
   assert.ok(20 * Math.log10(peak) > 0, `true peak dBTP should exceed 0 dBTP, got ${20 * Math.log10(peak)}`);
 });
 
-test('mono analysis reports one channel and preserves the loudness result', () => {
+test('mono analysis reports one channel and the expected mono loudness', () => {
   const mono = sine(seconds(5), 1000, -23);
   const result = analyzeEbuLufs(mono, new Float32Array(0), SR);
   assert.equal(result.channels, 1);
+  assert.equal(result.valid, true);
+  assert.ok(result.integratedLufs !== null);
+  // A single mono channel carries half the channel-energy sum of dual-mono,
+  // so the same per-channel peak level measures about 3.01 LU lower.
+  assert.ok(Math.abs(result.integratedLufs + 26.0103) <= 0.15, `got ${result.integratedLufs}`);
+});
+
+test('dual-mono analysis matches the stereo reference loudness', () => {
+  const channel = sine(seconds(5), 1000, -23);
+  const result = analyzeEbuLufs(channel, channel, SR);
+  assert.equal(result.channels, 2);
   assert.equal(result.valid, true);
   assert.ok(result.integratedLufs !== null);
   assert.ok(Math.abs(result.integratedLufs + 23) <= 0.15, `got ${result.integratedLufs}`);
