@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { MASTERING_PRESETS, PRESET_CATEGORIES, PresetCategory } from '../utils/presets';
 import { MasteringParams, MasteringPreset } from '../types';
-import { Bookmark, Sparkles, Check, Music, Lock, Volume2 } from 'lucide-react';
-import { ProBadge } from './ProBadge';
-import { FeatureGates } from '../billing/feature-gates';
+import { Bookmark, Check, Volume2, ChevronDown } from 'lucide-react';
 import { FeatureKey } from '../billing/billing-config';
 
 interface PresetSelectorProps {
@@ -17,120 +15,134 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
   currentParams,
   onApplyPreset,
   isBypassed,
-  onUpgradeClick,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<PresetCategory>('All');
-  const isPro = FeatureGates.isProUser();
+  const [open, setOpen] = useState(false);
 
   const filteredPresets = selectedCategory === 'All'
     ? MASTERING_PRESETS
     : MASTERING_PRESETS.filter((p) => p.category === selectedCategory);
 
-  const isPresetActive = (p: MasteringPreset) => {
-    return (
-      Math.abs(p.params.low - currentParams.low) < 0.05 &&
-      Math.abs(p.params.mid - currentParams.mid) < 0.05 &&
-      Math.abs(p.params.high - currentParams.high) < 0.05 &&
-      Math.abs(p.params.threshold - currentParams.threshold) < 0.05 &&
-      Math.abs(p.params.ratio - currentParams.ratio) < 0.05 &&
-      Math.abs(p.params.gain - currentParams.gain) < 0.05
-    );
-  };
+  const isPresetActive = (p: MasteringPreset) => (
+    Math.abs(p.params.low - currentParams.low) < 0.05 &&
+    Math.abs(p.params.mid - currentParams.mid) < 0.05 &&
+    Math.abs(p.params.high - currentParams.high) < 0.05 &&
+    Math.abs(p.params.threshold - currentParams.threshold) < 0.05 &&
+    Math.abs(p.params.ratio - currentParams.ratio) < 0.05 &&
+    Math.abs(p.params.gain - currentParams.gain) < 0.05
+  );
 
   const handleClickPreset = (preset: MasteringPreset) => {
     if (isBypassed) return;
-    if (preset.isPro && !isPro && onUpgradeClick) {
-      onUpgradeClick('ADVANCED_PRESETS');
-      return;
-    }
     onApplyPreset(preset);
+    setOpen(false);
   };
 
   return (
-    <div className="bg-[#07170c] rounded-sm p-5 border border-[#0d381c] shadow-lg crt-overlay">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#0d381c] pb-3 mb-4">
-        <div className="flex items-center gap-2">
-          <Bookmark className="w-4 h-4 text-[#00ff66]" />
-          <h2 className="text-sm font-bold font-mono tracking-tight text-[#00ff66] uppercase glow-phosphor">
-            DSP Target Presets &amp; Profiles
-          </h2>
+    <section className="premium-surface safe-width overflow-hidden p-4 sm:p-5" aria-label="DSP preset library">
+      <div className="flex min-w-0 flex-col gap-3 border-b border-[var(--border-subtle)] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[var(--accent-lime-soft)] text-[var(--accent-lime)]">
+            <Bookmark className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <h2 className="truncate text-sm font-bold tracking-tight text-[var(--text-primary)]">Mastering Profiles</h2>
+            <p className="truncate text-[10px] font-mono uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
+              {MASTERING_PRESETS.length} calibrated starting points
+            </p>
+          </div>
         </div>
 
-        {/* Category filters */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {PRESET_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-2.5 py-1 text-xs font-mono rounded-sm transition cursor-pointer ${
-                selectedCategory === cat.id
-                  ? 'bg-[#00ff66] text-[#030d06] font-bold shadow-sm shadow-[#00ff66]/30'
-                  : 'bg-[#030d06] text-[#00aa44] hover:text-[#00ff66] border border-[#0f4020]'
-              }`}
-            >
-              {cat.id === 'All' ? 'All' : cat.label}
-            </button>
-          ))}
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex min-w-0 flex-wrap gap-1.5" role="tablist" aria-label="Preset categories">
+            {PRESET_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                role="tab"
+                aria-selected={selectedCategory === cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`min-h-[36px] rounded-full border px-3 py-1.5 text-[10px] font-mono font-semibold transition-all focus-visible:outline-2 focus-visible:outline-[var(--accent-lime)] focus-visible:outline-offset-2 ${
+                  selectedCategory === cat.id
+                    ? 'border-[var(--accent-lime)]/50 bg-[var(--accent-lime-soft)] text-[var(--accent-lime)] shadow-sm'
+                    : 'border-[var(--border-subtle)] bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Preset cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {filteredPresets.map((preset) => {
           const active = isPresetActive(preset);
-          const isLocked = preset.isPro && !isPro;
-
           return (
             <button
               key={preset.id}
+              type="button"
               onClick={() => handleClickPreset(preset)}
               disabled={isBypassed}
-              className={`p-3.5 rounded-sm border text-left transition relative flex flex-col justify-between cursor-pointer ${
+              className={`group flex min-w-0 flex-col rounded-lg border p-4 text-left transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[var(--accent-lime)] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
                 active
-                  ? 'bg-[#0f4020]/70 border-[#00ff66] text-[var(--text-primary)] shadow-md shadow-[#00ff66]/15'
-                  : isLocked
-                  ? 'bg-[#030a05] border-[#1a331f] text-[#00aa44] hover:border-[#f59e0b]/50'
-                  : 'bg-[#030d06] border-[#0d381c] text-[#00cc55] hover:bg-[#071c0e] hover:border-[#00ff66]/40'
+                  ? 'border-[var(--accent-lime)]/60 bg-[var(--accent-lime-soft)] shadow-[0_8px_28px_rgba(183,240,0,0.08)]'
+                  : 'border-[var(--border-subtle)] bg-[var(--bg-primary)] hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:bg-[var(--bg-elevated)]'
               }`}
             >
-              <div>
-                <div className="flex items-center justify-between mb-1 gap-1">
-                  <span className="text-xs font-bold font-mono text-[#00ff66] block truncate">
-                    {preset.name}
-                  </span>
-                  {preset.isPro && <ProBadge locked={isLocked} />}
-                  {active && !preset.isPro && (
-                    <span className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono font-bold bg-[#00ff66] text-[#030d06] rounded">
-                      <Check className="w-2.5 h-2.5" /> ACTIVE
+              <div className="min-w-0">
+                <div className="mb-2 flex min-w-0 items-start justify-between gap-2">
+                  <div className="flex min-w-0 items-start gap-2">
+                    <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-[var(--accent-lime)] opacity-80" />
+                    <span className="min-w-0 break-anywhere text-xs font-semibold leading-snug text-[var(--text-primary)]">{preset.name}</span>
+                  </div>
+                  {active && (
+                    <span className="flex shrink-0 items-center gap-1 rounded-full bg-[var(--accent-lime)] px-2 py-0.5 text-[9px] font-mono font-bold text-[var(--bg-primary)]">
+                      <Check className="h-2.5 w-2.5" /> ACTIVE
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <span className="text-[9px] font-mono px-1.5 py-0.2 bg-[#0a2913] text-[#00ff66] border border-[#0f4020] rounded">
-                    {preset.category}
-                  </span>
-                </div>
-                <p className="text-[11px] text-[#00aa44] line-clamp-2 leading-relaxed mb-2 font-mono">
+                <span className="mb-2 inline-flex max-w-full items-center gap-1 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+                  {preset.category}
+                </span>
+                <p className="break-anywhere line-clamp-3 text-[11px] leading-relaxed text-[var(--text-secondary)]">
                   {preset.description}
                 </p>
               </div>
 
-              {/* Target & Parameter footprint badge */}
-              <div className="pt-2 border-t border-[#0f4020] flex items-center justify-between text-[10px] font-mono text-[#008833]">
-                {preset.targetLufs ? (
-                  <span className="text-[#88ffaa] flex items-center gap-1 font-bold">
-                    <Volume2 className="w-2.5 h-2.5 text-[#00ff66]" />
-                    {preset.targetLufs} LUFS
+              <div className="mt-4 flex min-w-0 items-center justify-between gap-2 border-t border-[var(--border-subtle)] pt-3 text-[9px] font-mono">
+                {preset.targetLufs !== undefined ? (
+                  <span className="flex shrink-0 items-center gap-1 text-[var(--accent-lime)]">
+                    <Volume2 className="h-3 w-3" /> {preset.targetLufs} LUFS
                   </span>
-                ) : (
-                  <span>EQ: {preset.params.low}/{preset.params.mid}/{preset.params.high}</span>
-                )}
-                <span>Thresh: {preset.params.threshold}dB</span>
+                ) : <span className="text-[var(--text-tertiary)]">CUSTOM CURVE</span>}
+                <span className="truncate text-[var(--text-tertiary)]">THR {preset.params.threshold} dB</span>
               </div>
             </button>
           );
         })}
       </div>
-    </div>
+
+      <div className="mt-4 flex min-w-0 items-center justify-between gap-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-primary)]/70 px-3 py-2.5">
+        <span className="min-w-0 truncate text-[10px] font-mono text-[var(--text-tertiary)]">
+          {filteredPresets.length} profila u kategoriji
+        </span>
+        <button
+          type="button"
+          className="flex min-h-[32px] shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[10px] font-mono text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+          onClick={() => setOpen((state) => !state)}
+          aria-expanded={open}
+          aria-label="Toggle preset library help"
+        >
+          Library <ChevronDown className={`h-3 w-3 transition-transform ${open ? 'rotate-180' : ''}`} />
+        </button>
+      </div>
+
+      {open && (
+        <p className="mt-2 break-anywhere text-[10px] leading-relaxed text-[var(--text-tertiary)]">
+          Svaki profil je odmah dostupan i primjenjuje se izravno na aktivni DSP lanac. Dvoklik nije potreban: odabir je jednim dodirom ili klikom.
+        </p>
+      )}
+    </section>
   );
 };

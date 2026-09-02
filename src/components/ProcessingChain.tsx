@@ -1,239 +1,95 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Power, Settings2 } from 'lucide-react';
 import { PhosphorSlider } from './PhosphorSlider';
-import { audioEngineEvents } from '../utils/audio-engine';
+import { audioEngine, audioEngineEvents } from '../utils/audio-engine';
 import { MasteringParams, MeterData } from '../types';
 
-export interface ChainBypassState {
-  eq: boolean;
-  dynamics: boolean;
-  saturation: boolean;
-  stereo: boolean;
-  limiter: boolean;
-}
+export interface ChainBypassState { eq: boolean; dynamics: boolean; saturation: boolean; stereo: boolean; limiter: boolean; }
 
 export interface AdvancedParamsState {
-  lowFreq?: number;
-  midFreq?: number;
-  highFreq?: number;
-  lowQ?: number;
-  midQ?: number;
-  highQ?: number;
-  attack: number;
-  release: number;
-  knee: number;
-  drive: number;
-  warmth: number;
-  mix: number;
-  width: number;
-  balance: number;
-  phaseInvert?: boolean;
-  ceiling: number;
-  limiterRelease: number;
-  lookahead: number;
-  truePeak?: boolean;
+  lowFreq?: number; midFreq?: number; highFreq?: number; lowQ?: number; midQ?: number; highQ?: number;
+  attack: number; release: number; knee: number; drive: number; warmth: number; mix: number; width: number;
+  balance: number; phaseInvert?: boolean; ceiling: number; limiterRelease: number; lookahead: number; truePeak?: boolean;
 }
 
 interface ProcessingChainProps {
-  params: MasteringParams;
-  advancedParams: AdvancedParamsState;
-  bypasses?: ChainBypassState;
-  isBypassed?: boolean;
-  gainReductionDb?: number;
-  meterData?: MeterData;
-  isPlaying?: boolean;
+  params: MasteringParams; advancedParams: AdvancedParamsState; bypasses?: ChainBypassState; isBypassed?: boolean;
+  gainReductionDb?: number; meterData?: MeterData; isPlaying?: boolean;
   onParamChange: <K extends keyof MasteringParams>(key: K, value: MasteringParams[K]) => void;
   onAdvancedParamChange: <K extends keyof AdvancedParamsState>(key: K, value: AdvancedParamsState[K]) => void;
   onToggleBypass?: (module: keyof ChainBypassState) => void;
   onOpenAdvancedModal?: (module: 'eq' | 'dynamics' | 'saturation' | 'stereo' | 'limiter') => void;
 }
 
-export const ProcessingChain: React.FC<ProcessingChainProps> = ({
-  params,
-  advancedParams,
-  bypasses: externalBypasses,
-  isBypassed = false,
-  gainReductionDb: externalGR,
-  meterData,
-  onParamChange,
-  onAdvancedParamChange,
-  onToggleBypass: externalToggleBypass,
-  onOpenAdvancedModal,
-}) => {
-  const [internalBypasses, setInternalBypasses] = useState<ChainBypassState>({
-    eq: false, dynamics: false, saturation: false, stereo: false, limiter: false,
-  });
-
+export const ProcessingChain: React.FC<ProcessingChainProps> = ({ params, advancedParams, bypasses: externalBypasses, isBypassed = false, gainReductionDb: externalGR, meterData, onParamChange, onAdvancedParamChange, onToggleBypass: externalToggleBypass, onOpenAdvancedModal }) => {
+  const [internalBypasses, setInternalBypasses] = useState<ChainBypassState>({ eq: false, dynamics: false, saturation: false, stereo: false, limiter: false });
+  const [localMeters, setLocalMeters] = useState<MeterData | null>(null);
   const bypasses = externalBypasses || internalBypasses;
-  const [localMeters, setLocalMeters] = React.useState<any>(null);
-  React.useEffect(() => {
-    const handler = (e: any) => setLocalMeters(e.detail);
+
+  useEffect(() => {
+    const handler = (event: Event) => setLocalMeters((event as CustomEvent<MeterData>).detail);
     audioEngineEvents.addEventListener('meterupdate', handler);
     return () => audioEngineEvents.removeEventListener('meterupdate', handler);
   }, []);
+
+  useEffect(() => {
+    // Flush the complete advanced state into the live worklet whenever A/B or a modal changes it.
+    audioEngine.setParams(advancedParams as unknown as Partial<MasteringParams>);
+  }, [advancedParams]);
+
   const activeMeters = localMeters || meterData;
-  const gr = activeMeters?.gainReductionDb !== undefined ? activeMeters?.gainReductionDb : externalGR || 0;
+  const gr = activeMeters?.gainReductionDb ?? externalGR ?? 0;
 
   const handleToggle = (module: keyof ChainBypassState) => {
-    if (externalToggleBypass) {
-      externalToggleBypass(module);
-    } else {
-      setInternalBypasses((prev) => ({ ...prev, [module]: !prev[module] }));
-    }
+    if (externalToggleBypass) externalToggleBypass(module);
+    else setInternalBypasses((prev) => ({ ...prev, [module]: !prev[module] }));
   };
 
-  const getContainerStyle = (isBypassedLocal: boolean) => 
-    `relative flex flex-col bg-transparent border border-[var(--border-subtle)] p-5 transition-all ${
-      isBypassedLocal || isBypassed ? 'opacity-40' : 'hover:border-[var(--text-tertiary)]'
-    }`;
+  const handleAdvanced = <K extends keyof AdvancedParamsState>(key: K, value: AdvancedParamsState[K]) => onAdvancedParamChange(key, value);
 
-  const getHeader = (title: string, module: keyof ChainBypassState) => (
-    <div className="flex items-center justify-between mb-6 pb-2 border-b border-[var(--border-subtle)]">
-      <span className="text-[10px] font-mono tracking-widest text-[var(--text-primary)] uppercase">{title}</span>
+  const header = (title: string, module: keyof ChainBypassState) => (
+    <div className="mb-5 flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
+      <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--text-primary)]">{title}</span>
       <div className="flex gap-2">
-        {onOpenAdvancedModal && (
-          <button 
-            onClick={() => onOpenAdvancedModal(module as any)}
-            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition"
-          >
-            <Settings2 className="w-3.5 h-3.5" />
-          </button>
-        )}
-        <button
-          onClick={() => handleToggle(module)}
-          className={`transition ${bypasses[module] ? 'text-[var(--text-tertiary)]' : 'text-[var(--accent-lime)]'}`}
-        >
-          <Power className="w-3.5 h-3.5" />
-        </button>
+        {onOpenAdvancedModal && <button type="button" aria-label={`${title} advanced`} onClick={() => onOpenAdvancedModal(module as any)} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"><Settings2 className="h-3.5 w-3.5" /></button>}
+        <button type="button" aria-label={`${title} bypass`} onClick={() => handleToggle(module)} className={`transition ${bypasses[module] ? 'text-[var(--text-tertiary)]' : 'text-[var(--accent-lime)]'}`}><Power className="h-3.5 w-3.5" /></button>
       </div>
     </div>
   );
 
+  const disabled = (module: keyof ChainBypassState) => bypasses[module] || isBypassed;
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2 mb-2">
-        <h3 className="text-[10px] font-mono tracking-widest text-[var(--text-primary)] uppercase">
-          MASTER CHAIN / 03
-        </h3>
-        <div className="flex gap-4">
-          <span className="text-[10px] font-mono tracking-widest text-[var(--accent-lime)]">SHAPE THE SIGNAL</span>
-        </div>
+    <section className="flex min-w-0 flex-col gap-6">
+      <div className="flex min-w-0 items-center justify-between border-b border-[var(--border-subtle)] pb-2">
+        <h3 className="text-[10px] font-mono uppercase tracking-widest text-[var(--text-primary)]">MASTER CHAIN / 03</h3>
+        <span className="text-[10px] font-mono tracking-widest text-[var(--accent-lime)]">REAL DSP</span>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-0 border border-[var(--border-subtle)] divide-y lg:divide-y-0 lg:divide-x divide-[var(--border-subtle)]">
-        
-        {/* TONE */}
-        <div className={getContainerStyle(bypasses.eq) + " border-0"}>
-          {getHeader('TONE', 'eq')}
-          <div className="flex flex-col gap-5">
-            <PhosphorSlider
-              label="Low" value={params.low} min={-12} max={12} step={0.1} unit=" dB"
-              disabled={bypasses.eq || isBypassed}
-              onChange={(val) => onParamChange('low', val)}
-            />
-            <PhosphorSlider
-              label="Mid" value={params.mid} min={-12} max={12} step={0.1} unit=" dB"
-              disabled={bypasses.eq || isBypassed}
-              onChange={(val) => onParamChange('mid', val)}
-            />
-            <PhosphorSlider
-              label="High" value={params.high} min={-12} max={12} step={0.1} unit=" dB"
-              disabled={bypasses.eq || isBypassed}
-              onChange={(val) => onParamChange('high', val)}
-            />
-          </div>
-        </div>
-
-        {/* DYNAMICS */}
-        <div className={getContainerStyle(bypasses.dynamics) + " border-0"}>
-          {getHeader('COMPRESSION', 'dynamics')}
-          <div className="flex flex-col gap-5">
-            <PhosphorSlider
-              label="Threshold" value={params.threshold} min={-60} max={0} step={0.5} unit=" dB"
-              disabled={bypasses.dynamics || isBypassed}
-              onChange={(val) => onParamChange('threshold', val)}
-            />
-            <PhosphorSlider
-              label="Ratio" value={params.ratio} min={1} max={20} step={0.1} displayValue={`${params.ratio.toFixed(1)}:1`}
-              disabled={bypasses.dynamics || isBypassed}
-              onChange={(val) => onParamChange('ratio', val)}
-            />
-            <PhosphorSlider
-              label="Knee" value={advancedParams.knee} min={0} max={12} step={0.5} unit=" dB"
-              disabled={bypasses.dynamics || isBypassed}
-              onChange={(val) => onAdvancedParamChange('knee', val)}
-            />
-          </div>
-          {gr < -0.1 && !bypasses.dynamics && !isBypassed && (
-            <div className="mt-6 flex justify-between items-center text-[10px] font-mono text-[var(--accent-lime)]">
-              <span>GR</span>
-              <span>{gr.toFixed(1)} dB</span>
-            </div>
-          )}
-        </div>
-
-        {/* SATURATION */}
-        <div className={getContainerStyle(bypasses.saturation) + " border-0"}>
-          {getHeader('SATURATION', 'saturation')}
-          <div className="flex flex-col gap-5">
-            <PhosphorSlider
-              label="Drive" value={advancedParams.drive} min={0} max={100} step={1} unit="%"
-              disabled={bypasses.saturation || isBypassed}
-              onChange={(val) => onAdvancedParamChange('drive', val)}
-            />
-            <PhosphorSlider
-              label="Warmth" value={advancedParams.warmth} min={0} max={100} step={1} unit="%"
-              disabled={bypasses.saturation || isBypassed}
-              onChange={(val) => onAdvancedParamChange('warmth', val)}
-            />
-            <PhosphorSlider
-              label="Mix" value={advancedParams.mix} min={0} max={100} step={1} unit="%"
-              disabled={bypasses.saturation || isBypassed}
-              onChange={(val) => onAdvancedParamChange('mix', val)}
-            />
-          </div>
-        </div>
-
-        {/* STEREO */}
-        <div className={getContainerStyle(bypasses.stereo) + " border-0"}>
-          {getHeader('STEREO', 'stereo')}
-          <div className="flex flex-col gap-5">
-            <PhosphorSlider
-              label="Width" value={advancedParams.width} min={0} max={200} step={1} unit="%"
-              disabled={bypasses.stereo || isBypassed}
-              onChange={(val) => onAdvancedParamChange('width', val)}
-            />
-            <PhosphorSlider
-              label="Balance" value={advancedParams.balance} min={-100} max={100} step={1}
-              disabled={bypasses.stereo || isBypassed}
-              onChange={(val) => onAdvancedParamChange('balance', val)}
-            />
-          </div>
-        </div>
-
-        {/* LIMITER */}
-        <div className={getContainerStyle(bypasses.limiter) + " border-0"}>
-          {getHeader('LIMITER', 'limiter')}
-          <div className="flex flex-col gap-5">
-            <PhosphorSlider
-              label="Ceiling" value={advancedParams.ceiling} min={-12} max={0} step={0.1} unit=" dB"
-              disabled={bypasses.limiter || isBypassed}
-              onChange={(val) => onAdvancedParamChange('ceiling', val)}
-            />
-            <PhosphorSlider
-              label="Release" value={advancedParams.limiterRelease} min={10} max={500} step={5} unit=" ms"
-              disabled={bypasses.limiter || isBypassed}
-              onChange={(val) => onAdvancedParamChange('limiterRelease', val)}
-            />
-            <PhosphorSlider
-              label="Lookahead" value={advancedParams.lookahead} min={0.1} max={10} step={0.1} unit=" ms"
-              disabled={bypasses.limiter || isBypassed}
-              onChange={(val) => onAdvancedParamChange('lookahead', val)}
-            />
-          </div>
-        </div>
-
+      <div className="grid min-w-0 grid-cols-1 divide-y border border-[var(--border-subtle)] md:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-y-0">
+        <div className="min-w-0 border-0 p-5">{header('TONE', 'eq')}<div className="flex flex-col gap-5">{(['low','mid','high'] as const).map((key) => <PhosphorSlider key={key} label={key} value={params[key]} min={-12} max={12} step={0.1} unit=" dB" disabled={disabled('eq')} onChange={(v) => onParamChange(key, v)} />)}</div></div>
+        <div className="min-w-0 border-0 p-5">{header('COMPRESSION', 'dynamics')}<div className="flex flex-col gap-5">
+          <PhosphorSlider label="Threshold" value={params.threshold} min={-60} max={0} step={0.5} unit=" dB" disabled={disabled('dynamics')} onChange={(v) => onParamChange('threshold', v)} />
+          <PhosphorSlider label="Ratio" value={params.ratio} min={1} max={20} step={0.1} displayValue={`${params.ratio.toFixed(1)}:1`} disabled={disabled('dynamics')} onChange={(v) => onParamChange('ratio', v)} />
+          <PhosphorSlider label="Makeup Gain" value={params.gain} min={-12} max={12} step={0.1} unit=" dB" disabled={disabled('dynamics')} onChange={(v) => onParamChange('gain', v)} />
+          <PhosphorSlider label="Knee" value={advancedParams.knee} min={0} max={12} step={0.5} unit=" dB" disabled={disabled('dynamics')} onChange={(v) => handleAdvanced('knee', v)} />
+          <PhosphorSlider label="Attack" value={advancedParams.attack} min={1} max={200} step={1} unit=" ms" disabled={disabled('dynamics')} onChange={(v) => handleAdvanced('attack', v)} />
+          <PhosphorSlider label="Release" value={advancedParams.release} min={10} max={1000} step={5} unit=" ms" disabled={disabled('dynamics')} onChange={(v) => handleAdvanced('release', v)} />
+        </div>{gr > 0.1 && !disabled('dynamics') && <div className="mt-5 flex justify-between text-[10px] font-mono text-[var(--accent-lime)]"><span>GR</span><span>{gr.toFixed(1)} dB</span></div>}</div>
+        <div className="min-w-0 border-0 p-5">{header('SATURATION', 'saturation')}<div className="flex flex-col gap-5">
+          <PhosphorSlider label="Drive" value={advancedParams.drive} min={0} max={100} step={1} unit="%" disabled={disabled('saturation')} onChange={(v) => handleAdvanced('drive', v)} />
+          <PhosphorSlider label="Warmth" value={advancedParams.warmth} min={0} max={100} step={1} unit="%" disabled={disabled('saturation')} onChange={(v) => handleAdvanced('warmth', v)} />
+          <PhosphorSlider label="Mix" value={advancedParams.mix} min={0} max={100} step={1} unit="%" disabled={disabled('saturation')} onChange={(v) => handleAdvanced('mix', v)} />
+        </div></div>
+        <div className="min-w-0 border-0 p-5">{header('STEREO', 'stereo')}<div className="flex flex-col gap-5">
+          <PhosphorSlider label="Width" value={advancedParams.width} min={0} max={200} step={1} unit="%" disabled={disabled('stereo')} onChange={(v) => handleAdvanced('width', v)} />
+          <PhosphorSlider label="Balance" value={advancedParams.balance} min={-100} max={100} step={1} unit="%" disabled={disabled('stereo')} onChange={(v) => handleAdvanced('balance', v)} />
+        </div></div>
+        <div className="min-w-0 border-0 p-5">{header('LIMITER', 'limiter')}<div className="flex flex-col gap-5">
+          <PhosphorSlider label="Ceiling" value={advancedParams.ceiling} min={-12} max={0} step={0.1} unit=" dB" disabled={disabled('limiter')} onChange={(v) => handleAdvanced('ceiling', v)} />
+          <PhosphorSlider label="Release" value={advancedParams.limiterRelease} min={10} max={500} step={5} unit=" ms" disabled={disabled('limiter')} onChange={(v) => handleAdvanced('limiterRelease', v)} />
+          {advancedParams.truePeak !== false && <div className="rounded-md border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-2 text-[9px] font-mono text-[var(--text-tertiary)]">4× FIR peak estimate active · no user lookahead</div>}
+        </div></div>
       </div>
-    </div>
+    </section>
   );
 };
