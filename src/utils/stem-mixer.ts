@@ -170,7 +170,7 @@ class StemMixer {
 
   /**
    * Disconnect all stem nodes. When requested, restore the engine's direct
-   * processor -> analyser path so playback remains valid outside the modal.
+   * processor -> analyser path and deactivate the modal-owned hook.
    */
   public detach(restoreDirectPath = true): void {
     const internals = audioEngine as unknown as EngineInternals;
@@ -208,10 +208,11 @@ class StemMixer {
       } catch {
         // Already connected.
       }
+      this.enabled = false;
     }
   }
 
-  /** Disable the modal-owned mixer without uninstalling the engine hook. */
+  /** Disable the modal-owned mixer and restore the normal direct path. */
   public deactivate(): void {
     this.enabled = false;
     this.detach(true);
