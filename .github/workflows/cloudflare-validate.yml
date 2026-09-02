@@ -1,0 +1,34 @@
+name: Validate Cloudflare deployment
+
+on:
+  pull_request:
+    paths:
+      - "cloudflare-worker.ts"
+      - "wrangler.jsonc"
+      - "Dockerfile"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/cloudflare-validate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "cloudflare-worker.ts"
+      - "wrangler.jsonc"
+      - "Dockerfile"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/cloudflare-validate.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npx wrangler deploy --dry-run
