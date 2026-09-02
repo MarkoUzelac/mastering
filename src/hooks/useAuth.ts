@@ -15,6 +15,7 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -30,8 +31,14 @@ export const useAuth = () => {
           subscriptionTier: 'free',
           createdAt: '',
         });
+        void currentUser.getIdTokenResult().then((tokenResult) => {
+          if (mounted) setIsAdmin(tokenResult.claims.admin === true);
+        }).catch(() => {
+          if (mounted) setIsAdmin(false);
+        });
       } else {
         setProfile(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -47,8 +54,6 @@ export const useAuth = () => {
       unsubscribe();
     };
   }, []);
-
-  const isAdmin = Boolean(user?.getIdToken && profile?.role === 'admin');
 
   return { user, profile, loading, isAdmin };
 };
