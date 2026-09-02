@@ -73,19 +73,28 @@ function percentile(values: number[], p: number): number | null {
   return sorted[index];
 }
 
-function designSincPhase(phase: number, taps = 16): Float64Array {
+/**
+ * Build a 4x polyphase low-pass interpolator. An odd tap count keeps phase 0
+ * centered exactly on an input sample, so the interpolated peak can never
+ * lose the original sample peak merely because of filter phase.
+ */
+function designSincPhase(phase: number, taps = 17): Float64Array {
   const coeffs = new Float64Array(taps);
-  const center = (taps - 1) / 2;
-  const cutoff = 0.49;
+  const center = Math.floor(taps / 2);
+  const cutoff = 0.5;
   let sum = 0;
+
   for (let i = 0; i < taps; i += 1) {
     const n = i - center - phase / 4;
     const x = Math.PI * cutoff * n;
     const sinc = Math.abs(x) < 1e-12 ? 1 : Math.sin(x) / x;
-    const w = 0.42 - 0.5 * Math.cos((2 * Math.PI * i) / (taps - 1)) + 0.08 * Math.cos((4 * Math.PI * i) / (taps - 1));
+    const w = 0.42
+      - 0.5 * Math.cos((2 * Math.PI * i) / (taps - 1))
+      + 0.08 * Math.cos((4 * Math.PI * i) / (taps - 1));
     coeffs[i] = cutoff * sinc * w;
     sum += coeffs[i];
   }
+
   for (let i = 0; i < taps; i += 1) coeffs[i] /= sum || 1;
   return coeffs;
 }
@@ -97,6 +106,7 @@ function truePeak4x(samples: Float32Array): number {
   const taps = TP_PHASES[0].length;
   const half = Math.floor(taps / 2);
   let peak = 0;
+
   for (let i = 0; i < samples.length; i += 1) {
     for (let phase = 0; phase < 4; phase += 1) {
       const coeffs = TP_PHASES[phase];
@@ -108,6 +118,7 @@ function truePeak4x(samples: Float32Array): number {
       peak = Math.max(peak, Math.abs(y));
     }
   }
+
   return peak;
 }
 
@@ -180,8 +191,7 @@ export function analyzeEbuLufs(left: Float32Array, right: Float32Array, sampleRa
     }
   }
 
-  let momentaryLufs: number | null = null;
-  if (momentaryBlocks.length) momentaryLufs = momentaryBlocks[momentaryBlocks.length - 1].lufs;
+  const momentaryLufs = momentaryBlocks.length ? momentaryBlocks[momentaryBlocks.length - 1].lufs : null;
 
   let shortTermLufs: number | null = null;
   if (length >= shortTermFrames) {
@@ -197,6 +207,7 @@ export function analyzeEbuLufs(left: Float32Array, right: Float32Array, sampleRa
   let dcL = 0;
   let dcR = 0;
   const shortTermHistory: number[] = [];
+
   for (let i = 0; i < length; i += 1) {
     const l = left[i];
     const r = channels === 2 ? right[i] : l;
@@ -216,7 +227,10 @@ export function analyzeEbuLufs(left: Float32Array, right: Float32Array, sampleRa
   const rms = Math.sqrt(sumSq / length);
   const rmsDb = dbFromPower(rms * rms) + 0.691;
   const crestFactorDb = rms > EPSILON ? 20 * Math.log10(peak / rms) : null;
-  const truePeak = Math.max(truePeak4x(left.subarray(0, length)), truePeak4x((channels === 2 ? right : left).subarray(0, length)));
+  const truePeak = Math.max(
+    truePeak4x(left.subarray(0, length)),
+    truePeak4x((channels === 2 ? right : left).subarray(0, length)),
+  );
   const truePeakDbtp = truePeak > EPSILON ? 20 * Math.log10(truePeak) : SILENCE_DB;
   const correlation = Math.sqrt(sumL * sumR) > EPSILON ? cross / Math.sqrt(sumL * sumR) : 1;
   const midRms = Math.sqrt(Math.max(EPSILON, (sumL + sumR + 2 * cross) / (4 * length)));
