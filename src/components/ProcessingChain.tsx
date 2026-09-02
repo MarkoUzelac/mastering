@@ -32,6 +32,11 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({ params, advanc
     return () => audioEngineEvents.removeEventListener('meterupdate', handler);
   }, []);
 
+  useEffect(() => {
+    // Hard-flush every advanced control into the same live DSP parameter state.
+    audioEngine.setParams(advancedParams as Partial<MasteringParams>);
+  }, [advancedParams]);
+
   const activeMeters = localMeters || meterData;
   const gr = activeMeters?.gainReductionDb ?? externalGR ?? 0;
 
@@ -42,7 +47,6 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({ params, advanc
 
   const handleAdvanced = <K extends keyof AdvancedParamsState>(key: K, value: AdvancedParamsState[K]) => {
     onAdvancedParamChange(key, value);
-    if (key !== 'lookahead') audioEngine.setParams({ [key]: value } as Partial<MasteringParams>);
   };
 
   const header = (title: string, module: keyof ChainBypassState) => (
@@ -75,6 +79,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({ params, advanc
           <div className="flex flex-col gap-5">
             <PhosphorSlider label="Threshold" value={params.threshold} min={-60} max={0} step={0.5} unit=" dB" disabled={disabled('dynamics')} onChange={(v) => onParamChange('threshold', v)} />
             <PhosphorSlider label="Ratio" value={params.ratio} min={1} max={20} step={0.1} displayValue={`${params.ratio.toFixed(1)}:1`} disabled={disabled('dynamics')} onChange={(v) => onParamChange('ratio', v)} />
+            <PhosphorSlider label="Makeup Gain" value={params.gain} min={-12} max={12} step={0.1} unit=" dB" disabled={disabled('dynamics')} onChange={(v) => onParamChange('gain', v)} />
             <PhosphorSlider label="Knee" value={advancedParams.knee} min={0} max={12} step={0.5} unit=" dB" disabled={disabled('dynamics')} onChange={(v) => handleAdvanced('knee', v)} />
             <PhosphorSlider label="Attack" value={advancedParams.attack} min={1} max={200} step={1} unit=" ms" disabled={disabled('dynamics')} onChange={(v) => handleAdvanced('attack', v)} />
             <PhosphorSlider label="Release" value={advancedParams.release} min={10} max={1000} step={5} unit=" ms" disabled={disabled('dynamics')} onChange={(v) => handleAdvanced('release', v)} />
@@ -101,7 +106,7 @@ export const ProcessingChain: React.FC<ProcessingChainProps> = ({ params, advanc
           <div className="flex flex-col gap-5">
             <PhosphorSlider label="Ceiling" value={advancedParams.ceiling} min={-12} max={0} step={0.1} unit=" dB" disabled={disabled('limiter')} onChange={(v) => handleAdvanced('ceiling', v)} />
             <PhosphorSlider label="Release" value={advancedParams.limiterRelease} min={10} max={500} step={5} unit=" ms" disabled={disabled('limiter')} onChange={(v) => handleAdvanced('limiterRelease', v)} />
-            {advancedParams.truePeak !== false && <div className="rounded-md border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-2 text-[9px] font-mono text-[var(--text-tertiary)]">4× peak scan active · no user lookahead</div>}
+            {advancedParams.truePeak !== false && <div className="rounded-md border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-2 text-[9px] font-mono text-[var(--text-tertiary)]">4× FIR peak estimate active · no user lookahead</div>}
           </div>
         </div>
       </div>
