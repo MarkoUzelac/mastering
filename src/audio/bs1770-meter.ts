@@ -78,9 +78,6 @@ const OVERLAP = 0.75;
 const EPSILON = 1e-12;
 const TRUE_PEAK_DB_FLOOR = -300;
 
-const clamp = (value: number, min: number, max: number): number =>
-  Math.max(min, Math.min(max, value));
-
 class Biquad {
   private z1 = 0;
   private z2 = 0;
@@ -111,13 +108,13 @@ const dbFromPower = (power: number): number =>
 const dbFromAmplitude = (amplitude: number): number =>
   amplitude > EPSILON ? 20 * Math.log10(amplitude) : TRUE_PEAK_DB_FLOOR;
 
-function validate48k(samples: readonly Float32Array[] | readonly number[][], sampleRate: number): void {
+function validate48k(channels: readonly ArrayLike<number>[], sampleRate: number): void {
   if (sampleRate !== 48_000) {
     throw new RangeError(
       `BS.1770 core currently requires 48 kHz for exact normative coefficients; received ${sampleRate} Hz`,
     );
   }
-  if (samples.length < 1 || samples.length > 5) {
+  if (channels.length < 1 || channels.length > 5) {
     throw new RangeError('BS.1770 core accepts 1-5 main channels; LFE is not represented');
   }
 }
@@ -133,7 +130,7 @@ function channelWeight(channelIndex: number, channelCount: number): number {
  * Channels are ordered L,R,C,Ls,Rs. The LFE channel is intentionally excluded.
  */
 export function measureBS1770(
-  channels: readonly (Float32Array | readonly number[])[],
+  channels: readonly ArrayLike<number>[],
   sampleRate: number,
 ): BS1770Measurement {
   validate48k(channels, sampleRate);
@@ -239,7 +236,7 @@ function meanPowerAtIndices(powers: readonly number[], indices: readonly number[
  * We evaluate all four polyphase outputs around every source sample and take
  * the maximum absolute reconstructed sample.
  */
-export function truePeakAmplitude(samples: readonly number[]): number {
+export function truePeakAmplitude(samples: ArrayLike<number>): number {
   let peak = 0;
   const tapCount = TRUE_PEAK_FIR_48X4.length;
   const half = tapCount / 2;
