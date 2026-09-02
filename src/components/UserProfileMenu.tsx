@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { signInWithGoogle, logOut } from '../lib/firebase';
-import { LogIn, LogOut, Settings, LayoutDashboard, Crown, CreditCard } from 'lucide-react';
-import { GoogleIcon } from './Icons';
+import { logOut } from '../lib/firebase';
+import { LogOut, LayoutDashboard, Crown, CreditCard } from 'lucide-react';
 
 interface UserProfileMenuProps {
   onOpenAdmin: () => void;
@@ -14,83 +13,72 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ onOpenAdmin, o
   const [isOpen, setIsOpen] = useState(false);
 
   if (loading) {
-    return <div className="w-8 h-8 rounded-full bg-[var(--border-subtle)] animate-pulse"></div>;
+    return <div className="w-8 h-8 rounded-full bg-[var(--border-subtle)] animate-pulse" aria-label="Loading account" />;
   }
 
-  if (!user || !profile) {
-    return (
-      <button
-        onClick={signInWithGoogle}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-gray-100 text-gray-900 border border-gray-300 rounded-sm text-sm font-semibold transition-colors shadow-sm"
-      >
-        <GoogleIcon className="w-4 h-4" />
-        Sign In with Google
-      </button>
-    );
-  }
+  if (!user || !profile) return null;
+
+  const displayName = profile.displayName || 'Mastering Engineer';
+  const email = profile.email || 'Anonymous session';
 
   return (
     <div className="relative">
       <button
+        type="button"
+        aria-label="Open account menu"
+        aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 focus:outline-none"
       >
-        {profile.photoURL ? (
-          <img src={profile.photoURL} alt={profile.displayName} className="w-8 h-8 rounded-full border border-[var(--border-subtle)] hover:border-[var(--accent-lime)] transition-colors" referrerPolicy="no-referrer" />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-[var(--accent-lime)] flex items-center justify-center text-[var(--text-primary)] font-bold text-sm">
-            {profile.displayName?.charAt(0) || profile.email.charAt(0)}
-          </div>
-        )}
+        <div className="w-8 h-8 rounded-full bg-[var(--accent-lime)] flex items-center justify-center text-[var(--text-primary)] font-bold text-sm">
+          {displayName.charAt(0).toUpperCase()}
+        </div>
       </button>
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
-          <div className="absolute right-0 mt-2 w-56 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm shadow-2xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-150">
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} aria-hidden="true" />
+          <div className="absolute right-0 mt-2 w-64 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-sm shadow-2xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-150">
             <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{profile.displayName}</p>
-              <p className="text-xs text-[var(--text-secondary)] truncate">{profile.email}</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{displayName}</p>
+              <p className="text-xs text-[var(--text-secondary)] truncate">{email}</p>
               <div className="mt-2 flex items-center gap-2">
-                {profile.subscriptionTier === 'pro' ? (
-                  <span className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-[#A7F3D0] bg-[#10B981]/20 px-2 py-0.5 rounded border border-[#10B981]/30">
-                    <Crown className="w-3 h-3" /> PRO Member
-                  </span>
-                ) : (
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-secondary)] bg-[var(--border-subtle)] px-2 py-0.5 rounded">
-                    Free Plan
-                  </span>
-                )}
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-secondary)] bg-[var(--border-subtle)] px-2 py-0.5 rounded">
+                  Free / Pro via Stripe
+                </span>
               </div>
             </div>
-            
+
             <div className="py-1">
               <button
+                type="button"
                 onClick={() => { setIsOpen(false); onOpenBilling(); }}
                 className="w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--border-subtle)] hover:text-[var(--text-primary)] flex items-center gap-2 transition-colors"
               >
                 <CreditCard className="w-4 h-4" />
-                Subscription & Billing
+                Subscription &amp; Billing
               </button>
-              
+
               {isAdmin && (
                 <button
+                  type="button"
                   onClick={() => { setIsOpen(false); onOpenAdmin(); }}
-                  className="w-full text-left px-4 py-2 text-sm text-[var(--accent-lime)] hover:bg-[var(--accent-lime)]/10 hover:text-[var(--accent-lime-hover)] flex items-center gap-2 transition-colors"
+                  className="w-full text-left px-4 py-2 text-sm text-[var(--accent-lime)] hover:bg-[var(--accent-lime)]/10 flex items-center gap-2 transition-colors"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   Admin Control Panel
                 </button>
               )}
-              
-              <div className="h-px bg-[var(--border-subtle)] my-1"></div>
-              
+
+              <div className="h-px bg-[var(--border-subtle)] my-1" />
+
               <button
-                onClick={() => { setIsOpen(false); logOut(); }}
+                type="button"
+                onClick={() => { setIsOpen(false); void logOut(); }}
                 className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                Sign Out
+                Reset Session
               </button>
             </div>
           </div>
