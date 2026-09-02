@@ -46,7 +46,9 @@ jobs:
       - name: Verify no tracked environment secrets
         shell: bash
         run: |
-          if git ls-files | grep -E '(^|/)(\.env|\.env\.[^/]+)$'; then
+          tracked_env_files=$(git ls-files | grep -E '(^|/)\.env(\.[^./]+)?$' | grep -vE '(^|/)\.env\.example$' || true)
+          if [ -n "$tracked_env_files" ]; then
+            printf '%s\n' "$tracked_env_files"
             echo 'Tracked environment file detected.'
             exit 1
           fi
