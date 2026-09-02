@@ -1,41 +1,57 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Pomoćne funkcije
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    function isAdmin() {
-      return isAuthenticated() && request.auth.token.email == "info@markouzelacuzy.com";
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
     }
 
-    match /users/{userId} {
-      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
-      allow create: if isAuthenticated() && request.auth.uid == userId;
-      // Client may edit profile presentation fields, never role or subscription authority.
-      allow update: if isAuthenticated() && request.auth.uid == userId
-        && request.resource.data.role == resource.data.role
-        && request.resource.data.subscriptionTier == resource.data.subscriptionTier;
+    function isAdmin() {
+      return isAuthenticated()
+        && get(/databases/$(database)/documents/admin/roles).data.admins.hasAny([request.auth.uid]);
+    }
+
+    // ACCOUNTS KOLEKCIJA (Stripe podaci i Tier)
+    match /accounts/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
+      allow update: if (isOwner(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'stripeCustomerId', 'stripeSubscriptionId', 'subscription', 'tier'
+        ])) || isAdmin();
       allow delete: if isAdmin();
     }
 
-    match /sessions/{sessionId} {
-      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+    // USERS KOLEKCIJA (Osnovni profili)
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if (isOwner(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])) || isAdmin();
+      allow delete: if isAdmin();
     }
 
-    // Billing/account state is server-authoritative via Firebase Admin SDK.
-    match /accounts/{userId} {
-      allow read, write: if false;
+    // PROJECTS / SESSIONS
+    match /projects/{projectId} {
+      allow read, update, delete: if isAuthenticated() && resource.data.ownerId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.ownerId == request.auth.uid;
+    }
+
+    // ADMIN STATS / STRIPE WEBHOOK EVENTS (Samo backend i admini)
+    match /admin/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
     }
 
     match /stripe_webhook_events/{eventId} {
       allow read, write: if false;
     }
 
-    match /data_requests/{requestId} {
-      allow read, write: if false;
-    }
-
+    // Default deny.
     match /{document=**} {
       allow read, write: if false;
     }
