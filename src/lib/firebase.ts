@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signInAnonymously, signOut, browserLocalPersistence, setPersistence, type User } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import firebaseConfigJson from '../../firebase-applet-config.json';
 
 const firebaseConfig = {
@@ -14,6 +15,7 @@ const firebaseConfig = {
 const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId);
 export const app = isFirebaseConfigured ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]) : null;
 export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app, firebaseConfigJson.firestoreDatabaseId || '(default)') : null;
 
 let persistenceConfigured = false;
 async function ensureAnonymousSession(): Promise<User | null> {
