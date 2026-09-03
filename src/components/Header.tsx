@@ -10,7 +10,7 @@ import { soundHaptics } from '../utils/sound-haptics';
 import { UserProfileMenu } from './UserProfileMenu';
 import { audioEngine } from '../utils/audio-engine';
 import { StudioAiReleaseModal } from './StudioAiReleaseModal';
-import { toStructuredAudioSnapshot } from '../audio/analyze-audio';
+import { toStructuredAudioSnapshotAsync } from '../audio/analyze-audio';
 import type { StructuredAudioSnapshot } from '../ai/contracts';
 
 export type ActiveTab = 'mastering' | 'analysis' | 'presets' | 'dashboard' | 'landing' | 'learn';
@@ -62,19 +62,25 @@ export const Header: React.FC<HeaderProps> = ({
       setAudioSnapshot(null);
       return;
     }
+
     const buffer = audioEngine.getLoadedBuffer();
     if (!buffer) {
       setAudioSnapshot(null);
       return;
     }
-    try {
-      const measured = toStructuredAudioSnapshot(buffer);
-      if (!cancelled) setAudioSnapshot(measured);
-    } catch (error) {
-      console.error('[Telemetry] Failed to analyze loaded buffer', error);
-      if (!cancelled) setAudioSnapshot(null);
-    }
-    return () => { cancelled = true; };
+
+    toStructuredAudioSnapshotAsync(buffer)
+      .then((measured) => {
+        if (!cancelled) setAudioSnapshot(measured);
+      })
+      .catch((error: unknown) => {
+        console.error('[Telemetry] Async analysis failed', error);
+        if (!cancelled) setAudioSnapshot(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [hasAudio]);
 
   const navigate = (tab: ActiveTab) => {
