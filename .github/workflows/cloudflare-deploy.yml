@@ -1,4 +1,5 @@
 name: Deploy MasteringLocal to Cloudflare
+
 on:
   push:
     branches: [main]
@@ -11,12 +12,13 @@ concurrency:
   group: cloudflare-production
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    permissions:
-      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,8 +49,10 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          set -eu
           test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing production secret CLOUDFLARE_API_TOKEN"; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing production secret CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+          echo "Cloudflare deployment secrets are present."
 
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3
@@ -60,3 +64,9 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: "4"
           command: deploy --config wrangler.jsonc
+
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "## Cloudflare deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ masteringlocal-pro deployed successfully." >> "$GITHUB_STEP_SUMMARY"
