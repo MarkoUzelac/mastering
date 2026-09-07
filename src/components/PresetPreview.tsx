@@ -103,7 +103,13 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
 
     setRendering(true);
     const rendered = renderPresetPreview(sourceBuffer, preset.params, PREVIEW_DURATION);
-    if (cancelled) return;
+    if (cancelled || !rendered) {
+      if (!cancelled) {
+        setRenderedBuffer(null);
+        setRendering(false);
+      }
+      return;
+    }
 
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = contextRef.current || new AudioCtx();
@@ -138,10 +144,12 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
     stopPlayback();
     const ctx = await getContext();
     const original = sourceBuffer || audioEngine.getLoadedBuffer();
-    const buffer = mode === 'original'
-      ? original
-      : renderedBuffer || (original ? createAudioBuffer(ctx, renderPresetPreview(original, preset.params, PREVIEW_DURATION)) : createFallbackBuffer(ctx, preset));
-
+    let buffer = mode === 'original' ? original : renderedBuffer;
+    if (!buffer && original) {
+      const rendered = renderPresetPreview(original, preset.params, PREVIEW_DURATION);
+      buffer = rendered ? createAudioBuffer(ctx, rendered) : null;
+    }
+    if (!buffer && !original) buffer = createFallbackBuffer(ctx, preset);
     if (!buffer) return;
 
     const maxDuration = Math.min(PREVIEW_DURATION, buffer.duration);
