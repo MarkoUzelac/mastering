@@ -17,25 +17,10 @@ export interface UserAccount { id: string; email: string; name: string; avatarUr
 export type EntitlementListener = (entitlement: UserEntitlement, usage: UserUsage) => void;
 export interface ExportLogParams { format: string; trackName: string; duration: number; sampleRate: number; }
 
-const FREE_FEATURES = [
-  'basic_mastering',
-  'waveform',
-  'spectrum',
-  '16bit_export',
-  '24bit_export',
-  '32bit_float_export',
-  'advanced_presets',
-  'loudness_analysis',
-  'true_peak_analysis',
-  'version_history',
-  'commercial_use',
-];
+const FREE_FEATURES = ['basic_mastering', 'waveform', 'spectrum', '16bit_export', '24bit_export', '32bit_float_export', 'advanced_presets', 'loudness_analysis', 'true_peak_analysis', 'version_history', 'commercial_use'];
 
 class EntitlementService {
-  private entitlement: UserEntitlement = {
-    plan: 'free', status: 'FREE', customerId: '', subscriptionId: null,
-    currentPeriodEnd: null, cancelAtPeriodEnd: false, features: FREE_FEATURES, lastVerifiedAt: Date.now(),
-  };
+  private entitlement: UserEntitlement = { plan: 'free', status: 'FREE', customerId: '', subscriptionId: null, currentPeriodEnd: null, cancelAtPeriodEnd: false, features: FREE_FEATURES, lastVerifiedAt: Date.now() };
   private usage: UserUsage = { period: new Date().toISOString().slice(0, 7), exportsUsed: 0, exportsLimit: -1, resetAt: Date.now() + 30 * 86400000 };
   private user: UserAccount = { id: '', email: '', name: '' };
   private listeners = new Set<EntitlementListener>();
@@ -56,9 +41,7 @@ class EntitlementService {
       const res = await fetch('/api/entitlements', { headers: await getApiAuthHeaders() });
       if (res.ok) {
         const data = await res.json();
-        if (data.entitlement) {
-          this.entitlement = { ...data.entitlement, plan: 'free', status: 'FREE', features: Array.from(new Set([...(Array.isArray(data.entitlement.features) ? data.entitlement.features : []), ...FREE_FEATURES])), lastVerifiedAt: Date.now() };
-        }
+        if (data.entitlement) this.entitlement = { ...data.entitlement, plan: 'free', status: 'FREE', features: Array.from(new Set([...(Array.isArray(data.entitlement.features) ? data.entitlement.features : []), ...FREE_FEATURES])), lastVerifiedAt: Date.now() };
         if (data.usage) this.usage = { ...data.usage, exportsLimit: -1 };
         if (data.user) this.user = data.user;
         this.notify();
@@ -78,7 +61,7 @@ class EntitlementService {
     const payload: ExportLogParams = typeof paramsOrFormat === 'object' ? paramsOrFormat : { format: paramsOrFormat, trackName: trackName || 'Master Track.wav', duration: duration || 0, sampleRate: sampleRate || 48000 };
     this.usage = { ...this.usage, exportsUsed: this.usage.exportsUsed + 1, exportsLimit: -1 };
     this.notify();
-    analytics.track('export_completed', payload);
+    analytics.track('export_completed', { format: payload.format, trackName: payload.trackName, duration: payload.duration, sampleRate: payload.sampleRate });
     return { allowed: true, remaining: Infinity };
   }
 }
