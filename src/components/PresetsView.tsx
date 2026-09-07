@@ -7,12 +7,13 @@ import { PresetPreview } from './PresetPreview';
 interface PresetsViewProps {
   presets: MasteringPreset[];
   activePresetId: string;
+  currentAudioBuffer?: AudioBuffer | null;
   onSelectPreset: (preset: MasteringPreset) => void;
   onOpenMastering: () => void;
   onOpenUpgradeModal: (feature: string) => void;
 }
 
-export const PresetsView: React.FC<PresetsViewProps> = ({ presets, activePresetId, onSelectPreset, onOpenMastering }) => {
+export const PresetsView: React.FC<PresetsViewProps> = ({ presets, activePresetId, currentAudioBuffer, onSelectPreset, onOpenMastering, onOpenUpgradeModal }) => {
   const [selectedCategory, setSelectedCategory] = useState<PresetCategory>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [previewPresetId, setPreviewPresetId] = useState<string | null>(activePresetId || presets[0]?.id || null);
@@ -54,11 +55,13 @@ export const PresetsView: React.FC<PresetsViewProps> = ({ presets, activePresetI
     }
   };
 
-  const handlePreviewSelect = (preset: MasteringPreset) => {
-    setPreviewPresetId(preset.id);
-  };
+  const handlePreviewSelect = (preset: MasteringPreset) => setPreviewPresetId(preset.id);
 
   const handleApply = (preset: MasteringPreset) => {
+    if (preset.proOnly || preset.isPro) {
+      onOpenUpgradeModal('ADVANCED_PRESETS');
+      return;
+    }
     onSelectPreset(preset);
     onOpenMastering();
   };
@@ -73,16 +76,16 @@ export const PresetsView: React.FC<PresetsViewProps> = ({ presets, activePresetI
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="break-anywhere text-xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-2xl">Mastering Profiles</h1>
-              <span className="rounded-full border border-[var(--accent-lime)]/25 bg-[var(--accent-lime-soft)] px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-[var(--accent-lime)]">Studio Preview</span>
+              <span className="rounded-full border border-[var(--accent-lime)]/25 bg-[var(--accent-lime-soft)] px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-[var(--accent-lime)]">A/B Preview</span>
             </div>
             <p className="mt-1 max-w-2xl break-anywhere text-xs leading-relaxed text-[var(--text-secondary)] sm:text-sm">
-              Preslušaj karakter profila, pregledaj njegovu krivulju i tek onda ga primijeni u mastering lancu.
+              Odaberi profil, preslušaj ORIGINAL nasuprot DSP karakteru i tek onda primijeni preset u mastering lancu.
             </p>
           </div>
 
           {previewPreset && (
             <div className="w-full min-w-0 lg:max-w-md">
-              <PresetPreview preset={previewPreset} />
+              <PresetPreview preset={previewPreset} audioBuffer={currentAudioBuffer} />
             </div>
           )}
         </div>
@@ -137,7 +140,7 @@ export const PresetsView: React.FC<PresetsViewProps> = ({ presets, activePresetI
 
                 <p className="mt-3 min-h-[54px] break-anywhere text-[11px] leading-relaxed text-[var(--text-secondary)]">{preset.description}</p>
 
-                {previewed && <div className="mt-3" onClick={(event) => event.stopPropagation()}><PresetPreview preset={preset} compact /></div>}
+                {previewed && <div className="mt-3" onClick={(event) => event.stopPropagation()}><PresetPreview preset={preset} audioBuffer={currentAudioBuffer} compact /></div>}
 
                 <div className="mt-3 grid grid-cols-3 gap-2 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-2 text-center font-mono">
                   <div className="min-w-0"><span className="block text-[8px] uppercase tracking-wider text-[var(--text-tertiary)]">Low</span><span className="block truncate text-[10px] text-[var(--text-primary)]">{preset.params.low > 0 ? '+' : ''}{preset.params.low} dB</span></div>
