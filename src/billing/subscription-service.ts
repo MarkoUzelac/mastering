@@ -1,7 +1,7 @@
 import { PlanId } from './billing-config';
 import { entitlementService, UserEntitlement } from './entitlement-service';
 import { analytics } from './analytics';
-import { getApiAuthHeaders } from '../lib/firebase';
+import { getApiAuthHeaders } from '../lib/client-identity';
 
 export interface Invoice { id: string; number: string; amount: number; currency: string; status: 'paid' | 'open' | 'void'; created: number; pdfUrl?: string; interval: string; }
 export interface ExportHistoryRecord { id: string; filename: string; format: string; sampleRate: number; channels: number; duration: number; profileName: string; createdAt: number; tier: string; }
@@ -30,7 +30,6 @@ class SubscriptionService {
     } catch { return { error: 'Network error connecting to Customer Portal.' }; }
   }
 
-  /** Stripe webhooks are authoritative. This method only refreshes state after returning from Checkout. */
   public async confirmSubscription(_sessionId: string, _planId: PlanId): Promise<UserEntitlement> {
     return entitlementService.fetchServerEntitlements();
   }
@@ -57,6 +56,7 @@ class SubscriptionService {
     try { const res = await fetch('/api/billing/invoices', { headers: await getApiAuthHeaders() }); if (res.ok) return (await res.json()).invoices || []; } catch {}
     return [];
   }
+
   public async getExportHistory(): Promise<ExportHistoryRecord[]> {
     try { const res = await fetch('/api/account/exports', { headers: await getApiAuthHeaders() }); if (res.ok) return (await res.json()).exports || []; } catch {}
     return [];
