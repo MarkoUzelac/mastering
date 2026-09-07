@@ -1,18 +1,24 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "22"
   NPM_FLAGS = "--no-audit --no-fund"
 
-# Vite SPA fallback.
+# API gateway: Netlify Functions -> /api/*
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Vite SPA fallback. Keep this after the API redirect.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Do not cache the application shell aggressively.
 [[headers]]
   for = "/index.html"
   [headers.values]
