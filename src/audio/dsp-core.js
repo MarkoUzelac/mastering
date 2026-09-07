@@ -53,4 +53,18 @@ export class MasteringDSP {
   process(inputs,outputs){const frames=inputs[0]?.length||0;for(let i=0;i<frames;i+=1){let L=inputs[0][i]||0;let R=(inputs[1]?.[i]??L);if(this.params.phaseInvert)R=-R;L=this.saturate(this.filters[0].high.process(this.filters[0].mid.process(this.filters[0].low.process(L))));R=this.saturate(this.filters[Math.min(1,this.filters.length-1)].high.process(this.filters[Math.min(1,this.filters.length-1)].mid.process(this.filters[Math.min(1,this.filters.length-1)].low.process(R))));const mid=(L+R)*0.5,side=(L-R)*0.5*this.width;L=mid+side;R=mid-side;if(this.balance<0)R*=1+this.balance;else if(this.balance>0)L*=1-this.balance;const detector=Math.max(Math.abs(L),Math.abs(R));const coeff=detector>this.envelope?this.attack:this.release;this.envelope=detector+coeff*(this.envelope-detector);const compressedDb=this.compressDb(gainToDb(this.envelope));const reductionDb=compressedDb-gainToDb(this.envelope);const compressorGain=dbToGain(reductionDb)*this.makeup;const scaledL=L*compressorGain,scaledR=R*compressorGain;const peak=Math.max(this.truePeakEstimate(scaledL,this.previousL),this.truePeakEstimate(scaledR,this.previousR));const target=peak>this.ceiling?this.ceiling/peak:1;this.limiterGain=target<this.limiterGain?target:1+this.limitRelease*(this.limiterGain-1);L=scaledL*this.limiterGain;R=scaledR*this.limiterGain;const finalPeak=Math.max(Math.abs(L),Math.abs(R));if(finalPeak>this.ceiling){const s=this.ceiling/finalPeak;L*=s;R*=s;this.limiterGain*=s;}outputs[0][i]=clamp(L,-1,1);if(outputs[1])outputs[1][i]=clamp(R,-1,1);this.previousL=L;this.previousR=R;}}
 }
 
+export function renderPresetPreview(buffer, params = {}, seconds = 8) {
+  if (!buffer || !Number.isFinite(buffer.sampleRate) || buffer.length <= 0) return null;
+  const sampleRate = buffer.sampleRate;
+  const frames = Math.min(buffer.length, Math.max(1, Math.floor(sampleRate * seconds)));
+  const channels = Math.min(2, Math.max(1, buffer.numberOfChannels));
+  const left = buffer.getChannelData(0);
+  const right = channels > 1 ? buffer.getChannelData(1) : left;
+  const outLeft = new Float32Array(frames);
+  const outRight = new Float32Array(frames);
+  const dsp = new MasteringDSP(sampleRate, 2, params);
+  dsp.process([left.subarray(0, frames), right.subarray(0, frames)], [outLeft, outRight]);
+  return { sampleRate, frames, left: outLeft, right: outRight };
+}
+
 export { DEFAULT_PARAMS };
