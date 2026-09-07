@@ -45,7 +45,8 @@ function extractWaveform(buffer: AudioBuffer, maxPoints = 128) {
   return values;
 }
 
-function createAudioBuffer(ctx: AudioContext, rendered: { sampleRate: number; frames: number; left: Float32Array; right: Float32Array }) {
+function createAudioBuffer(ctx: AudioContext, rendered: { sampleRate: number; frames: number; left: Float32Array; right: Float32Array } | null) {
+  if (!rendered) return null;
   const buffer = ctx.createBuffer(2, rendered.frames, rendered.sampleRate);
   buffer.getChannelData(0).set(rendered.left);
   buffer.getChannelData(1).set(rendered.right);
@@ -167,83 +168,32 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
   }
 
   const displayedBuffer = mode === 'original' ? sourceBuffer : renderedBuffer;
-  const waveform = useMemo(
-    () => displayedBuffer ? extractWaveform(displayedBuffer) : makeFallbackWaveform(preset),
-    [displayedBuffer, preset]
-  );
+  const waveform = useMemo(() => displayedBuffer ? extractWaveform(displayedBuffer) : makeFallbackWaveform(preset), [displayedBuffer, preset]);
   const statusLabel = mode === 'original' ? 'ORIGINAL' : hasRealTrack ? 'MASTERINGDSP RENDER' : 'DSP DEMO';
 
   return (
     <div className={`rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-primary)]/90 ${compact ? 'p-2.5' : 'p-3.5'} shadow-[0_12px_36px_rgba(0,0,0,0.12)]`}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent-lime-soft)] text-[var(--accent-lime)]">
-            <Volume2 className="h-3.5 w-3.5" />
-          </div>
-          <div className="min-w-0">
-            <div className="truncate text-[9px] font-mono uppercase tracking-[0.16em] text-[var(--text-tertiary)]">A/B audio preview</div>
-            <div className="truncate text-[10px] font-semibold text-[var(--text-primary)]">{statusLabel}</div>
-          </div>
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent-lime-soft)] text-[var(--accent-lime)]"><Volume2 className="h-3.5 w-3.5" /></div>
+          <div className="min-w-0"><div className="truncate text-[9px] font-mono uppercase tracking-[0.16em] text-[var(--text-tertiary)]">A/B audio preview</div><div className="truncate text-[10px] font-semibold text-[var(--text-primary)]">{statusLabel}</div></div>
         </div>
-        <button
-          type="button"
-          onClick={() => void (playing ? Promise.resolve(stopPlayback()) : play())}
-          disabled={rendering}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[var(--accent-lime)]/35 bg-[var(--accent-lime-soft)] px-3 text-[9px] font-mono font-bold text-[var(--accent-lime)] transition hover:bg-[var(--accent-lime)]/15 focus-visible:outline-2 focus-visible:outline-[var(--accent-lime)] focus-visible:outline-offset-2 disabled:cursor-wait disabled:opacity-60"
-          aria-label={playing ? `Zaustavi preview ${preset.name}` : `Preslušaj ${preset.name}`}
-        >
-          {rendering ? <Loader2 className="h-3 w-3 animate-spin" /> : playing ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
-          {rendering ? 'RENDER' : playing ? 'STOP' : 'PLAY'}
+        <button type="button" onClick={() => void (playing ? Promise.resolve(stopPlayback()) : play())} disabled={rendering} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[var(--accent-lime)]/35 bg-[var(--accent-lime-soft)] px-3 text-[9px] font-mono font-bold text-[var(--accent-lime)] transition hover:bg-[var(--accent-lime)]/15 focus-visible:outline-2 focus-visible:outline-[var(--accent-lime)] focus-visible:outline-offset-2 disabled:cursor-wait disabled:opacity-60" aria-label={playing ? `Zaustavi preview ${preset.name}` : `Preslušaj ${preset.name}`}>
+          {rendering ? <Loader2 className="h-3 w-3 animate-spin" /> : playing ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />} {rendering ? 'RENDER' : playing ? 'STOP' : 'PLAY'}
         </button>
       </div>
-
       <div className="mt-3 grid grid-cols-2 gap-1 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-1" role="tablist" aria-label="A/B preview">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === 'original'}
-          onClick={() => { stopPlayback(); setMode('original'); }}
-          disabled={!hasRealTrack}
-          className={`min-h-9 rounded-md px-2 text-[9px] font-mono font-bold transition ${mode === 'original' ? 'bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'} disabled:cursor-not-allowed disabled:opacity-40`}
-        >
-          A · ORIGINAL
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === 'preset'}
-          onClick={() => { stopPlayback(); setMode('preset'); }}
-          className={`min-h-9 rounded-md px-2 text-[9px] font-mono font-bold transition ${mode === 'preset' ? 'bg-[var(--accent-lime-soft)] text-[var(--accent-lime)] shadow-sm' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'}`}
-        >
-          B · {hasRealTrack ? 'PRESET' : 'DSP DEMO'}
-        </button>
+        <button type="button" role="tab" aria-selected={mode === 'original'} onClick={() => { stopPlayback(); setMode('original'); }} disabled={!hasRealTrack} className={`min-h-9 rounded-md px-2 text-[9px] font-mono font-bold transition ${mode === 'original' ? 'bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'} disabled:cursor-not-allowed disabled:opacity-40`}>A · ORIGINAL</button>
+        <button type="button" role="tab" aria-selected={mode === 'preset'} onClick={() => { stopPlayback(); setMode('preset'); }} className={`min-h-9 rounded-md px-2 text-[9px] font-mono font-bold transition ${mode === 'preset' ? 'bg-[var(--accent-lime-soft)] text-[var(--accent-lime)] shadow-sm' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'}`}>B · {hasRealTrack ? 'PRESET' : 'DSP DEMO'}</button>
       </div>
-
       <div className="mt-3 h-16 w-full overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01))] px-1.5" aria-label={mode === 'original' ? 'Waveform originalnog audio zapisa' : 'Waveform DSP rendera preseta'}>
         <svg viewBox="0 0 128 42" preserveAspectRatio="none" className="h-full w-full" role="img">
           <path d="M0 21 L128 21" stroke="currentColor" strokeOpacity="0.08" strokeWidth="0.6" />
-          {waveform.map((value, index) => {
-            const x = index;
-            const y = 21 - value * 17;
-            const y2 = 21 + value * 17;
-            const active = progress > 0 && index / Math.max(1, waveform.length - 1) <= progress;
-            return <line key={`${preset.id}-${mode}-${index}`} x1={x} x2={x} y1={y} y2={y2} stroke="currentColor" strokeOpacity={active ? 0.95 : 0.48} strokeWidth="0.72" className="text-[var(--accent-lime)]" />;
-          })}
+          {waveform.map((value, index) => { const x = index; const y = 21 - value * 17; const y2 = 21 + value * 17; const active = progress > 0 && index / Math.max(1, waveform.length - 1) <= progress; return <line key={`${preset.id}-${mode}-${index}`} x1={x} x2={x} y1={y} y2={y2} stroke="currentColor" strokeOpacity={active ? 0.95 : 0.48} strokeWidth="0.72" className="text-[var(--accent-lime)]" />; })}
         </svg>
       </div>
-
-      <div className="mt-2 flex items-center justify-between gap-2 text-[9px] font-mono text-[var(--text-tertiary)]">
-        <span className="truncate">{hasRealTrack ? `${mode === 'original' ? 'A' : 'B'} · stvarni audio buffer` : 'Nema učitanog tracka'}</span>
-        <span className="shrink-0">{preset.targetLufs.toFixed(1)} LUFS</span>
-      </div>
-
-      <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2.5 py-2">
-        <div className="flex min-w-0 items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-          {mode === 'preset' ? <Check className="h-3 w-3 text-[var(--accent-lime)]" /> : <RotateCcw className="h-3 w-3" />}
-          <span className="truncate">{mode === 'preset' ? 'Slušaš stvarni DSP render preseta' : 'Slušaš originalni track'}</span>
-        </div>
-        <span className="shrink-0 tabular-nums text-[9px] text-[var(--text-tertiary)]">{Math.round(progress * 100)}%</span>
-      </div>
+      <div className="mt-2 flex items-center justify-between gap-2 text-[9px] font-mono text-[var(--text-tertiary)]"><span className="truncate">{hasRealTrack ? `${mode === 'original' ? 'A' : 'B'} · stvarni audio buffer` : 'Nema učitanog tracka'}</span><span className="shrink-0">{preset.targetLufs.toFixed(1)} LUFS</span></div>
+      <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2.5 py-2"><div className="flex min-w-0 items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">{mode === 'preset' ? <Check className="h-3 w-3 text-[var(--accent-lime)]" /> : <RotateCcw className="h-3 w-3" />}<span className="truncate">{mode === 'preset' ? 'Slušaš stvarni DSP render preseta' : 'Slušaš originalni track'}</span></div><span className="shrink-0 tabular-nums text-[9px] text-[var(--text-tertiary)]">{Math.round(progress * 100)}%</span></div>
     </div>
   );
 };
