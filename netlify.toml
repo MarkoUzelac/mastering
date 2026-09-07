@@ -7,6 +7,9 @@
   NODE_VERSION = "22"
   NPM_FLAGS = "--no-audit --no-fund"
 
+# Firebase Web API keys are public client configuration; Netlify Smart Detection
+# is safelisted in the Netlify project environment rather than disabling scanning.
+
 # API gateway: Netlify Functions -> /api/*
 [[redirects]]
   from = "/api/*"
