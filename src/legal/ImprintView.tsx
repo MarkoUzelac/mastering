@@ -2,7 +2,11 @@ import React from 'react';
 import { LEGAL_CONFIG } from './legal-config';
 import { Building2, Mail, Globe, Scale, AlertCircle } from 'lucide-react';
 
-export const ImprintView: React.FC = () => {
+export interface ImprintViewProps {
+  onBack?: () => void;
+}
+
+export const ImprintView: React.FC<ImprintViewProps> = ({ onBack: _onBack }) => {
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 md:px-8 text-left space-y-8 animate-fade-in">
       <div className="border-b border-[var(--border-subtle)] pb-6">
@@ -16,7 +20,6 @@ export const ImprintView: React.FC = () => {
         </p>
       </div>
 
-      {/* Configuration Status Notice if placeholders are present */}
       {!LEGAL_CONFIG.isConfigurationComplete && (
         <div className="p-4 rounded-sm bg-[#171A20] border border-[#2D333F] flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-[var(--accent-lime)] shrink-0 mt-0.5" />
@@ -29,13 +32,9 @@ export const ImprintView: React.FC = () => {
         </div>
       )}
 
-      {/* Main Entity Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
         <div className="p-5 rounded-sm bg-[#121418] border border-[var(--border-subtle)] space-y-3">
-          <div className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[var(--accent-lime)]" />
-            <span>Service Provider & Legal Entity</span>
-          </div>
+          <div className="font-semibold text-[var(--text-primary)] flex items-center gap-2"><Building2 className="w-4 h-4 text-[var(--accent-lime)]" /><span>Service Provider & Legal Entity</span></div>
           <div className="space-y-1.5 text-[var(--text-secondary)]">
             <div><strong className="text-[var(--text-primary)]">Legal Entity:</strong> {LEGAL_CONFIG.businessName}</div>
             <div><strong className="text-[var(--text-primary)]">Trading Name:</strong> {LEGAL_CONFIG.tradingName}</div>
@@ -45,12 +44,8 @@ export const ImprintView: React.FC = () => {
             <div><strong className="text-[var(--text-primary)]">VAT Identification (OIB / UID):</strong> {LEGAL_CONFIG.vatId}</div>
           </div>
         </div>
-
         <div className="p-5 rounded-sm bg-[#121418] border border-[var(--border-subtle)] space-y-3">
-          <div className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
-            <Mail className="w-4 h-4 text-[var(--accent-lime)]" />
-            <span>Contact & Representative</span>
-          </div>
+          <div className="font-semibold text-[var(--text-primary)] flex items-center gap-2"><Mail className="w-4 h-4 text-[var(--accent-lime)]" /><span>Contact & Representative</span></div>
           <div className="space-y-1.5 text-[var(--text-secondary)]">
             <div><strong className="text-[var(--text-primary)]">Authorized Representative:</strong> {LEGAL_CONFIG.legalRepresentative}</div>
             <div><strong className="text-[var(--text-primary)]">Customer Support:</strong> <a href={`mailto:${LEGAL_CONFIG.supportEmail}`} className="text-[var(--accent-lime)]">{LEGAL_CONFIG.supportEmail}</a></div>
@@ -60,7 +55,6 @@ export const ImprintView: React.FC = () => {
         </div>
       </div>
 
-      {/* Online Dispute Resolution */}
       <section className="space-y-3 text-sm text-[var(--text-secondary)] leading-relaxed">
         <h2 className="text-lg font-semibold text-[var(--text-primary)]">EU Online Dispute Resolution (ODR)</h2>
         <p className="text-xs text-[var(--text-tertiary)]">
