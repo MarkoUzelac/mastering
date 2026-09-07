@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, Pause, Play, RotateCcw, Volume2 } from 'lucide-react';
-import { MasteringPreset, MasteringParams } from '../types';
+import { Check, Loader2, Pause, Play, RotateCcw, Volume2 } from 'lucide-react';
+import { MasteringPreset } from '../types';
 import { audioEngine } from '../utils/audio-engine';
+import { renderPresetPreview } from '../audio/dsp-core.js';
 
 interface PresetPreviewProps {
   preset: MasteringPreset;
@@ -44,19 +45,14 @@ function extractWaveform(buffer: AudioBuffer, maxPoints = 128) {
   return values;
 }
 
-function downsampleBuffer(buffer: AudioBuffer, seconds = PREVIEW_DURATION) {
-  const sampleRate = buffer.sampleRate;
-  const frames = Math.min(buffer.length, Math.floor(sampleRate * seconds));
-  const channels = Math.min(2, buffer.numberOfChannels);
-  const preview = new Float32Array(frames * channels);
-  for (let channel = 0; channel < channels; channel += 1) {
-    const source = buffer.getChannelData(channel);
-    for (let i = 0; i < frames; i += 1) preview[(i * channels) + channel] = source[i];
-  }
-  return { frames, channels, sampleRate, data: preview };
+function createAudioBuffer(ctx: AudioContext, rendered: { sampleRate: number; frames: number; left: Float32Array; right: Float32Array }) {
+  const buffer = ctx.createBuffer(2, rendered.frames, rendered.sampleRate);
+  buffer.getChannelData(0).set(rendered.left);
+  buffer.getChannelData(1).set(rendered.right);
+  return buffer;
 }
 
-function createParamPreviewBuffer(ctx: AudioContext, preset: MasteringPreset) {
+function createFallbackBuffer(ctx: AudioContext, preset: MasteringPreset) {
   const frameCount = Math.floor(ctx.sampleRate * 3.2);
   const buffer = ctx.createBuffer(2, frameCount, ctx.sampleRate);
   const lowBoost = Math.max(-6, Math.min(6, preset.params.low));
@@ -84,23 +80,38 @@ function createParamPreviewBuffer(ctx: AudioContext, preset: MasteringPreset) {
 export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = false, audioBuffer }) => {
   const [mode, setMode] = useState<'original' | 'preset'>('preset');
   const [playing, setPlaying] = useState(false);
+  const [rendering, setRendering] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [renderedBuffer, setRenderedBuffer] = useState<AudioBuffer | null>(null);
   const contextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
-  const gainRef = useRef<GainNode | null>(null);
   const timerRef = useRef<number | null>(null);
 
-  const waveform = useMemo(
-    () => audioBuffer ? extractWaveform(audioBuffer) : makeFallbackWaveform(preset),
-    [audioBuffer, preset]
-  );
+  const sourceBuffer = audioBuffer || audioEngine.getLoadedBuffer();
+  const hasRealTrack = Boolean(sourceBuffer);
 
-  const previewBuffer = useMemo(() => {
-    if (!audioBuffer) return null;
-    const ctx = contextRef.current;
-    if (!ctx) return null;
-    return createParamPreviewBuffer(ctx, preset);
-  }, [audioBuffer, preset]);
+  useEffect(() => {
+    let cancelled = false;
+    stopPlayback();
+
+    if (!sourceBuffer) {
+      setRenderedBuffer(null);
+      setRendering(false);
+      return;
+    }
+
+    setRendering(true);
+    const rendered = renderPresetPreview(sourceBuffer, preset.params, PREVIEW_DURATION);
+    if (cancelled) return;
+
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = contextRef.current || new AudioCtx();
+    contextRef.current = ctx;
+    setRenderedBuffer(createAudioBuffer(ctx, rendered));
+    setRendering(false);
+
+    return () => { cancelled = true; };
+  }, [preset, sourceBuffer]);
 
   useEffect(() => () => stopPlayback(), []);
 
@@ -109,9 +120,7 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
     timerRef.current = null;
     try { sourceRef.current?.stop(); } catch { /* already stopped */ }
     try { sourceRef.current?.disconnect(); } catch { /* already disconnected */ }
-    try { gainRef.current?.disconnect(); } catch { /* already disconnected */ }
     sourceRef.current = null;
-    gainRef.current = null;
     setPlaying(false);
     setProgress(0);
   }
@@ -127,29 +136,20 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
   async function play() {
     stopPlayback();
     const ctx = await getContext();
-    let buffer: AudioBuffer | null = null;
-
-    if (mode === 'original') {
-      buffer = audioBuffer || audioEngine.getLoadedBuffer();
-    } else {
-      const original = audioBuffer || audioEngine.getLoadedBuffer();
-      if (original) {
-        buffer = createParamPreviewBuffer(ctx, preset);
-      } else {
-        buffer = createParamPreviewBuffer(ctx, preset);
-      }
-    }
+    const original = sourceBuffer || audioEngine.getLoadedBuffer();
+    const buffer = mode === 'original'
+      ? original
+      : renderedBuffer || (original ? createAudioBuffer(ctx, renderPresetPreview(original, preset.params, PREVIEW_DURATION)) : createFallbackBuffer(ctx, preset));
 
     if (!buffer) return;
 
-    const maxDuration = mode === 'original' ? Math.min(PREVIEW_DURATION, buffer.duration) : buffer.duration;
+    const maxDuration = Math.min(PREVIEW_DURATION, buffer.duration);
     const source = ctx.createBufferSource();
     const gain = ctx.createGain();
     source.buffer = buffer;
     gain.gain.value = 0.0001;
     source.connect(gain).connect(ctx.destination);
     sourceRef.current = source;
-    gainRef.current = gain;
 
     const now = ctx.currentTime;
     gain.gain.exponentialRampToValueAtTime(0.78, now + 0.05);
@@ -157,6 +157,7 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
     source.start(now);
     source.stop(now + maxDuration + 0.03);
     setPlaying(true);
+
     const startedAt = performance.now();
     timerRef.current = window.setInterval(() => {
       const elapsed = (performance.now() - startedAt) / 1000;
@@ -165,8 +166,12 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
     }, 50);
   }
 
-  const hasRealTrack = Boolean(audioBuffer || audioEngine.getLoadedBuffer());
-  const statusLabel = mode === 'original' ? 'ORIGINAL' : hasRealTrack ? 'PRESET DSP' : 'DSP DEMO';
+  const displayedBuffer = mode === 'original' ? sourceBuffer : renderedBuffer;
+  const waveform = useMemo(
+    () => displayedBuffer ? extractWaveform(displayedBuffer) : makeFallbackWaveform(preset),
+    [displayedBuffer, preset]
+  );
+  const statusLabel = mode === 'original' ? 'ORIGINAL' : hasRealTrack ? 'MASTERINGDSP RENDER' : 'DSP DEMO';
 
   return (
     <div className={`rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-primary)]/90 ${compact ? 'p-2.5' : 'p-3.5'} shadow-[0_12px_36px_rgba(0,0,0,0.12)]`}>
@@ -183,11 +188,12 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
         <button
           type="button"
           onClick={() => void (playing ? Promise.resolve(stopPlayback()) : play())}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[var(--accent-lime)]/35 bg-[var(--accent-lime-soft)] px-3 text-[9px] font-mono font-bold text-[var(--accent-lime)] transition hover:bg-[var(--accent-lime)]/15 focus-visible:outline-2 focus-visible:outline-[var(--accent-lime)] focus-visible:outline-offset-2"
+          disabled={rendering}
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[var(--accent-lime)]/35 bg-[var(--accent-lime-soft)] px-3 text-[9px] font-mono font-bold text-[var(--accent-lime)] transition hover:bg-[var(--accent-lime)]/15 focus-visible:outline-2 focus-visible:outline-[var(--accent-lime)] focus-visible:outline-offset-2 disabled:cursor-wait disabled:opacity-60"
           aria-label={playing ? `Zaustavi preview ${preset.name}` : `Preslušaj ${preset.name}`}
         >
-          {playing ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
-          {playing ? 'STOP' : 'PLAY'}
+          {rendering ? <Loader2 className="h-3 w-3 animate-spin" /> : playing ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
+          {rendering ? 'RENDER' : playing ? 'STOP' : 'PLAY'}
         </button>
       </div>
 
@@ -213,7 +219,7 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
         </button>
       </div>
 
-      <div className="mt-3 h-16 w-full overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01))] px-1.5" aria-label="Stvarni waveform učitanog audio zapisa">
+      <div className="mt-3 h-16 w-full overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01))] px-1.5" aria-label={mode === 'original' ? 'Waveform originalnog audio zapisa' : 'Waveform DSP rendera preseta'}>
         <svg viewBox="0 0 128 42" preserveAspectRatio="none" className="h-full w-full" role="img">
           <path d="M0 21 L128 21" stroke="currentColor" strokeOpacity="0.08" strokeWidth="0.6" />
           {waveform.map((value, index) => {
@@ -221,32 +227,20 @@ export const PresetPreview: React.FC<PresetPreviewProps> = ({ preset, compact = 
             const y = 21 - value * 17;
             const y2 = 21 + value * 17;
             const active = progress > 0 && index / Math.max(1, waveform.length - 1) <= progress;
-            return (
-              <line
-                key={`${preset.id}-${index}`}
-                x1={x}
-                x2={x}
-                y1={y}
-                y2={y2}
-                stroke="currentColor"
-                strokeOpacity={active ? 0.95 : 0.48}
-                strokeWidth="0.72"
-                className="text-[var(--accent-lime)]"
-              />
-            );
+            return <line key={`${preset.id}-${mode}-${index}`} x1={x} x2={x} y1={y} y2={y2} stroke="currentColor" strokeOpacity={active ? 0.95 : 0.48} strokeWidth="0.72" className="text-[var(--accent-lime)]" />;
           })}
         </svg>
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-2 text-[9px] font-mono text-[var(--text-tertiary)]">
-        <span className="truncate">{hasRealTrack ? 'Waveform: učitani track' : 'Nema učitanog tracka'}</span>
+        <span className="truncate">{hasRealTrack ? `${mode === 'original' ? 'A' : 'B'} · stvarni audio buffer` : 'Nema učitanog tracka'}</span>
         <span className="shrink-0">{preset.targetLufs.toFixed(1)} LUFS</span>
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2.5 py-2">
         <div className="flex min-w-0 items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
           {mode === 'preset' ? <Check className="h-3 w-3 text-[var(--accent-lime)]" /> : <RotateCcw className="h-3 w-3" />}
-          <span className="truncate">{mode === 'preset' ? 'Slušaš preset karakter' : 'Slušaš original'}</span>
+          <span className="truncate">{mode === 'preset' ? 'Slušaš stvarni DSP render preseta' : 'Slušaš originalni track'}</span>
         </div>
         <span className="shrink-0 tabular-nums text-[9px] text-[var(--text-tertiary)]">{Math.round(progress * 100)}%</span>
       </div>
