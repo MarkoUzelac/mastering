@@ -46,7 +46,7 @@ import { entitlementService, UserEntitlement, UserUsage } from './billing/entitl
 import { PlanId, FeatureKey } from './billing/billing-config';
 import { FeatureGates } from './billing/feature-gates';
 import { soundHaptics } from './utils/sound-haptics';
-import { ArrowLeft, Download, Upload, Sparkles, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Upload, Sparkles, ChevronDown } from 'lucide-react';
 import { SplashScreen } from './components/SplashScreen';
 
 export const App: React.FC = () => {
@@ -72,27 +72,15 @@ export const App: React.FC = () => {
   const [selectedTarget, setSelectedTarget] = useState<ReferenceTarget>(REFERENCE_TARGETS[0]);
   const [isMasteringInProgress, setIsMasteringInProgress] = useState(false);
   const [activeDspSlot, setActiveDspSlot] = useState<'A' | 'B'>('A');
-  const [slotA, setSlotA] = useState<DSPStateSlot>({
-    params: { ...DEFAULT_PARAMS },
-    advancedParams: { ...advancedParams },
-    presetName: 'Modern Streaming', timestamp: Date.now(),
-  });
-  const [slotB, setSlotB] = useState<DSPStateSlot>({
-    params: { ...DEFAULT_PARAMS, low: 1.5, mid: -0.5, high: 1.2, threshold: -16.0, ratio: 3.5, gain: 1.0 },
-    advancedParams: { ...advancedParams, drive: 45.0, warmth: 50.0, width: 125.0 },
-    presetName: 'Warm Analog Push', timestamp: Date.now(),
-  });
+  const [slotA, setSlotA] = useState<DSPStateSlot>({ params: { ...DEFAULT_PARAMS }, advancedParams: { ...advancedParams }, presetName: 'Modern Streaming', timestamp: Date.now() });
+  const [slotB, setSlotB] = useState<DSPStateSlot>({ params: { ...DEFAULT_PARAMS, low: 1.5, mid: -0.5, high: 1.2, threshold: -16.0, ratio: 3.5, gain: 1.0 }, advancedParams: { ...advancedParams, drive: 45.0, warmth: 50.0, width: 125.0 }, presetName: 'Warm Analog Push', timestamp: Date.now() });
   const historyStack = useRef<MasteringParams[]>([{ ...DEFAULT_PARAMS }]);
   const historyIndex = useRef(0);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [entitlement, setEntitlement] = useState<UserEntitlement>(entitlementService.getEntitlement());
   const [usage, setUsage] = useState<UserUsage>(entitlementService.getUsage());
-  const [meterData, setMeterData] = useState<MeterData>({
-    inputPeakL: -3.2, inputPeakR: -3.4, inputRmsL: -14.6, inputRmsR: -14.8, outputPeakL: -0.9,
-    outputPeakR: -0.9, outputRmsL: -11.2, outputRmsR: -11.4, gainReductionDb: 2.1,
-    limiterActive: true, momentaryLufs: -9.7, integratedLufs: -10.8, crestFactor: 8.4,
-  });
+  const [meterData, setMeterData] = useState<MeterData>({ inputPeakL: -3.2, inputPeakR: -3.4, inputRmsL: -14.6, inputRmsR: -14.8, outputPeakL: -0.9, outputPeakR: -0.9, outputRmsL: -11.2, outputRmsR: -11.4, gainReductionDb: 2.1, limiterActive: true, momentaryLufs: -9.7, integratedLufs: -10.8, crestFactor: 8.4 });
   const [snapshots, setSnapshots] = useState<HistorySnapshotItem[]>([
     { id: '1', time: '14:23:05', name: 'EQ Low Shelf Boost', target: 'Spotify (-14 LUFS)', params: { ...DEFAULT_PARAMS } },
     { id: '2', time: '14:20:12', name: 'Dynamics Glue VCA', target: 'Club/EDM (-9 LUFS)', params: { ...DEFAULT_PARAMS } },
@@ -116,116 +104,29 @@ export const App: React.FC = () => {
   const [upgradeTargetFeature, setUpgradeTargetFeature] = useState<FeatureKey>('HIGH_RES_EXPORT');
 
   const pushHistory = (newParams: MasteringParams) => {
-    const currentHistory = historyStack.current.slice(0, historyIndex.current + 1);
-    currentHistory.push({ ...newParams });
-    historyStack.current = currentHistory;
-    historyIndex.current = currentHistory.length - 1;
-    setCanUndo(historyIndex.current > 0);
-    setCanRedo(false);
+    const currentHistory = historyStack.current.slice(0, historyIndex.current + 1); currentHistory.push({ ...newParams }); historyStack.current = currentHistory; historyIndex.current = currentHistory.length - 1; setCanUndo(historyIndex.current > 0); setCanRedo(false);
   };
-  const handleUndo = () => {
-    if (historyIndex.current <= 0) return;
-    soundHaptics.playSwitchSound(false);
-    historyIndex.current -= 1;
-    const target = historyStack.current[historyIndex.current];
-    setParams({ ...target }); audioEngine.setParams({ ...target }); setCanUndo(historyIndex.current > 0); setCanRedo(true);
-  };
-  const handleRedo = () => {
-    if (historyIndex.current >= historyStack.current.length - 1) return;
-    soundHaptics.playSwitchSound(true);
-    historyIndex.current += 1;
-    const target = historyStack.current[historyIndex.current];
-    setParams({ ...target }); audioEngine.setParams({ ...target }); setCanUndo(true); setCanRedo(historyIndex.current < historyStack.current.length - 1);
-  };
+  const handleUndo = () => { if (historyIndex.current <= 0) return; soundHaptics.playSwitchSound(false); historyIndex.current -= 1; const target = historyStack.current[historyIndex.current]; setParams({ ...target }); audioEngine.setParams({ ...target }); setCanUndo(historyIndex.current > 0); setCanRedo(true); };
+  const handleRedo = () => { if (historyIndex.current >= historyStack.current.length - 1) return; soundHaptics.playSwitchSound(true); historyIndex.current += 1; const target = historyStack.current[historyIndex.current]; setParams({ ...target }); audioEngine.setParams({ ...target }); setCanUndo(true); setCanRedo(historyIndex.current < historyStack.current.length - 1); };
+
   useEffect(() => {
     const path = window.location.pathname.toLowerCase();
-    if (path.includes('/privacy/data-request')) setActiveTab('data-request');
-    else if (path.includes('/privacy')) setActiveTab('privacy');
-    else if (path.includes('/terms')) setActiveTab('terms');
-    else if (path.includes('/subscriptions') || path.includes('/subscription-terms')) setActiveTab('subscriptions');
-    else if (path.includes('/cookies')) setActiveTab('cookies');
-    else if (path.includes('/refunds')) setActiveTab('refunds');
-    else if (path.includes('/legal') || path.includes('/imprint')) setActiveTab('legal');
-    else if (path.includes('/contact')) setActiveTab('contact');
-    else if (path.includes('/pricing')) setIsPricingModalOpen(true);
-    else if (path.includes('/learn/lufs-guide')) { setInitialGuideSlug('lufs-guide'); setActiveTab('learn'); }
-    else if (path.includes('/learn/24-bit-vs-16-bit')) { setInitialGuideSlug('24-bit-vs-16-bit'); setActiveTab('learn'); }
-    else if (path.includes('/learn/master-for-spotify')) { setInitialGuideSlug('master-for-spotify'); setActiveTab('learn'); }
-    else if (path.includes('/learn/master-for-youtube')) { setInitialGuideSlug('master-for-youtube'); setActiveTab('learn'); }
-    else if (path.includes('/learn')) setActiveTab('learn');
+    if (path.includes('/privacy/data-request')) setActiveTab('data-request'); else if (path.includes('/privacy')) setActiveTab('privacy'); else if (path.includes('/terms')) setActiveTab('terms'); else if (path.includes('/subscriptions') || path.includes('/subscription-terms')) setActiveTab('subscriptions'); else if (path.includes('/cookies')) setActiveTab('cookies'); else if (path.includes('/refunds')) setActiveTab('refunds'); else if (path.includes('/legal') || path.includes('/imprint')) setActiveTab('legal'); else if (path.includes('/contact')) setActiveTab('contact'); else if (path.includes('/pricing')) setIsPricingModalOpen(true); else if (path.includes('/learn/lufs-guide')) { setInitialGuideSlug('lufs-guide'); setActiveTab('learn'); } else if (path.includes('/learn/24-bit-vs-16-bit')) { setInitialGuideSlug('24-bit-vs-16-bit'); setActiveTab('learn'); } else if (path.includes('/learn/master-for-spotify')) { setInitialGuideSlug('master-for-spotify'); setActiveTab('learn'); } else if (path.includes('/learn/master-for-youtube')) { setInitialGuideSlug('master-for-youtube'); setActiveTab('learn'); } else if (path.includes('/learn')) setActiveTab('learn');
   }, []);
-  useEffect(() => {
-    if (!showSplash) loadDemoTrack('synthwave');
-  }, [showSplash]);
-  useEffect(() => {
-    const unsubscribe = entitlementService.subscribe((newEnt, newUsage) => { setEntitlement(newEnt); setUsage(newUsage); });
-    entitlementService.fetchServerEntitlements().catch(console.error);
-    audioEngine.setTimeUpdateCallback((_time, totalDuration) => { if (totalDuration > 0) setDuration(totalDuration); });
-    audioEngine.setMeterUpdateCallback((meters) => setMeterData(meters));
-    return () => { unsubscribe(); audioEngine.stop(); };
-  }, []);
-  const loadDemoTrack = (type: 'synthwave' | 'acoustic' | 'parity') => {
-    audioEngine.stop(); setIsPlaying(false); setCurrentTime(0);
-    const buffer = audioEngine.createDemoTrack(type); audioEngine.setAudioBuffer(buffer);
-    const names = { synthwave: 'Synthwave Neon Horizon Master.wav', acoustic: 'Acoustic Resonance & Harmonics.wav', parity: 'Production Parity 100k Benchmark.wav' };
-    setCurrentTrack({ name: names[type], duration: buffer.duration, sampleRate: buffer.sampleRate, channels: buffer.numberOfChannels, buffer, sourceType: type === 'parity' ? 'synthetic' : 'demo' });
-    setDuration(buffer.duration);
-  };
-  const handleFileUpload = async (file: File) => {
-    try {
-      audioEngine.stop(); setIsPlaying(false); setCurrentTime(0);
-      const buffer = await audioEngine.loadAudioFile(file);
-      setCurrentTrack({ name: file.name, duration: buffer.duration, sampleRate: buffer.sampleRate, channels: buffer.numberOfChannels, buffer, sourceType: 'file', fileSize: file.size });
-      setDuration(buffer.duration); setActiveTab('mastering');
-    } catch (err) { console.error('Failed to load audio file:', err); }
-  };
-  const handleSelectDspSlot = useCallback((slot: 'A' | 'B') => {
-    if (slot === activeDspSlot) return; setActiveDspSlot(slot);
-    const target = slot === 'A' ? slotA : slotB;
-    setParams({ ...target.params }); setAdvancedParams({ ...target.advancedParams }); audioEngine.setParams({ ...target.params }); pushHistory({ ...target.params }); soundHaptics.playButtonTap();
-  }, [activeDspSlot, slotA, slotB]);
-  const handleCaptureToOppositeSlot = useCallback(() => {
-    const opposite = activeDspSlot === 'A' ? 'B' : 'A';
-    const data: DSPStateSlot = { params: { ...params }, advancedParams: { ...advancedParams }, presetName: MASTERING_PRESETS.find((p) => p.id === activePresetId)?.name || 'Custom', timestamp: Date.now() };
-    if (opposite === 'B') setSlotB(data); else setSlotA(data);
-  }, [activeDspSlot, params, advancedParams, activePresetId]);
-  const handleCopyDspSlot = useCallback((from: 'A' | 'B', to: 'A' | 'B') => {
-    const source = from === 'A' ? slotA : slotB; const copied = { params: { ...source.params }, advancedParams: { ...source.advancedParams }, presetName: source.presetName, timestamp: Date.now() };
-    if (to === 'B') setSlotB(copied); else setSlotA(copied);
-    if (activeDspSlot === to) { setParams({ ...copied.params }); setAdvancedParams({ ...copied.advancedParams }); audioEngine.setParams({ ...copied.params }); }
-  }, [slotA, slotB, activeDspSlot]);
-  const handleSwapDspSlots = useCallback(() => {
-    setSlotA(slotB); setSlotB(slotA); const activeNow = activeDspSlot === 'A' ? slotB : slotA;
-    setParams({ ...activeNow.params }); setAdvancedParams({ ...activeNow.advancedParams }); audioEngine.setParams({ ...activeNow.params });
-  }, [slotA, slotB, activeDspSlot]);
-  const handleResetDspSlot = useCallback((slot: 'A' | 'B') => {
-    const reset: DSPStateSlot = { params: { ...DEFAULT_PARAMS }, advancedParams: { ...advancedParams }, presetName: 'Default', timestamp: Date.now() };
-    if (slot === 'A') setSlotA(reset); else setSlotB(reset);
-    if (slot === activeDspSlot) { setParams({ ...DEFAULT_PARAMS }); setAdvancedParams(reset.advancedParams); audioEngine.setParams({ ...DEFAULT_PARAMS }); pushHistory({ ...DEFAULT_PARAMS }); }
-  }, [activeDspSlot, advancedParams]);
-  const handleParamChange = useCallback((param: keyof MasteringParams, value: number) => {
-    setParams((prev) => { const updated = { ...prev, [param]: value }; audioEngine.setParams(updated); pushHistory(updated); return updated; });
-    const updateSlot = (prev: DSPStateSlot) => ({ ...prev, params: { ...prev.params, [param]: value }, timestamp: Date.now() });
-    if (activeDspSlot === 'A') setSlotA(updateSlot); else setSlotB(updateSlot);
-  }, [activeDspSlot]);
-  const handleAdvancedParamChange = useCallback(<K extends keyof AdvancedParamsState>(key: K, value: AdvancedParamsState[K]) => {
-    setAdvancedParams((prev) => ({ ...prev, [key]: value }));
-    const updateSlot = (prev: DSPStateSlot) => ({ ...prev, advancedParams: { ...prev.advancedParams, [key]: value }, timestamp: Date.now() });
-    if (activeDspSlot === 'A') setSlotA(updateSlot); else setSlotB(updateSlot);
-  }, [activeDspSlot]);
-  const handleResetParams = () => {
-    setParams({ ...DEFAULT_PARAMS }); audioEngine.setParams({ ...DEFAULT_PARAMS }); pushHistory({ ...DEFAULT_PARAMS }); soundHaptics.playResetSound();
-    if (activeDspSlot === 'A') setSlotA((prev) => ({ ...prev, params: { ...DEFAULT_PARAMS }, timestamp: Date.now() }));
-    else setSlotB((prev) => ({ ...prev, params: { ...DEFAULT_PARAMS }, timestamp: Date.now() }));
-  };
-  const handleApplyPreset = (preset: MasteringPreset) => {
-    if ((preset.proOnly || preset.isPro) && !FeatureGates.isProUser()) { setUpgradeTargetFeature('ADVANCED_PRESETS'); setIsUpgradeModalOpen(true); return; }
-    soundHaptics.playPresetClick(); setActivePresetId(preset.id); setParams({ ...preset.params }); audioEngine.setParams({ ...preset.params }); pushHistory({ ...preset.params });
-    const updater = (prev: DSPStateSlot) => ({ ...prev, params: { ...preset.params }, presetName: preset.name, timestamp: Date.now() });
-    if (activeDspSlot === 'A') setSlotA(updater); else setSlotB(updater);
-    const now = new Date(); const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-    setSnapshots((prev) => [{ id: Date.now().toString(), time: timeStr, name: preset.name, target: `${selectedTarget.platform} (${selectedTarget.targetLufs} LUFS)`, params: { ...preset.params } }, ...prev.slice(0, 4)]);
-  };
+  useEffect(() => { if (!showSplash) loadDemoTrack('synthwave'); }, [showSplash]);
+  useEffect(() => { const unsubscribe = entitlementService.subscribe((newEnt, newUsage) => { setEntitlement(newEnt); setUsage(newUsage); }); entitlementService.fetchServerEntitlements().catch(console.error); audioEngine.setTimeUpdateCallback((_time, totalDuration) => { if (totalDuration > 0) setDuration(totalDuration); }); audioEngine.setMeterUpdateCallback((meters) => setMeterData(meters)); return () => { unsubscribe(); audioEngine.stop(); }; }, []);
+
+  const loadDemoTrack = (type: 'synthwave' | 'acoustic' | 'parity') => { audioEngine.stop(); setIsPlaying(false); setCurrentTime(0); const buffer = audioEngine.createDemoTrack(type); audioEngine.setAudioBuffer(buffer); const names = { synthwave: 'Synthwave Neon Horizon Master.wav', acoustic: 'Acoustic Resonance & Harmonics.wav', parity: 'Production Parity 100k Benchmark.wav' }; setCurrentTrack({ name: names[type], duration: buffer.duration, sampleRate: buffer.sampleRate, channels: buffer.numberOfChannels, buffer, sourceType: type === 'parity' ? 'synthetic' : 'demo' }); setDuration(buffer.duration); };
+  const handleFileUpload = async (file: File) => { try { audioEngine.stop(); setIsPlaying(false); setCurrentTime(0); const buffer = await audioEngine.loadAudioFile(file); setCurrentTrack({ name: file.name, duration: buffer.duration, sampleRate: buffer.sampleRate, channels: buffer.numberOfChannels, buffer, sourceType: 'file', fileSize: file.size }); setDuration(buffer.duration); setActiveTab('mastering'); } catch (err) { console.error('Failed to load audio file:', err); } };
+  const handleSelectDspSlot = useCallback((slot: 'A' | 'B') => { if (slot === activeDspSlot) return; setActiveDspSlot(slot); const target = slot === 'A' ? slotA : slotB; setParams({ ...target.params }); setAdvancedParams({ ...target.advancedParams }); audioEngine.setParams({ ...target.params }); pushHistory({ ...target.params }); soundHaptics.playButtonTap(); }, [activeDspSlot, slotA, slotB]);
+  const handleCaptureToOppositeSlot = useCallback(() => { const opposite = activeDspSlot === 'A' ? 'B' : 'A'; const data: DSPStateSlot = { params: { ...params }, advancedParams: { ...advancedParams }, presetName: MASTERING_PRESETS.find((p) => p.id === activePresetId)?.name || 'Custom', timestamp: Date.now() }; if (opposite === 'B') setSlotB(data); else setSlotA(data); }, [activeDspSlot, params, advancedParams, activePresetId]);
+  const handleCopyDspSlot = useCallback((from: 'A' | 'B', to: 'A' | 'B') => { const source = from === 'A' ? slotA : slotB; const copied = { params: { ...source.params }, advancedParams: { ...source.advancedParams }, presetName: source.presetName, timestamp: Date.now() }; if (to === 'B') setSlotB(copied); else setSlotA(copied); if (activeDspSlot === to) { setParams({ ...copied.params }); setAdvancedParams({ ...copied.advancedParams }); audioEngine.setParams({ ...copied.params }); } }, [slotA, slotB, activeDspSlot]);
+  const handleSwapDspSlots = useCallback(() => { setSlotA(slotB); setSlotB(slotA); const activeNow = activeDspSlot === 'A' ? slotB : slotA; setParams({ ...activeNow.params }); setAdvancedParams({ ...activeNow.advancedParams }); audioEngine.setParams({ ...activeNow.params }); }, [slotA, slotB, activeDspSlot]);
+  const handleResetDspSlot = useCallback((slot: 'A' | 'B') => { const reset: DSPStateSlot = { params: { ...DEFAULT_PARAMS }, advancedParams: { ...advancedParams }, presetName: 'Default', timestamp: Date.now() }; if (slot === 'A') setSlotA(reset); else setSlotB(reset); if (slot === activeDspSlot) { setParams({ ...DEFAULT_PARAMS }); setAdvancedParams(reset.advancedParams); audioEngine.setParams({ ...DEFAULT_PARAMS }); pushHistory({ ...DEFAULT_PARAMS }); } }, [activeDspSlot, advancedParams]);
+  const handleParamChange = useCallback((param: keyof MasteringParams, value: number) => { setParams((prev) => { const updated = { ...prev, [param]: value }; audioEngine.setParams(updated); pushHistory(updated); return updated; }); const updateSlot = (prev: DSPStateSlot) => ({ ...prev, params: { ...prev.params, [param]: value }, timestamp: Date.now() }); if (activeDspSlot === 'A') setSlotA(updateSlot); else setSlotB(updateSlot); }, [activeDspSlot]);
+  const handleAdvancedParamChange = useCallback(<K extends keyof AdvancedParamsState>(key: K, value: AdvancedParamsState[K]) => { setAdvancedParams((prev) => ({ ...prev, [key]: value })); const updateSlot = (prev: DSPStateSlot) => ({ ...prev, advancedParams: { ...prev.advancedParams, [key]: value }, timestamp: Date.now() }); if (activeDspSlot === 'A') setSlotA(updateSlot); else setSlotB(updateSlot); }, [activeDspSlot]);
+  const handleResetParams = () => { setParams({ ...DEFAULT_PARAMS }); audioEngine.setParams({ ...DEFAULT_PARAMS }); pushHistory({ ...DEFAULT_PARAMS }); soundHaptics.playResetSound(); if (activeDspSlot === 'A') setSlotA((prev) => ({ ...prev, params: { ...DEFAULT_PARAMS }, timestamp: Date.now() })); else setSlotB((prev) => ({ ...prev, params: { ...DEFAULT_PARAMS }, timestamp: Date.now() })); };
+  const handleApplyPreset = (preset: MasteringPreset) => { if ((preset.proOnly || preset.isPro) && !FeatureGates.isProUser()) { setUpgradeTargetFeature('ADVANCED_PRESETS'); setIsUpgradeModalOpen(true); return; } soundHaptics.playPresetClick(); setActivePresetId(preset.id); setParams({ ...preset.params }); audioEngine.setParams({ ...preset.params }); pushHistory({ ...preset.params }); const updater = (prev: DSPStateSlot) => ({ ...prev, params: { ...preset.params }, presetName: preset.name, timestamp: Date.now() }); if (activeDspSlot === 'A') setSlotA(updater); else setSlotB(updater); const now = new Date(); const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`; setSnapshots((prev) => [{ id: Date.now().toString(), time: timeStr, name: preset.name, target: `${selectedTarget.platform} (${selectedTarget.targetLufs} LUFS)`, params: { ...preset.params } }, ...prev.slice(0, 4)]); };
   const handleRestoreSnapshot = (snapshot: HistorySnapshotItem) => { if (!snapshot.params) return; soundHaptics.playPresetClick(); setParams({ ...snapshot.params }); audioEngine.setParams({ ...snapshot.params }); pushHistory({ ...snapshot.params }); };
   const handleToggleBypass = () => { const next = !isBypassed; setIsBypassed(next); audioEngine.setBypass(next); };
   const handlePlay = () => { void audioEngine.play(); setIsPlaying(true); };
@@ -237,21 +138,10 @@ export const App: React.FC = () => {
   const handleTriggerMaster = () => { soundHaptics.playSwitchSound(true); setIsMasteringInProgress(true); setTimeout(() => { setIsMasteringInProgress(false); soundHaptics.playSuccessSound(); setIsExportModalOpen(true); }, 900); };
   const handleOpenAccount = (tab: 'subscription' | 'billing' | 'usage' | 'exports' | 'privacy' = 'subscription') => { setAccountInitialTab(tab); setIsAccountModalOpen(true); };
   const handleOpenCheckout = (planId: PlanId) => { setSelectedPlanForCheckout(planId); setIsPricingModalOpen(false); setIsUpgradeModalOpen(false); setIsCheckoutModalOpen(true); };
-  const handleOpenUpgradePrompt = (featureKey: FeatureKey = 'HIGH_RES_EXPORT') => { setUpgradeTargetFeature(featureKey); setIsUpgradeModalOpen(true); };
+  const handleOpenUpgradePrompt = (featureKey: FeatureKey | string = 'HIGH_RES_EXPORT') => { setUpgradeTargetFeature(featureKey as FeatureKey); setIsUpgradeModalOpen(true); };
+
   const isLegalView = ['privacy','terms','subscriptions','cookies','refunds','legal','contact','data-request'].includes(activeTab);
-  const getSeoInfo = () => {
-    if (isPricingModalOpen) return { title: 'Pricing & Pro Plans | MasteringLocal.Pro', description: 'Upgrade to MasteringLocal.Pro for high-resolution exports and advanced dynamics processing.' };
-    if (isLegalView) { const titles: Record<string,string> = { privacy:'Privacy Policy', terms:'Terms of Service', subscriptions:'Subscription Terms', cookies:'Cookie Policy', refunds:'Refund Policy', legal:'Legal Imprint', contact:'Contact Support', 'data-request':'Data Request' }; const title = titles[activeTab] || 'Legal'; return { title: `${title} | MasteringLocal.Pro`, description: `View the ${title} for MasteringLocal.Pro.` }; }
-    switch (activeTab) {
-      case 'landing': return { title: 'MasteringLocal.Pro — Professional Audio Mastering', description: 'Studio-grade audio mastering console. 100% in your browser. No audio uploads, zero server processing.' };
-      case 'mastering': return { title: 'Mastering Workspace | MasteringLocal.Pro', description: 'Professional audio mastering workstation with zero latency DSP.' };
-      case 'analysis': return { title: 'Loudness & Analysis | MasteringLocal.Pro', description: 'Real-time true peak and LUFS analysis for audio mastering.' };
-      case 'presets': return { title: 'Mastering Presets | MasteringLocal.Pro', description: 'Professional mastering presets for Spotify, Apple Music, and Club.' };
-      case 'learn': return { title: 'Learn Audio Mastering | MasteringLocal.Pro', description: 'Educational guides on LUFS, True Peak, and audio dynamics.' };
-      case 'admin': return { title: 'Admin Control Panel | MasteringLocal.Pro', description: 'Platform administration.' };
-      default: return { title: 'MasteringLocal.Pro — Professional Audio Mastering', description: 'Studio-grade audio mastering console.' };
-    }
-  };
+  const getSeoInfo = () => { if (isPricingModalOpen) return { title: 'Pricing & Pro Plans | MasteringLocal.Pro', description: 'Upgrade to MasteringLocal.Pro for high-resolution exports and advanced dynamics processing.' }; if (isLegalView) { const titles: Record<string,string> = { privacy:'Privacy Policy', terms:'Terms of Service', subscriptions:'Subscription Terms', cookies:'Cookie Policy', refunds:'Refund Policy', legal:'Legal Imprint', contact:'Contact Support', 'data-request':'Data Request' }; const title = titles[activeTab] || 'Legal'; return { title: `${title} | MasteringLocal.Pro`, description: `View the ${title} for MasteringLocal.Pro.` }; } switch (activeTab) { case 'landing': return { title: 'MasteringLocal.Pro — Professional Audio Mastering', description: 'Studio-grade audio mastering console. 100% in your browser. No audio uploads, zero server processing.' }; case 'mastering': return { title: 'Mastering Workspace | MasteringLocal.Pro', description: 'Professional audio mastering workstation with zero latency DSP.' }; case 'analysis': return { title: 'Loudness & Analysis | MasteringLocal.Pro', description: 'Real-time true peak and LUFS analysis for audio mastering.' }; case 'presets': return { title: 'Mastering Presets | MasteringLocal.Pro', description: 'Professional mastering presets for Spotify, Apple Music, and Club.' }; case 'learn': return { title: 'Learn Audio Mastering | MasteringLocal.Pro', description: 'Educational guides on LUFS, True Peak, and audio dynamics.' }; case 'admin': return { title: 'Admin Control Panel | MasteringLocal.Pro', description: 'Platform administration.' }; default: return { title: 'MasteringLocal.Pro — Professional Audio Mastering', description: 'Studio-grade audio mastering console.' }; } };
   const seo = getSeoInfo();
   useEffect(() => { document.title = isPlaying ? `▶ ${currentTrack?.name || 'Audio Session'} - MasteringLocal.Pro` : getSeoInfo().title; }, [isPlaying, currentTrack, activeTab, isPricingModalOpen]);
 
@@ -272,7 +162,7 @@ export const App: React.FC = () => {
                   <WaveformHero currentTrack={currentTrack} currentTime={currentTime} duration={duration} isPlaying={isPlaying} isBypassed={isBypassed} onSeek={handleSeek} loopRegion={loopRegion} onToggleLoop={handleToggleLoop} />
                   <DSPStateCompare activeSlot={activeDspSlot} slotA={slotA} slotB={slotB} currentParams={params} currentAdvancedParams={advancedParams} onSelectSlot={handleSelectDspSlot} onCaptureToOppositeSlot={handleCaptureToOppositeSlot} onCopySlot={handleCopyDspSlot} onSwapSlots={handleSwapDspSlots} onResetSlot={handleResetDspSlot} />
                   <ProcessingChain params={params} advancedParams={advancedParams} meterData={meterData} isBypassed={isBypassed} onParamChange={handleParamChange} onAdvancedParamChange={handleAdvancedParamChange} onOpenAdvancedModal={setActiveAdvancedModal} />
-                  <button onClick={() => { soundHaptics.playMasterStart(); handleTriggerMaster(); }} disabled={isMasteringInProgress} className={`w-full flex items-center justify-between px-8 py-5 min-h-[72px] transition cursor-pointer active:scale-[0.99] select-none ${isMasteringInProgress ? 'bg-[var(--text-tertiary)] cursor-wait' : 'bg-[var(--accent-lime)] hover:bg-[#c9ff2e]'}`}><div className="flex items-center gap-4"><div className="w-10 h-10 border border-black/20 flex items-center justify-center">{isMasteringInProgress ? <Sparkles className="w-5 h-5 animate-spin text-black" style={{ animationDuration: '2s' }} /> : <Upload className="w-5 h-5 text-black" />}</div><span className="tracking-widest uppercase font-mono font-bold text-black text-2xl">{isMasteringInProgress ? 'MASTERING...' : 'EXPORT MASTER'}</span></div><div className="flex items-center gap-3"><span className="text-[10px] font-mono text-black font-bold tracking-widest px-2 py-1 border border-black/20">24-BIT WAV</span><ChevronDown className="w-5 h-5 text-black opacity-50" /></div></button>
+                  <button onClick={handleTriggerMaster} disabled={isMasteringInProgress} className={`w-full flex items-center justify-between px-8 py-5 min-h-[72px] transition cursor-pointer active:scale-[0.99] select-none ${isMasteringInProgress ? 'bg-[var(--text-tertiary)] cursor-wait' : 'bg-[var(--accent-lime)] hover:bg-[#c9ff2e]'}`}><div className="flex items-center gap-4"><div className="w-10 h-10 border border-black/20 flex items-center justify-center">{isMasteringInProgress ? <Sparkles className="w-5 h-5 animate-spin text-black" style={{ animationDuration: '2s' }} /> : <Upload className="w-5 h-5 text-black" />}</div><span className="tracking-widest uppercase font-mono font-bold text-black text-2xl">{isMasteringInProgress ? 'MASTERING...' : 'EXPORT MASTER'}</span></div><div className="flex items-center gap-3"><span className="text-[10px] font-mono text-black font-bold tracking-widest px-2 py-1 border border-black/20">24-BIT WAV</span><ChevronDown className="w-5 h-5 text-black opacity-50" /></div></button>
                   <BottomCards params={params} presets={MASTERING_PRESETS} activePresetId={activePresetId} snapshots={snapshots} onParamChange={handleParamChange} onSelectPreset={handleApplyPreset} onRestoreSnapshot={handleRestoreSnapshot} onOpenFullPresets={() => setActiveTab('presets')} onOpenFullHistory={() => setIsHistoryModalOpen(true)} onOpenTargetModal={() => setIsReferenceModalOpen(true)} />
                   <div className="sticky bottom-16 md:static z-30"><TransportBar isPlaying={isPlaying} isBypassed={isBypassed} currentTime={currentTime} duration={duration} currentTrack={currentTrack} onPlay={handlePlay} onPause={handlePause} onStop={handleStop} onSeek={handleSeek} onToggleBypass={handleToggleBypass} isLooping={isLooping} onToggleLoop={handleToggleLoop} isMono={isMono} onToggleMono={handleToggleMono} /></div>
                 </div>
@@ -295,22 +185,22 @@ export const App: React.FC = () => {
             {activeTab === 'data-request' && <DataRequestView />}
           </main>
         </div>
-        <MobileBottomNav activeTab={activeTab as ActiveTab} onSelectTab={(tab) => setActiveTab(tab)} onOpenPricing={() => setIsPricingModalOpen(true)} />
+        <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} onOpenAccount={() => handleOpenAccount()} isPro={entitlement.plan !== 'free'} />
         <CookieConsentBanner />
       </div>
-      {activeAdvancedModal && <AdvancedModuleModal isOpen={true} module={activeAdvancedModal} params={params} advancedParams={advancedParams} onClose={() => setActiveAdvancedModal(null)} onParamChange={handleParamChange} onAdvancedParamChange={handleAdvancedParamChange} />}
+      {activeAdvancedModal && <AdvancedModuleModal module={activeAdvancedModal} params={params} advancedParams={advancedParams} onClose={() => setActiveAdvancedModal(null)} onParamChange={handleParamChange} onAdvancedParamChange={handleAdvancedParamChange} />}
       <ParityModal isOpen={isParityModalOpen} onClose={() => setIsParityModalOpen(false)} />
       <RuntimeAuditModal isOpen={isAuditModalOpen} onClose={() => setIsAuditModalOpen(false)} />
-      <ExportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} audioEngine={audioEngine} track={currentTrack} usage={usage} entitlement={entitlement} onOpenUpgrade={handleOpenUpgradePrompt} />
-      <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} onSelectPlan={handleOpenCheckout} />
-      <CheckoutModal isOpen={isCheckoutModalOpen} onClose={() => setIsCheckoutModalOpen(false)} planId={selectedPlanForCheckout} />
-      <AccountModal isOpen={isAccountModalOpen} onClose={() => setIsAccountModalOpen(false)} initialTab={accountInitialTab} />
+      <ExportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} track={currentTrack} params={params} onUpgradeClick={handleOpenUpgradePrompt} />
+      <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} onSelectPlan={handleOpenCheckout} currentPlan={entitlement.plan} />
+      <CheckoutModal isOpen={isCheckoutModalOpen} onClose={() => setIsCheckoutModalOpen(false)} initialPlanId={selectedPlanForCheckout} onSuccess={() => setIsCheckoutModalOpen(false)} />
+      <AccountModal isOpen={isAccountModalOpen} onClose={() => setIsAccountModalOpen(false)} initialTab={accountInitialTab} onUpgradeClick={() => handleOpenUpgradePrompt('ADVANCED_PRESETS')} />
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-      <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} feature={upgradeTargetFeature} onSelectPlan={handleOpenCheckout} />
-      <ReferenceTargetModal isOpen={isReferenceModalOpen} onClose={() => setIsReferenceModalOpen(false)} selectedTarget={selectedTarget} onSelectTarget={setSelectedTarget} />
-      <LoudnessDetailsModal isOpen={isLoudnessModalOpen} onClose={() => setIsLoudnessModalOpen(false)} meterData={meterData} />
-      <StemsModal isOpen={isStemsModalOpen} onClose={() => setIsStemsModalOpen(false)} />
-      <HistoryModal isOpen={isHistoryModalOpen} onClose={() => setIsHistoryModalOpen(false)} snapshots={snapshots} onRestore={handleRestoreSnapshot} />
+      <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} featureKey={upgradeTargetFeature} onUpgradeClick={() => handleOpenCheckout(selectedPlanForCheckout)} />
+      {isReferenceModalOpen && <ReferenceTargetModal selectedTargetId={selectedTarget.id} onSelectTarget={setSelectedTarget} onClose={() => setIsReferenceModalOpen(false)} />}
+      {isLoudnessModalOpen && <LoudnessDetailsModal meterData={meterData} targetLufs={selectedTarget.targetLufs} onClose={() => setIsLoudnessModalOpen(false)} />}
+      {isStemsModalOpen && <StemsModal onClose={() => setIsStemsModalOpen(false)} />}
+      {isHistoryModalOpen && <HistoryModal historyList={snapshots} onRestore={(item) => handleRestoreSnapshot(item as HistorySnapshotItem)} onClose={() => setIsHistoryModalOpen(false)} />}
     </HelmetProvider>
   );
 };
