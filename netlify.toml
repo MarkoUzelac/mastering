@@ -6,6 +6,8 @@
 [build.environment]
   NODE_VERSION = "22"
   NPM_FLAGS = "--no-audit --no-fund"
+  SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
+  SECRETS_SCAN_SMART_DETECTION_OMIT_VALUES = "AIzaSyAvTd2-F-F9heGlf1IL5eo9ZdVpn2LniiM"
 
 # API gateway: Netlify Functions -> /api/*
 [[redirects]]

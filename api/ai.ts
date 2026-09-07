@@ -67,8 +67,39 @@ async function readBody(req: IncomingMessage): Promise<unknown> {
 }
 
 async function runGemini(input: string, schema: Record<string, unknown>) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || process.env.NETLIFY_AI_GATEWAY_KEY;
   if (!apiKey) throw new Error('AI provider is not configured.');
+
+  const gatewayBase = process.env.GOOGLE_GEMINI_BASE_URL
+    || (process.env.NETLIFY_AI_GATEWAY_BASE_URL ? `${process.env.NETLIFY_AI_GATEWAY_BASE_URL}/gemini` : '');
+
+  if (gatewayBase) {
+    const url = `${gatewayBase.replace(/\/+$/, '')}/v1beta/models/${DEFAULT_MODEL}:generateContent`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'x-goog-api-key': apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: input }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: schema,
+        },
+      }),
+    });
+
+    const payload = await response.json() as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      error?: { message?: string };
+    };
+
+    if (!response.ok) throw new Error(payload.error?.message || `AI Gateway request failed (${response.status})`);
+    const text = payload.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('AI Gateway returned no structured output.');
+    try { return JSON.parse(text); } catch { throw new Error('AI Gateway returned invalid structured JSON.'); }
+  }
 
   const response = await fetch(GEMINI_ENDPOINT, {
     method: 'POST',
