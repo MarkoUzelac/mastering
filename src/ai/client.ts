@@ -4,7 +4,7 @@ import type {
   ReleaseAssistantRequest,
   ReleaseAssistantResponse,
 } from './contracts';
-import { getApiAuthHeaders } from '../lib/firebase';
+import { getApiAuthHeaders } from '../lib/client-identity';
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
   const response = await fetch(path, {
@@ -13,12 +13,8 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
     headers: { 'content-type': 'application/json', ...(await getApiAuthHeaders()) },
     body: JSON.stringify(body),
   });
-
   const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-  if (!response.ok) {
-    throw new Error(payload?.error || `AI request failed (${response.status})`);
-  }
-
+  if (!response.ok) throw new Error(payload?.error || `AI request failed (${response.status})`);
   return payload as T;
 }
 
